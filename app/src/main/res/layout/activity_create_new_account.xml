@@ -4,12 +4,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center|center_horizontal"
+    android:gravity="center"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".CreateNewAccount">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="enter login:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <EditText
-        android:id="@+id/etLogin"
+        android:id="@+id/editTextTextPersonName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -17,11 +24,18 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:ems="10"
-        android:hint="Your login"
+        android:hint="Login"
         android:inputType="textPersonName" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="enter password:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
     <EditText
-        android:id="@+id/etPassword"
+        android:id="@+id/editTextTextPassword"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="20dp"
@@ -29,43 +43,43 @@
         android:layout_marginEnd="20dp"
         android:layout_marginRight="20dp"
         android:ems="10"
-        android:hint="Your password"
+        android:hint="PassWord"
+        android:inputType="textPassword" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="enter password again:"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/editTextTextPassword2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginRight="20dp"
+        android:ems="10"
+        android:hint="PassWord"
         android:inputType="textPassword" />
 
     <Button
-        android:id="@+id/btn_login"
+        android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="login" />
-
-    <CheckBox
-        android:id="@+id/checkBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="Remember me?" />
+        android:text="Register" />
 
     <TextView
-        android:id="@+id/tvLoginError"
-        android:layout_width="wrap_content"
+        android:id="@+id/tvError"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Error"
-        android:textColor="#FD0000"
+        android:textColor="#FB0000"
         android:textSize="20sp"
         android:textStyle="italic"
         android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
-
-    <ProgressBar
-        android:id="@+id/progressBarLogin"
-        style="?android:attr/progressBarStyle"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
 </LinearLayout>

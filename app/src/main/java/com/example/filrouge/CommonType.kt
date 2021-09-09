@@ -2,29 +2,30 @@ package com.example.filrouge
 
 import android.content.Intent
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewbinding.ViewBinding
 
 
-abstract class CommonType : AppCompatActivity(), GenericTypeAdapater.GenericListener{
+abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericTypeAdapter.GenericListener{
 
 
-    val designers = ArrayList<String>()
-    val designerAdapter = GenericTypeAdapater(designers, this, Type.Designer.name)
+    private val designers = ArrayList<String>()
+    private val designerAdapter = GenericTypeAdapter(designers, this, Type.Designer.name)
 
-    val artists = ArrayList<String>()
-    val artistAdapter = GenericTypeAdapater(artists, this, Type.Artist.name)
+    private val artists = ArrayList<String>()
+    private val artistAdapter = GenericTypeAdapter(artists, this, Type.Artist.name)
 
-    val publishers = ArrayList<String>()
-    val publisherAdapter = GenericTypeAdapater(publishers, this, Type.Publisher.name)
+    private val publishers = ArrayList<String>()
+    private val publisherAdapter = GenericTypeAdapter(publishers, this, Type.Publisher.name)
 
-    val languages = ArrayList<String>()
-    val languageAdapter = GenericTypeAdapater(languages, this, Type.Language.name)
+    private val languages = ArrayList<String>()
+    private val languageAdapter = GenericTypeAdapter(languages, this, Type.Language.name)
 
-    val playing_mode = ArrayList<String>()
-    val playingModeAdapter = GenericTypeAdapater(playing_mode, this, Type.PlayingMode.name)
+    private val playing_mode = ArrayList<String>()
+    private val playingModeAdapter = GenericTypeAdapter(playing_mode, this, Type.PlayingMode.name)
+
 
     override fun onGenericClick(datum: String, type:String) {
         intent = Intent(this, GenericTypeDetails::class.java)
@@ -71,6 +72,47 @@ abstract class CommonType : AppCompatActivity(), GenericTypeAdapater.GenericList
         loadRv(rvLanguage, languages, languageAdapter, element.language)
         loadRv(rvPlayingMod, playing_mode, playingModeAdapter, element.playing_mode)
     }
+
+    private fun onAddOnClick(datum: AddOnBean) {
+        intent = Intent(this, AddOnDetails::class.java)
+        intent.putExtra(SerialKey.AddOn.name, datum)
+        val parentList = allGames.filter{datum.game == it.name}
+        val parent:GameBean? = if(parentList.size == 1)parentList[0] else null
+        intent.putExtra(SerialKey.ParentGame.name, parent)
+        startActivity(intent)
+        finish()
+    }
+
+
+    private fun onMultiAddOnClick(datum: MultiAddOnBean) {
+        intent = Intent(this, MultiAddOnDetails::class.java)
+        intent.putExtra(SerialKey.MultiAddOn.name, datum)
+        val parent:GameBean? = null
+        intent.putExtra(SerialKey.ParentGame.name, parent)
+        startActivity(intent)
+        finish()
+    }
+
+    override fun onElementClick(datum:CommonBase?) {
+        when(datum){
+            is GameBean? -> onGameClick(datum)
+            is AddOnBean -> onAddOnClick(datum)
+            is MultiAddOnBean -> onMultiAddOnClick(datum)
+        }
+
+    }
+    open fun onGameClick(datum:GameBean?){
+        if (datum == null){
+            Toast.makeText(this, "Link Error!", Toast.LENGTH_SHORT).show()
+        }
+        else{
+            intent = Intent(this,GameDetails::class.java)
+            intent.putExtra(SerialKey.Game.name, datum)
+            startActivity(intent)
+            finish()
+        }
+    }
+
 
 
 }

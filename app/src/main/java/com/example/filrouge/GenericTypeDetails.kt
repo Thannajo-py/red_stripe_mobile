@@ -4,22 +4,20 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
-import com.example.filrouge.databinding.ActivityGameDetailsBinding
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
-import java.util.Locale.filter
 
-class GenericTypeDetails : AppCompatActivity(), AddonAdapter.onAddOnListListener,
-        MultiAddonAdapter.multiAddOnListListener, GameAdapter.onGameListListener {
 
-    val binding: ActivityGenericTypeDetailsBinding by lazy{ ActivityGenericTypeDetailsBinding.inflate(layoutInflater) }
-    val addOns = ArrayList<AddOnBean>()
-    val multiAddOns = ArrayList<MultiAddOnBean>()
-    val games = ArrayList<GameBean>()
-    val genericAddOnAdapter = AddonAdapter(addOns ,this)
-    val genericMultiAddOnAdapter = MultiAddonAdapter(multiAddOns, this)
-    val genericGameAdapater = GameAdapter(games, this)
-    val type:String by lazy{intent.extras!!.getString(SerialKey.Type.name, "")}
-    val name:String by lazy{intent.extras!!.getString(SerialKey.Name.name, "")}
+class GenericTypeDetails : CommonType(), OnGenericListListener {
+
+    private val binding: ActivityGenericTypeDetailsBinding by lazy{ ActivityGenericTypeDetailsBinding.inflate(layoutInflater) }
+    private val addOns = ArrayList<AddOnBean>()
+    private val multiAddOns = ArrayList<MultiAddOnBean>()
+    private val games = ArrayList<GameBean>()
+    private val genericAddOnAdapter = GenericAdapter(addOns ,this)
+    private val genericMultiAddOnAdapter = GenericAdapter(multiAddOns, this)
+    private val genericGameAdapater = GenericAdapter(games, this)
+    private val type:String by lazy{intent.extras!!.getString(SerialKey.Type.name, "")}
+    private val name:String by lazy{intent.extras!!.getString(SerialKey.Name.name, "")}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -72,6 +70,12 @@ class GenericTypeDetails : AppCompatActivity(), AddonAdapter.onAddOnListListener
             Type.Tag.name -> games.addAll(allGames.filter{it.tags.contains(name)})
             Type.Mechanism.name -> games.addAll(allGames.filter{it.mechanism.contains(name)})
             Type.Topic.name -> games.addAll(allGames.filter{it.topics.contains(name)})
+            Type.Search.name -> {
+                val searchResult = intent.extras!!.getSerializable(SerialKey.SearchResult.name) as ApiResponse
+                games.addAll(searchResult.games)
+                addOns.addAll(searchResult.add_ons)
+                multiAddOns.addAll(searchResult.multi_add_ons)
+            }
         }
 
         binding.tvGenericDetailName.text = name
@@ -80,31 +84,6 @@ class GenericTypeDetails : AppCompatActivity(), AddonAdapter.onAddOnListListener
         genericMultiAddOnAdapter.notifyDataSetChanged()
     }
 
-    override fun onAddOnClick(datum: AddOnBean) {
-        intent = Intent(this, AddOnDetails::class.java)
-        intent.putExtra(SerialKey.AddOn.name, datum)
-        val parentList = allGames.filter{datum.game == it.name}
-        val parent:GameBean? = if(parentList.size == 1)parentList[0] else null
-        intent.putExtra(SerialKey.ParentGame.name, parent)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onMultiAddOnClick(datum: MultiAddOnBean) {
-        intent = Intent(this, MultiAddOnDetails::class.java)
-        intent.putExtra(SerialKey.MultiAddOn.name, datum)
-        val parent:GameBean? = null
-        intent.putExtra(SerialKey.ParentGame.name, parent)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onGameClick(datum: GameBean?) {
-        intent = Intent(this, GameDetails::class.java)
-        intent.putExtra(SerialKey.Game.name, datum)
-        startActivity(intent)
-        finish()
-    }
 
 
 

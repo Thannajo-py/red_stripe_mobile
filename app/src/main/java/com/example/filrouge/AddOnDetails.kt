@@ -6,9 +6,9 @@ import com.example.filrouge.databinding.ActivityAddOnDetailsBinding
 
 class AddOnDetails : CommonType() {
 
-    val binding: ActivityAddOnDetailsBinding by lazy{ ActivityAddOnDetailsBinding.inflate(layoutInflater) }
-    val parent:GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
-    val addOn:AddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.AddOn.name) as AddOnBean}
+    private val binding: ActivityAddOnDetailsBinding by lazy{ ActivityAddOnDetailsBinding.inflate(layoutInflater) }
+    private val parent:GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
+    private val addOn:AddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.AddOn.name) as AddOnBean}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

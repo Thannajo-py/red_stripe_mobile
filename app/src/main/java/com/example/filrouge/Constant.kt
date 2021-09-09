@@ -13,7 +13,11 @@ enum class SerialKey{
     Name,
     APIStorage,
     RememberNameStorage,
-    RememberPasswordStorage
+    RememberPasswordStorage,
+    SearchResult,
+    AccountName,
+    AddedContent
+
 }
 
 enum class Type{
@@ -25,9 +29,12 @@ enum class Type{
     Language,
     Tag,
     Mechanism,
-    Topic
+    Topic,
+    Search
 }
 
 enum class MenuId{
-    Synchronize
+    Synchronize,
+    Search,
+    DeleteAccount
 }

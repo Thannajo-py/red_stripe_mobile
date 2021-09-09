@@ -2,7 +2,7 @@ package com.example.filrouge
 
 import java.io.Serializable
 
-data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>)
+data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>):Serializable
 class GameBean(
         name: String,
         player_min: Int?,
@@ -57,7 +57,7 @@ class AddOnBean(
         buying_price:Int?,
         stock: Int?,
         max_time: Int?,
-        val game: String,
+        val game: String?,
 ): CommonBase(name,
 player_min,
 player_max,

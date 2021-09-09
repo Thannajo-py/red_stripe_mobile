@@ -14,13 +14,13 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.lang.Exception
-class ViewGamesActivity : AppCompatActivity(),  GameAdapter.onGameListListener {
+class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
 
-    val binding: ActivityViewGamesBinding by lazy{ ActivityViewGamesBinding.inflate(layoutInflater) }
-    val gson = Gson()
-    val adapter = GameAdapter(allGames, this)
-    val sharedPreference by lazy{SharedPreference(this)}
+    private val binding: ActivityViewGamesBinding by lazy{ ActivityViewGamesBinding.inflate(layoutInflater) }
+    private val gson = Gson()
+    private val adapter = GenericAdapter(allGames, this)
+    private val sharedPreference by lazy{SharedPreference(this)}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,20 +35,29 @@ class ViewGamesActivity : AppCompatActivity(),  GameAdapter.onGameListListener {
 
     }
 
+    override fun onResume() {
+        super.onResume()
+        getSave()
+    }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0,MenuId.Synchronize.ordinal,0,"Synchronize")
+        menu?.add(0,MenuId.Synchronize.ordinal,0,"Synchroniser")
+        menu?.add(0,MenuId.Search.ordinal,0,"Rechercher")
+        menu?.add(0,MenuId.DeleteAccount.ordinal,0,"Supprimer compte")
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             MenuId.Synchronize.ordinal -> synchronize()
+            MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
+            MenuId.DeleteAccount.ordinal -> startActivity(Intent(this, DeleteAccount::class.java))
+
         }
         return super.onOptionsItemSelected(item)
     }
 
 
-    fun synchronize() {
+    private fun synchronize() {
         binding.progressBar.visibility = View.VISIBLE
         binding.tvGameError.visibility = View.GONE
 
@@ -80,20 +89,20 @@ class ViewGamesActivity : AppCompatActivity(),  GameAdapter.onGameListListener {
 
 
 
-    override fun onGameClick(datum: GameBean?) {
+    override fun onElementClick(datum: CommonBase?) {
         intent = Intent(this, GameDetails::class.java)
         intent.putExtra(SerialKey.Game.name, datum)
         startActivity(intent)
     }
 
 
-    fun <T>fillList(list:ArrayList<T>, fill:ArrayList<T>){
+    private fun <T>fillList(list:ArrayList<T>, fill:ArrayList<T>){
         list.clear()
         list.addAll(fill)
 
     }
 
-    fun getSave(){
+    private fun getSave(){
         val savedContent = sharedPreference.getValueString(SerialKey.APIStorage.name)
         if (savedContent != null && savedContent.isNotBlank()) {
             val answer = gson.fromJson(
@@ -104,11 +113,14 @@ class ViewGamesActivity : AppCompatActivity(),  GameAdapter.onGameListListener {
             adapter.notifyDataSetChanged()
             fillList(allAddOns, answer.add_ons)
             fillList(allMultiAddOns, answer.multi_add_ons)
+        }else{
+                binding.tvGameError.text = "Liste vide synchonisez là!"
+                binding.tvGameError.visibility = View.VISIBLE
         }
 
     }
 
-    fun refreshAll(answer:ApiResponse){
+    private fun refreshAll(answer:ApiResponse){
         fillList(allGames, answer.games)
         fillList(allAddOns, answer.add_ons)
         fillList(allMultiAddOns, answer.multi_add_ons)

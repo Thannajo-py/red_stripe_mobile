@@ -9,7 +9,7 @@ import com.example.filrouge.databinding.ActivityMainMenuBinding
 
 class MainMenuActivity : AppCompatActivity(), View.OnClickListener {
 
-    val binding: ActivityMainMenuBinding by lazy{ ActivityMainMenuBinding.inflate(layoutInflater) }
+    private val binding: ActivityMainMenuBinding by lazy{ ActivityMainMenuBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

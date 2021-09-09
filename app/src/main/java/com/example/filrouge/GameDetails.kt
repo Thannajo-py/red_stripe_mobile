@@ -1,27 +1,26 @@
 package com.example.filrouge
 
-import android.content.Intent
 import android.os.Bundle
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
 
-class GameDetails : CommonType(), AddonAdapter.onAddOnListListener, MultiAddonAdapter.multiAddOnListListener {
+class GameDetails : CommonType(), OnGenericListListener{
 
-    val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
+    private val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
 
-    val addOns = ArrayList<AddOnBean>()
-    val multiAddOns = ArrayList<MultiAddOnBean>()
-    val addOnAdapter = AddonAdapter(addOns ,this)
-    val multiAddOnAdapter = MultiAddonAdapter(multiAddOns, this)
+    private val addOns = ArrayList<AddOnBean>()
+    private val multiAddOns = ArrayList<MultiAddOnBean>()
+    private val addOnAdapter = GenericAdapter(addOns ,this)
+    private val multiAddOnAdapter = GenericAdapter(multiAddOns, this)
 
 
-    val tags = ArrayList<String>()
-    val tagAdapter = GenericTypeAdapater(tags, this, Type.Tag.name)
-    val mechanism = ArrayList<String>()
-    val mechanismAdapter = GenericTypeAdapater(mechanism, this, Type.Mechanism.name)
-    val topics = ArrayList<String>()
-    val topicAdapter = GenericTypeAdapater(topics, this, Type.Topic.name)
+    private val tags = ArrayList<String>()
+    private val tagAdapter = GenericTypeAdapter(tags, this, Type.Tag.name)
+    private val mechanism = ArrayList<String>()
+    private val mechanismAdapter = GenericTypeAdapter(mechanism, this, Type.Mechanism.name)
+    private val topics = ArrayList<String>()
+    private val topicAdapter = GenericTypeAdapter(topics, this, Type.Topic.name)
 
-    val game:GameBean by lazy{intent.extras!!.getSerializable(SerialKey.Game.name) as GameBean}
+    private val game:GameBean by lazy{intent.extras!!.getSerializable(SerialKey.Game.name) as GameBean}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,22 +40,6 @@ class GameDetails : CommonType(), AddonAdapter.onAddOnListListener, MultiAddonAd
 
 
 
-    }
-
-    override fun onAddOnClick(datum: AddOnBean) {
-        intent = Intent(this, AddOnDetails::class.java)
-        intent.putExtra(SerialKey.AddOn.name, datum)
-        intent.putExtra(SerialKey.ParentGame.name, game)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onMultiAddOnClick(datum: MultiAddOnBean) {
-        intent = Intent(this, MultiAddOnDetails::class.java)
-        intent.putExtra(SerialKey.MultiAddOn.name, datum)
-        intent.putExtra(SerialKey.ParentGame.name, game)
-        startActivity(intent)
-        finish()
     }
 
 

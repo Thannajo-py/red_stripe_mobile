@@ -1,18 +1,15 @@
 package com.example.filrouge
 
-import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.databinding.ActivityMultiAddOnDetailBinding
 
-class MultiAddOnDetails : CommonType(), MultiAddOnGameAdapater.GameListListener {
+class MultiAddOnDetails : CommonType() {
 
-    val binding: ActivityMultiAddOnDetailBinding by lazy{ ActivityMultiAddOnDetailBinding.inflate(layoutInflater) }
-    val parent:GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
-    val multiAddOn:MultiAddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOn.name) as MultiAddOnBean}
-    val gamesList = ArrayList<String>()
-    val adapter = MultiAddOnGameAdapater(gamesList, this)
+    private val binding: ActivityMultiAddOnDetailBinding by lazy{ ActivityMultiAddOnDetailBinding.inflate(layoutInflater) }
+    private val parent:GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
+    private val multiAddOn:MultiAddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOn.name) as MultiAddOnBean}
+    private val gamesList = ArrayList<String>()
+    private val adapter = MultiAddOnGameAdapter(gamesList, this)
 
 
 
@@ -31,17 +28,7 @@ class MultiAddOnDetails : CommonType(), MultiAddOnGameAdapater.GameListListener 
     }
 
 
-    override fun onGameClick(datum: GameBean?) {
-        if (datum == null){
-            Toast.makeText(this, "Link Error!",Toast.LENGTH_SHORT).show()
-        }
-        else{
-            intent = Intent(this,GameDetails::class.java)
-            intent.putExtra(SerialKey.Game.name, datum)
-            startActivity(intent)
-            finish()
-        }
-    }
+
 
 
 }

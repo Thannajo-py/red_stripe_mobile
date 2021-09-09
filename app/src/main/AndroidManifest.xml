@@ -11,15 +11,34 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.FilRouge">
-        <activity android:name=".GenericTypeDetails"></activity>
-        <activity android:name=".MultiAddOnDetails" />
-        <activity android:name=".AddOnDetails" />
+        <activity
+            android:name=".AddElement"
+            android:exported="true"
+            android:parentActivityName=".ViewGamesActivity"/>
+        <activity
+            android:name=".DeleteAccount"
+            android:exported="true"
+            android:parentActivityName=".ViewGamesActivity"/>
+        <activity
+            android:name=".Search"
+            android:exported="true"
+            android:parentActivityName=".ViewGamesActivity" />
+        <activity
+            android:name=".CreateNewAccount"
+            android:exported="true"
+            android:parentActivityName=".MainActivity" />
+        <activity android:name=".GenericTypeDetails"
+            android:parentActivityName=".ViewGamesActivity"/>
+        <activity android:name=".MultiAddOnDetails"
+            android:parentActivityName=".ViewGamesActivity"/>
+        <activity android:name=".AddOnDetails"
+            android:parentActivityName=".ViewGamesActivity"/>
         <activity
             android:name=".GameDetails"
             android:parentActivityName=".ViewGamesActivity" />
         <activity
             android:name=".ViewGamesActivity"
-            android:parentActivityName=".MainMenuActivity" />
+            android:parentActivityName=".MainActivity" />
         <activity android:name=".MainMenuActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>

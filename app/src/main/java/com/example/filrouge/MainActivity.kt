@@ -10,8 +10,8 @@ import com.example.filrouge.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
-    val binding: ActivityMainBinding by lazy{ ActivityMainBinding.inflate(layoutInflater) }
-    val sharedPreference by lazy{SharedPreference(this)}
+    private val binding: ActivityMainBinding by lazy{ ActivityMainBinding.inflate(layoutInflater) }
+    private val sharedPreference by lazy{SharedPreference(this)}
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -19,7 +19,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         binding.btnLogin.setOnClickListener(this)
         binding.etLogin.setText(sharedPreference.getValueString(SerialKey.RememberNameStorage.name)?:"")
         binding.etPassword.setText(sharedPreference.getValueString(SerialKey.RememberPasswordStorage.name)?:"")
-        Toast.makeText(this, sharedPreference.getValueString("test"), Toast.LENGTH_LONG).show()
+        val test = sharedPreference.getValueString(SerialKey.AccountName.name)
+        if (sharedPreference.getValueString(SerialKey.AccountName.name).isNullOrBlank()){
+            startActivity(Intent(this, CreateNewAccount::class.java))
+        }
 
     }
 
