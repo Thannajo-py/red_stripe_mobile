@@ -16,7 +16,10 @@ enum class SerialKey{
     RememberPasswordStorage,
     SearchResult,
     AccountName,
-    AddedContent
+    AddedContent,
+    APIDeleteStorage,
+    APIModifyStorage,
+    APIAddStorage
 
 }
 
@@ -30,11 +33,16 @@ enum class Type{
     Tag,
     Mechanism,
     Topic,
-    Search
+    Search,
+    Game,
+    AddOn,
+    MultiAddOn,
 }
 
 enum class MenuId{
     Synchronize,
     Search,
-    DeleteAccount
+    DeleteAccount,
+    AddContent,
+    DeleteThis,
 }

@@ -1,11 +1,19 @@
 package com.example.filrouge
 
+import android.app.AlertDialog
+import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
 
 class GameDetails : CommonType(), OnGenericListListener{
 
     private val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
+    private val sharedPreference by lazy {SharedPreference(this)}
 
     private val addOns = ArrayList<AddOnBean>()
     private val multiAddOns = ArrayList<MultiAddOnBean>()
@@ -39,8 +47,24 @@ class GameDetails : CommonType(), OnGenericListListener{
         loadRv(binding.rvGameDetailMultiAddOn, multiAddOns, multiAddOnAdapter, game.multi_add_on)
 
 
-
     }
+
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer ce jeu?").setTitle("Attention")
+                .setPositiveButton("ok"){
+                        dialog, which -> run{deleteFromList(game, allGames, addedGames, deletedGames, modifiedGames)
+                                            refreshedSavedData(sharedPreference)
+                        }
+                }.setNegativeButton("cancel"){
+                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+                }
+                .show()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
 
 
 

@@ -4,6 +4,7 @@ import java.io.Serializable
 
 data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>):Serializable
 class GameBean(
+        id: Int?,
         name: String,
         player_min: Int?,
         player_max: Int?,
@@ -25,7 +26,8 @@ class GameBean(
         val mechanism:ArrayList<String>,
         val add_on: ArrayList<AddOnBean>,
         val multi_add_on: ArrayList<MultiAddOnBean>
-): CommonBase(name,
+): CommonBase(id,
+        name,
         player_min,
         player_max,
         playing_time,
@@ -39,9 +41,20 @@ class GameBean(
         age,
         buying_price,
         stock,
-        max_time),Serializable
+        max_time),Serializable{
+        override fun equals(other: Any?): Boolean {
+                if(other !is GameBean){
+                        return false
+                }
+                else{
+                        return this.id == other.id && this.name == other.name
+
+                }
+        }
+        }
 
 class AddOnBean(
+        id: Int?,
         name: String,
         player_min: Int?,
         player_max: Int?,
@@ -58,7 +71,8 @@ class AddOnBean(
         stock: Int?,
         max_time: Int?,
         val game: String?,
-): CommonBase(name,
+): CommonBase(id,
+        name,
 player_min,
 player_max,
 playing_time,
@@ -73,8 +87,21 @@ age,
 buying_price,
 stock,
 max_time),Serializable
+{
+        override fun equals(other: Any?): Boolean {
+                if(other !is AddOnBean){
+                        return false
+                }
+                else{
+                        return this.id == other.id && this.name == other.name
+
+                }
+        }
+}
+
 
 class MultiAddOnBean(
+        id: Int?,
         name: String,
         player_min: Int?,
         player_max: Int?,
@@ -91,7 +118,8 @@ class MultiAddOnBean(
         stock: Int?,
         max_time: Int?,
         val games: ArrayList<String>
-): CommonBase(name,
+): CommonBase(id,
+        name,
         player_min,
         player_max,
         playing_time,
@@ -106,8 +134,20 @@ class MultiAddOnBean(
         buying_price,
         stock,
         max_time),Serializable
+{
+        override fun equals(other: Any?): Boolean {
+                if(other !is MultiAddOnBean){
+                        return false
+                }
+                else{
+                        return this.id == other.id && this.name == other.name
+
+                }
+        }
+}
 
 open class CommonBase(
+        val id: Int?,
         val name: String,
         val player_min: Int?,
         val player_max: Int?,

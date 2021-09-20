@@ -109,6 +109,11 @@
                 android:hint="Klaus"
                 android:inputType="textPersonName" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDesigner"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
             <TextView
                 android:id="@+id/textView10"
                 android:layout_width="wrap_content"
@@ -133,6 +138,11 @@
                 android:hint="Dutrait"
                 android:inputType="textPersonName" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvArtist"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
             <TextView
                 android:id="@+id/textView11"
                 android:layout_width="wrap_content"
@@ -155,6 +165,11 @@
                 android:ems="10"
                 android:hint="Asmodée"
                 android:inputType="textPersonName" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPublisher"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -244,6 +259,11 @@
                 android:hint="vétéran"
                 android:inputType="textPersonName" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvDifficulty"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -289,6 +309,11 @@
                 android:hint="coopératif"
                 android:inputType="textPersonName" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvPlayingMode"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
+
             <TextView
                 android:id="@+id/textView12"
                 android:layout_width="wrap_content"
@@ -312,6 +337,11 @@
                 android:ems="10"
                 android:hint="français"
                 android:inputType="textPersonName" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
 
 
             <TextView
@@ -356,7 +386,7 @@
                 android:layout_marginRight="10dp"
                 android:ems="10"
                 android:hint="1"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -378,7 +408,7 @@
                 android:layout_marginRight="10dp"
                 android:ems="10"
                 android:hint="25"
-                android:inputType="textPersonName" />
+                android:inputType="number" />
 
             <LinearLayout
                 android:id="@+id/ll_game"
@@ -386,7 +416,8 @@
                 android:layout_height="match_parent"
                 android:gravity="center"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="visible"
+                tools:visibility="visible">
 
                 <TextView
                     android:id="@+id/tv_tag"
@@ -411,6 +442,11 @@
                     android:hint="classique"
                     android:inputType="textPersonName" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTag"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
+
                 <TextView
                     android:id="@+id/textView15"
                     android:layout_width="wrap_content"
@@ -434,6 +470,11 @@
                     android:hint="pathfinder"
                     android:inputType="textPersonName" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvTopic"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -456,6 +497,65 @@
                     android:hint="parcours"
                     android:inputType="textPersonName" />
 
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvMechanism"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="extensions multiples associées"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/et_game_multi_add_on"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:ems="10"
+                    android:hint="boite de classe, deck de classe"
+                    android:inputType="textPersonName" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvGameMultiAddOn"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:text="extensions associées"
+                    android:textColor="#000000"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/et_game_add_on"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_marginRight="10dp"
+                    android:ems="10"
+                    android:hint="extension 5-6 joueurs, to the moon"
+                    android:inputType="textPersonName" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvGameAddOn"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp"/>
+
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -469,7 +569,9 @@
                 <RadioGroup
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:visibility="visible"
+                    tools:visibility="visible">
 
                     <RadioButton
                         android:id="@+id/rb_by_player_true"
@@ -486,49 +588,6 @@
                         android:checked="true"
                         android:text="faux" />
 
-                    <EditText
-                        android:id="@+id/et_game_multi_add_on"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:ems="10"
-                        android:hint="boite de classe, deck de classe"
-                        android:inputType="textPersonName" />
-
-                    <EditText
-                        android:id="@+id/et_game_add_on"
-                        android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginStart="10dp"
-                        android:layout_marginLeft="10dp"
-                        android:layout_marginEnd="10dp"
-                        android:layout_marginRight="10dp"
-                        android:ems="10"
-                        android:hint="extension 5-6 joueurs, to the moon"
-                        android:inputType="textPersonName" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="extensions associées"
-                        android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
-                        android:layout_marginBottom="10dp"
-                        android:text="extensions multiples associées"
-                        android:textColor="#000000"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
                 </RadioGroup>
 
             </LinearLayout>
@@ -552,6 +611,8 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
+
+
                 <EditText
                     android:id="@+id/et_add_on_game"
                     android:layout_width="match_parent"
@@ -563,6 +624,11 @@
                     android:ems="10"
                     android:hint="pathfinder"
                     android:inputType="textPersonName" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvGame"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -595,6 +661,11 @@
                     android:ems="10"
                     android:hint="pathfinder, 6 qui prend"
                     android:inputType="textPersonName" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvGames"
+                    android:layout_width="match_parent"
+                    android:layout_height="150dp" />
             </LinearLayout>
 
 

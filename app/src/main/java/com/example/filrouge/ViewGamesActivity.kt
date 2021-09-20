@@ -43,6 +43,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         menu?.add(0,MenuId.Synchronize.ordinal,0,"Synchroniser")
         menu?.add(0,MenuId.Search.ordinal,0,"Rechercher")
         menu?.add(0,MenuId.DeleteAccount.ordinal,0,"Supprimer compte")
+        menu?.add(0,MenuId.AddContent.ordinal,0,"Ajouter un élément")
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -51,7 +52,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             MenuId.Synchronize.ordinal -> synchronize()
             MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
             MenuId.DeleteAccount.ordinal -> startActivity(Intent(this, DeleteAccount::class.java))
-
+            MenuId.AddContent.ordinal -> startActivity(Intent(this, AddElement::class.java))
         }
         return super.onOptionsItemSelected(item)
     }

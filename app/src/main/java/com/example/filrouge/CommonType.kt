@@ -1,6 +1,8 @@
 package com.example.filrouge
 
 import android.content.Intent
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -9,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 
 
 abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericTypeAdapter.GenericListener{
+
 
 
     private val designers = ArrayList<String>()
@@ -27,6 +30,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
     private val playingModeAdapter = GenericTypeAdapter(playing_mode, this, Type.PlayingMode.name)
 
 
+
     override fun onGenericClick(datum: String, type:String) {
         intent = Intent(this, GenericTypeDetails::class.java)
         intent.putExtra(SerialKey.Type.name, type)
@@ -40,7 +44,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         list.addItemDecoration(MarginItemDecoration(5))
     }
 
-    fun <T, U:RecyclerView.ViewHolder>loadRv(rv:RecyclerView, list:ArrayList<T>, adapter:RecyclerView.Adapter<U>, content:ArrayList<T>){
+    fun <T, U:RecyclerView.ViewHolder>loadRv(rv:RecyclerView, list:ArrayList<T>, adapter:RecyclerView.Adapter<U>, content:Collection<T>){
         rv.adapter = adapter
         layout(rv)
         list.clear()
@@ -71,6 +75,16 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         loadRv(rvPublisher, publishers, publisherAdapter, element.publishers)
         loadRv(rvLanguage, languages, languageAdapter, element.language)
         loadRv(rvPlayingMod, playing_mode, playingModeAdapter, element.playing_mode)
+    }
+
+    fun fillCommonRv(rvDesigner:RecyclerView, rvArtist:RecyclerView, rvPublisher:RecyclerView,
+                     rvLanguage:RecyclerView, rvPlayingMod:RecyclerView){
+        loadRv(rvDesigner, designers, designerAdapter, allDesigners())
+        loadRv(rvArtist, artists, artistAdapter, allArtists())
+        loadRv(rvPublisher, publishers, publisherAdapter, allPublishers())
+        loadRv(rvLanguage, languages, languageAdapter, allLanguages())
+        loadRv(rvPlayingMod, playing_mode, playingModeAdapter, allPlayingModes())
+
     }
 
     private fun onAddOnClick(datum: AddOnBean) {
@@ -112,6 +126,104 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
             finish()
         }
     }
+
+    fun <T:CommonBase>deleteFromList(game:T, allGames:ArrayList<T>, addedGames:ArrayList<T>, deletedGames:ArrayList<T>, modifiedGames:ArrayList<T>){
+        allGames.removeIf{it == game}
+        modifiedGames.removeIf{it == game}
+        addedGames.removeIf{it == game}
+        game.id?.run{deletedGames.add(game)}
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu?.add(0,MenuId.DeleteThis.ordinal,0,"Supprimer")
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    fun refreshedSavedData(sharedPreference:SharedPreference){
+        sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
+        sharedPreference.save(gson.toJson(ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)),SerialKey.APIDeleteStorage.name)
+        sharedPreference.save(gson.toJson(ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns)),SerialKey.APIModifyStorage.name)
+        sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns, addedMultiAddOns)),SerialKey.APIAddStorage.name)
+        startActivity(Intent(this,ViewGamesActivity::class.java))
+        finish()
+    }
+
+    fun allDesigners():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.designers)}
+        allAddOns.forEach { tempSet.addAll(it.designers) }
+        allMultiAddOns.forEach { tempSet.addAll(it.designers) }
+        return tempSet
+    }
+
+    fun allArtists():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.artists)}
+        allAddOns.forEach { tempSet.addAll(it.artists) }
+        allMultiAddOns.forEach { tempSet.addAll(it.artists) }
+        return tempSet
+    }
+    fun allPublishers():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.publishers)}
+        allAddOns.forEach { tempSet.addAll(it.publishers) }
+        allMultiAddOns.forEach { tempSet.addAll(it.publishers) }
+        return tempSet
+    }
+
+    fun allPlayingModes():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.playing_mode)}
+        allAddOns.forEach { tempSet.addAll(it.playing_mode) }
+        allMultiAddOns.forEach { tempSet.addAll(it.playing_mode) }
+        return tempSet
+    }
+
+    fun allDifficulties():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.add(it.difficulty?:"unknown")}
+        allAddOns.forEach { tempSet.add(it.difficulty?:"unknown") }
+        allMultiAddOns.forEach { tempSet.add(it.difficulty?:"unknown") }
+        return tempSet
+    }
+
+    fun allLanguages():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.language)}
+        allAddOns.forEach { tempSet.addAll(it.language) }
+        allMultiAddOns.forEach { tempSet.addAll(it.language) }
+        return tempSet
+    }
+
+    fun allTags():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.tags)}
+        return tempSet
+    }
+
+    fun allMechanism():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.mechanism)}
+        return tempSet
+    }
+
+    fun allTopics():MutableSet<String>{
+        val tempSet = mutableSetOf<String>()
+        allGames.forEach{tempSet.addAll(it.topics)}
+        return tempSet
+    }
+
+
+
+
+
+
+
+
+
+
+
 
 
 

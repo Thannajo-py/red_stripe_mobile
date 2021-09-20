@@ -1,11 +1,16 @@
 package com.example.filrouge
 
+import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
+import android.view.MenuItem
+import android.widget.Toast
 import com.example.filrouge.databinding.ActivityMultiAddOnDetailBinding
 
 class MultiAddOnDetails : CommonType() {
 
     private val binding: ActivityMultiAddOnDetailBinding by lazy{ ActivityMultiAddOnDetailBinding.inflate(layoutInflater) }
+    private val sharedPreference by lazy {SharedPreference(this)}
     private val parent:GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
     private val multiAddOn:MultiAddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOn.name) as MultiAddOnBean}
     private val gamesList = ArrayList<String>()
@@ -25,6 +30,22 @@ class MultiAddOnDetails : CommonType() {
 
         loadRv(binding.rvMultiAddOn, gamesList, adapter, multiAddOn.games)
 
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension partagée?").setTitle("Attention")
+                .setPositiveButton("ok"){
+                        dialog, which -> run{deleteFromList(multiAddOn, allMultiAddOns, addedMultiAddOns, deletedMultiAddOns, modifiedMultiAddOns)
+                    refreshedSavedData(sharedPreference)
+
+                        }
+                }.setNegativeButton("cancel"){
+                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+                }
+                .show()
+        }
+        return super.onOptionsItemSelected(item)
     }
 
 
