@@ -7,7 +7,7 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.example.filrouge.databinding.ActivityAddOnDetailsBinding
 
-class AddOnDetails : CommonType() {
+class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
     private val sharedPreference by lazy {SharedPreference(this)}
     private val binding: ActivityAddOnDetailsBinding by lazy{ ActivityAddOnDetailsBinding.inflate(layoutInflater) }
@@ -50,6 +50,7 @@ class AddOnDetails : CommonType() {
                         dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
                 .show()
+            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(SerialKey.ToModifyData.name, addOn))
         }
         return super.onOptionsItemSelected(item)
     }

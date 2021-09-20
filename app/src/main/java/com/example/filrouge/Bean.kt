@@ -164,3 +164,5 @@ open class CommonBase(
         val stock: Int?,
         val max_time: Int?,
 ):Serializable
+
+class SendApiChange(val login:String, val password:String, val addedList:ApiResponse, val modifiedList:ApiResponse, val deletedList:ApiResponse)

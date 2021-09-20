@@ -39,6 +39,8 @@ class AddElement : CommonType(), View.OnClickListener {
     private val game = ArrayList<GameBean>()
     private val gameAdapter = GenericAdapter(game, this)
 
+    private val changedObject: CommonBase? by lazy{intent.getSerializableExtra(SerialKey.ToModifyData.name) as CommonBase?}
+
 
 
 
@@ -67,6 +69,14 @@ class AddElement : CommonType(), View.OnClickListener {
         loadRv(binding.rvGameMultiAddOn, multiAddOns, multiAddOnAdapter, allMultiAddOns)
         loadRv(binding.rvGame, game, gameAdapter, allGames)
         loadRv(binding.rvGames, games, gamesAdapter, allGames)
+        changedObject?.run{
+            setCommonElement(this)
+            when(this){
+                is GameBean -> {setGameBeanElement(this)}
+                is AddOnBean -> binding.etAddOnGame.setText(this.game)
+                is MultiAddOnBean -> binding.etMultiAddOnGames.setText(this.games.joinToString(", "))
+            }
+        }
 
 
     }
@@ -76,9 +86,12 @@ class AddElement : CommonType(), View.OnClickListener {
         if(binding.etNom.text.toString().isBlank()){
             Toast.makeText(this, "le nom ne peut pas être vide", Toast.LENGTH_SHORT).show()
         }
-        else if (binding.rbGame.isChecked && allGames.any{it.name == name} ||
+        else if (
+            (changedObject == null ||
+            changedObject?.name != name) &&
+            (binding.rbGame.isChecked && allGames.any{it.name == name} ||
             binding.rbAddOn.isChecked && allAddOns.any{it.name == name} ||
-            binding.rbMultiAddOn.isChecked && allMultiAddOns.any{it.name == name}){
+            binding.rbMultiAddOn.isChecked && allMultiAddOns.any{it.name == name})){
 
             Toast.makeText(this, "Un élément de la même catégorie portant le même nom existe déjà!", Toast.LENGTH_SHORT).show()
 
@@ -96,7 +109,7 @@ class AddElement : CommonType(), View.OnClickListener {
             val playing_mode = returnList(binding.etPlayingMode.text.toString())
             val language = returnList(binding.etLanguage.text.toString())
             val age = testNull(binding.etAge.text.toString())?.toInt()
-            val buying_price = testNull(binding.etBuyingPrice.text.toString())?.toInt()
+            val buying_price = testNull(binding.etBuyingPrice.text.toString())?.toInt()?:0
             val stock = testNull(binding.etStock.text.toString())?.toInt()
             val max_time = testNull(binding.etStock.text.toString())?.toInt()
             val by_player = binding.rbByPlayerTrue.isChecked
@@ -124,6 +137,34 @@ class AddElement : CommonType(), View.OnClickListener {
             sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns, addedMultiAddOns)),SerialKey.AddedContent.name)
             startActivity(Intent(this,ViewGamesActivity::class.java))
             finish()
+        }
+
+    }
+
+    fun <T:CommonBase, U:CommonBase>modifyElement(originalChangedList:ArrayList<U>, changedList:ArrayList<T>,
+                                                  originalAllList:ArrayList<U>, allList:ArrayList<T>,
+                                                  originalData: U, modifiedData:T){
+
+        originalChangedList.removeIf{it == originalData}
+        originalAllList.removeIf{it == originalData }
+        changedList.add(modifiedData)
+        allList.add(modifiedData)
+    }
+
+    fun <T:CommonBase>handleCategoryChange(changedList:ArrayList<T>, allList:ArrayList<T>,
+                                           modifiedData:T){
+        changedObject!!.id?.run{
+            when(changedObject){
+                is GameBean -> modifyElement(modifiedGames, changedList, allGames, allList, changedObject as GameBean, modifiedData)
+                is AddOnBean -> modifyElement(modifiedAddOns, changedList, allAddOns, allList, changedObject as AddOnBean, modifiedData)
+                is MultiAddOnBean -> modifyElement(modifiedMultiAddOns, changedList, allMultiAddOns, allList, changedObject as MultiAddOnBean, modifiedData)
+            }
+        }?:run{
+            when(changedObject){
+                is GameBean -> modifyElement(addedGames, changedList, allGames, allList, changedObject as GameBean, modifiedData)
+                is AddOnBean -> modifyElement(addedAddOns, changedList, allAddOns, allList, changedObject as AddOnBean, modifiedData)
+                is MultiAddOnBean -> modifyElement(addedMultiAddOns, changedList, allMultiAddOns, allList, changedObject as MultiAddOnBean, modifiedData)
+            }
         }
 
     }
@@ -173,9 +214,19 @@ class AddElement : CommonType(), View.OnClickListener {
             add_on,
             multi_add_on
         )
-        allGames.add(game)
-        addedGames.add(game)
+        changedObject?.run{
+            this.id?.run{
+                handleCategoryChange(modifiedGames, allGames, game)
+        }?:run{
+                handleCategoryChange(addedGames, allGames, game)
+            }}?:run{
+            allGames.add(game)
+            addedGames.add(game)
+        }
+
     }
+
+
 
     fun registerAddOn(name: String,
                       player_min: Int?,
@@ -211,8 +262,17 @@ class AddElement : CommonType(), View.OnClickListener {
             max_time,
             game
         )
-        allAddOns.add(addOn)
-        addedAddOns.add(addOn)
+
+        changedObject?.run{
+            this.id?.run{
+                handleCategoryChange(modifiedAddOns, allAddOns, addOn)
+            }?:run{
+                handleCategoryChange(addedAddOns, allAddOns, addOn)
+            }}?:run{
+            allAddOns.add(addOn)
+            addedAddOns.add(addOn)
+        }
+
 
     }
     fun registerMultiAddOn(name: String,
@@ -250,8 +310,18 @@ class AddElement : CommonType(), View.OnClickListener {
             max_time,
             games
         )
-        allMultiAddOns.add(multiAddOn)
-        addedMultiAddOns.add(multiAddOn)
+
+        changedObject?.run{
+            this.id?.run{
+                handleCategoryChange(modifiedMultiAddOns, allMultiAddOns, multiAddOn)
+            }?:run{
+                handleCategoryChange(addedMultiAddOns, allMultiAddOns, multiAddOn)
+            }}?:run{
+            allMultiAddOns.add(multiAddOn)
+            addedMultiAddOns.add(multiAddOn)
+        }
+
+
     }
 
     fun setView(ll: LinearLayout){
@@ -317,6 +387,36 @@ class AddElement : CommonType(), View.OnClickListener {
             }
 
         }
+    }
+
+    private fun setCommonElement(it:CommonBase){
+        binding.etNom.setText(it.name)
+        binding.etDesigner.setText(it.designers.joinToString(", "))
+        binding.etArtist.setText(it.artists.joinToString(", "))
+        binding.etPublisher.setText(it.publishers.joinToString(", "))
+        binding.etNbPlayerMin.setText(it.player_min?.toString()?:"")
+        binding.etNbPlayerMax.setText(it.player_max?.toString()?:"")
+        binding.etMaxTime.setText(it.max_time?.toString()?:"")
+        binding.etDifficulty.setText(it.difficulty?:"")
+        binding.etAge.setText(it.age?.toString()?:"")
+        binding.etPlayingMode.setText(it.playing_mode.joinToString(", "))
+        binding.etLanguage.setText(it.language.joinToString(", "))
+        binding.etBggLink.setText(it.bgg_link?:"")
+        binding.etStock.setText(it.stock?.toString()?:"")
+        binding.etBuyingPrice.setText(it.buying_price?.toString()?:"")
+
+    }
+
+    private fun setGameBeanElement(it:GameBean){
+        binding.rbGame.isChecked = true
+        setView(binding.llGame)
+        binding.etTag.setText(it.tags.joinToString(", "))
+        binding.etTopic.setText(it.topics.joinToString(", "))
+        binding.etMechanism.setText(it.mechanism.joinToString(", "))
+        binding.etGameAddOn.setText(it.add_on.joinToString (", "){ add_on -> add_on.name })
+        binding.etGameMultiAddOn.setText(it.multi_add_on.joinToString (", "){ multi_add_on -> multi_add_on.name })
+        if (it.by_player == true) binding.rbByPlayerTrue.isChecked = true
+
     }
 
 

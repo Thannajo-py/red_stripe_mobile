@@ -10,7 +10,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
 
-class GameDetails : CommonType(), OnGenericListListener{
+class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
 
     private val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
     private val sharedPreference by lazy {SharedPreference(this)}
@@ -61,6 +61,7 @@ class GameDetails : CommonType(), OnGenericListListener{
                         dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
                 .show()
+            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(SerialKey.ToModifyData.name, game))
         }
         return super.onOptionsItemSelected(item)
     }

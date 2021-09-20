@@ -134,11 +134,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         game.id?.run{deletedGames.add(game)}
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu?.add(0,MenuId.DeleteThis.ordinal,0,"Supprimer")
 
-        return super.onCreateOptionsMenu(menu)
-    }
 
     fun refreshedSavedData(sharedPreference:SharedPreference){
         sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
@@ -213,6 +209,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         allGames.forEach{tempSet.addAll(it.topics)}
         return tempSet
     }
+
 
 
 

@@ -19,7 +19,8 @@ enum class SerialKey{
     AddedContent,
     APIDeleteStorage,
     APIModifyStorage,
-    APIAddStorage
+    APIAddStorage,
+    ToModifyData
 
 }
 
@@ -40,9 +41,11 @@ enum class Type{
 }
 
 enum class MenuId{
+    CancelAndSynchronize,
     Synchronize,
     Search,
     DeleteAccount,
     AddContent,
     DeleteThis,
+    ModifyThis
 }
