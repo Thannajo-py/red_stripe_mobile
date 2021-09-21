@@ -2,13 +2,23 @@ package com.example.filrouge
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
+import android.view.Gravity.CENTER
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.LinearLayout.TEXT_ALIGNMENT_CENTER
+import android.widget.LinearLayout.VERTICAL
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
+import com.example.filrouge.databinding.ActivityMainBinding
 
 class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
 
@@ -52,15 +62,24 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer ce jeu?").setTitle("Attention")
+
+            MenuId.DeleteThis.ordinal -> {
+
+                AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer ce jeu?").setTitle("Attention")
                 .setPositiveButton("ok"){
-                        dialog, which -> run{deleteFromList(game, allGames, addedGames, deletedGames, modifiedGames)
+                        dialog, which -> run{
+
+                    deleteFromList(game, allGames, addedGames, deletedGames, modifiedGames)
                                             refreshedSavedData(sharedPreference)
                         }
                 }.setNegativeButton("cancel"){
-                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+                        dialog, which -> kotlin.run {
+
+
+                    Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
-                .show()
+                }
+                .show()}
             MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(SerialKey.ToModifyData.name, game))
         }
         return super.onOptionsItemSelected(item)

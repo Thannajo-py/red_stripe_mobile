@@ -1,7 +1,7 @@
 package com.example.filrouge
 
 enum class APIUrl(val url:String){
-    ALL_GAMES("https://fil-rouge-ja.herokuapp.com/api/all/")
+    ALL_GAMES("https://fil-rouge-ja.herokuapp.com/api/synchronize-change/")
 }
 
 enum class SerialKey{

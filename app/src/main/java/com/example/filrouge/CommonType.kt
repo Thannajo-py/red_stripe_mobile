@@ -1,8 +1,13 @@
 package com.example.filrouge
 
 import android.content.Intent
+import android.graphics.Typeface
+import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
+import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -209,6 +214,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         allGames.forEach{tempSet.addAll(it.topics)}
         return tempSet
     }
+
 
 
 

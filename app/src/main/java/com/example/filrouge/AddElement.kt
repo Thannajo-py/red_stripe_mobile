@@ -169,6 +169,14 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
+    fun deleteChangeObject(){
+        when(changedObject){
+            is GameBean -> deletedGames.add(changedObject as GameBean)
+            is AddOnBean -> deletedAddOns.add(changedObject as AddOnBean)
+            is MultiAddOnBean -> deletedMultiAddOns.add(changedObject as MultiAddOnBean)
+        }
+    }
+
     fun registerGame(name: String,
                      player_min: Int?,
                      player_max: Int?,
@@ -191,7 +199,12 @@ class AddElement : CommonType(), View.OnClickListener {
                      add_on: ArrayList<AddOnBean>,
                      multi_add_on: ArrayList<MultiAddOnBean>
     ){
-        val game = GameBean(null,
+        var id:Int? = null
+        if (changedObject is GameBean){
+            id = (changedObject as GameBean).id
+        }
+
+        val game = GameBean( id,
             name,
             player_min,
             player_max,
@@ -215,9 +228,10 @@ class AddElement : CommonType(), View.OnClickListener {
             multi_add_on
         )
         changedObject?.run{
-            this.id?.run{
+            game.id?.run{
                 handleCategoryChange(modifiedGames, allGames, game)
         }?:run{
+                changedObject?.id?.run{deleteChangeObject()}
                 handleCategoryChange(addedGames, allGames, game)
             }}?:run{
             allGames.add(game)
@@ -244,7 +258,11 @@ class AddElement : CommonType(), View.OnClickListener {
                       stock: Int?,
                       max_time: Int?,
                       game: String?){
-        val addOn = AddOnBean(null,
+        var id:Int? = null
+        if (changedObject is AddOnBean){
+            id = (changedObject as AddOnBean).id
+        }
+        val addOn = AddOnBean(id,
             name,
             player_min,
             player_max,
@@ -264,9 +282,10 @@ class AddElement : CommonType(), View.OnClickListener {
         )
 
         changedObject?.run{
-            this.id?.run{
+            addOn.id?.run{
                 handleCategoryChange(modifiedAddOns, allAddOns, addOn)
             }?:run{
+                changedObject?.id?.run{deleteChangeObject()}
                 handleCategoryChange(addedAddOns, allAddOns, addOn)
             }}?:run{
             allAddOns.add(addOn)
@@ -291,8 +310,12 @@ class AddElement : CommonType(), View.OnClickListener {
                       stock: Int?,
                       max_time: Int?,
                       games: ArrayList<String>){
+        var id:Int? = null
+        if (changedObject is MultiAddOnBean){
+            id = (changedObject as MultiAddOnBean).id
+        }
         val multiAddOn = MultiAddOnBean(
-            null,
+            id,
             name,
             player_min,
             player_max,
@@ -312,9 +335,10 @@ class AddElement : CommonType(), View.OnClickListener {
         )
 
         changedObject?.run{
-            this.id?.run{
+            multiAddOn.id?.run{
                 handleCategoryChange(modifiedMultiAddOns, allMultiAddOns, multiAddOn)
             }?:run{
+                changedObject?.id?.run{deleteChangeObject()}
                 handleCategoryChange(addedMultiAddOns, allMultiAddOns, multiAddOn)
             }}?:run{
             allMultiAddOns.add(multiAddOn)

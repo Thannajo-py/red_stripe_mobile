@@ -3,11 +3,15 @@ package com.example.filrouge
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.view.Menu
-import android.view.MenuItem
-import android.view.View
+import android.text.method.PasswordTransformationMethod
+import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.widget.EditText
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.databinding.ActivityViewGamesBinding
@@ -15,6 +19,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import java.io.File
 import java.lang.Exception
 class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
@@ -52,42 +57,65 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            MenuId.CancelAndSynchronize.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous annuler toutes vos modifications et re-synchroniser?").setTitle("Attention")
-                .setPositiveButton("ok"){
-                        dialog, which -> run{cancelAndSynchronize()
-                }
-                }.setNegativeButton("cancel"){
-                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                }
-                .show()
+            MenuId.CancelAndSynchronize.ordinal -> {
+                val (input, pwd, ll) = alertDialogLoginBox()
+                AlertDialog.Builder(this)
+                    .setMessage("Voulez vous annuler toutes vos modifications et re-synchroniser?")
+                    .setTitle("Attention")
+                    .setPositiveButton("ok") { dialog, which ->
+                        run {
+                            synchronize(input.text.toString(),pwd.text.toString(), true)
+                        }
+                    }.setNegativeButton("cancel") { dialog, which ->
+                        Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+                    }.setView(ll)
+                    .show()
+            }
             MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
             MenuId.DeleteAccount.ordinal -> startActivity(Intent(this, DeleteAccount::class.java))
             MenuId.AddContent.ordinal -> startActivity(Intent(this, AddElement::class.java))
-            MenuId.Synchronize.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?").setTitle("Attention")
-                .setPositiveButton("ok"){
-                        dialog, which -> run{synchronize()
-                }
-                }.setNegativeButton("cancel"){
-                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                }
-                .show()
+            MenuId.Synchronize.ordinal -> {
+                val (input, pwd, ll) = alertDialogLoginBox()
+                AlertDialog.Builder(this)
+                    .setMessage("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?")
+                    .setTitle("Attention")
+                    .setPositiveButton("ok") { dialog, which ->
+                        run {
+                            synchronize(input.text.toString(),pwd.text.toString(), false)
+                        }
+                    }.setNegativeButton("cancel") { dialog, which ->
+                        Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+                    }.setView(ll)
+                    .show()
+            }
         }
         return super.onOptionsItemSelected(item)
     }
 
 
-    private fun synchronize(){
+    private fun synchronize(login:String, password:String, cancel:Boolean){
         binding.progressBar.visibility = View.VISIBLE
         binding.tvGameError.visibility = View.GONE
+
+        var modification =SendApiChange(login,password,ApiResponse(
+            addedGames, addedAddOns, addedMultiAddOns)
+            , ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns),
+            ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)
+        )
+        if (cancel){
+            modification = SendApiChange(login,password,ApiResponse(
+                ArrayList(), ArrayList(), ArrayList())
+                , ApiResponse(ArrayList(), ArrayList(), ArrayList()),
+                ApiResponse(ArrayList(), ArrayList(), ArrayList())
+            )
+        }
+        val content = gson.toJson(ApiBody(modification))
+        println(content)
 
 
         CoroutineScope(SupervisorJob()).launch {
             try {
-                val body = sendPostOkHttpRequest(APIUrl.ALL_GAMES.url, gson.toJson(SendApiChange("","",ApiResponse(
-                    addedGames, addedAddOns, addedMultiAddOns)
-                , ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns),
-                    ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)
-                )))
+                val body = sendPostOkHttpRequest(APIUrl.ALL_GAMES.url, content)
                 apiReception(body)
 
 
@@ -97,22 +125,6 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         }
     }
 
-
-    private fun cancelAndSynchronize() {
-        binding.progressBar.visibility = View.VISIBLE
-        binding.tvGameError.visibility = View.GONE
-
-
-        CoroutineScope(SupervisorJob()).launch {
-            try {
-                val body = sendGetOkHttpRequest(APIUrl.ALL_GAMES.url)
-                apiReception(body)
-
-            } catch (e: Exception) {
-                apiErrorHandling(e)
-            }
-        }
-    }
 
 
     private fun apiReception(body:String){
@@ -120,7 +132,6 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         if (body.isNotBlank()){
             sharedPreference.save(body, SerialKey.APIStorage.name)
             val result = gson.fromJson(body, ApiResponse::class.java)
-
             refreshAll(result)
         }
 
@@ -161,6 +172,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
     private fun getSave(){
         val savedContent = sharedPreference.getValueString(SerialKey.APIStorage.name)
         if (savedContent != null && savedContent.isNotBlank()) {
+            println(sharedPreference.getValueString(SerialKey.APIStorage.name))
             val answer = gson.fromJson(
                 sharedPreference.getValueString(SerialKey.APIStorage.name),
                 ApiResponse::class.java
@@ -180,6 +192,35 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         fillList(allGames, answer.games)
         fillList(allAddOns, answer.add_ons)
         fillList(allMultiAddOns, answer.multi_add_ons)
+    }
+
+    fun alertDialogLoginBox():Triple<EditText, EditText, LinearLayout>{
+        val loginText = TextView(this)
+        loginText.text = "Login"
+        loginText.typeface = Typeface.DEFAULT_BOLD
+        loginText.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        val login = EditText(this)
+        val pwdText = TextView(this)
+        pwdText.text = "Password"
+        pwdText.typeface = Typeface.DEFAULT_BOLD
+        pwdText.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        val pwd = EditText(this)
+        pwd.transformationMethod = PasswordTransformationMethod.getInstance()
+        val ll = LinearLayout(this)
+        ll.orientation = LinearLayout.VERTICAL
+        ll.gravity = Gravity.CENTER
+        ll.setPadding(20,0,20,0)
+        ll.addView(loginText)
+        ll.addView(login)
+        ll.addView(pwdText)
+        ll.addView(pwd)
+        return Triple(login, pwd, ll)
     }
 
 

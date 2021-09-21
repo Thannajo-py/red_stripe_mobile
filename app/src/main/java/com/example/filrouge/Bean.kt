@@ -166,3 +166,5 @@ open class CommonBase(
 ):Serializable
 
 class SendApiChange(val login:String, val password:String, val addedList:ApiResponse, val modifiedList:ApiResponse, val deletedList:ApiResponse)
+
+class ApiBody(val body:SendApiChange)
