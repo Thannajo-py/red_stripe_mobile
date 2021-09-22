@@ -70,6 +70,9 @@ class AddElement : CommonType(), View.OnClickListener {
         loadRv(binding.rvGame, game, gameAdapter, allGames)
         loadRv(binding.rvGames, games, gamesAdapter, allGames)
         changedObject?.run{
+            if (allImages.list_of_images.contains(this.name)){
+                binding.cbDelImg.visibility = View.VISIBLE
+            }
             setCommonElement(this)
             when(this){
                 is GameBean -> {setGameBeanElement(this)}
@@ -120,18 +123,24 @@ class AddElement : CommonType(), View.OnClickListener {
             val games = returnList(binding.etGameAddOn.text.toString())
             val add_on = returnMemberByName(binding.etAddOnGame.text.toString(), allAddOns)
             val multi_add_on = returnMemberByName(binding.etMultiAddOnGames.text.toString(), allMultiAddOns)
+            val external_image = testNull(binding.etExternalImage.text.toString())
 
             when (true) {
                 binding.rbGame.isChecked -> registerGame(name, player_min, player_max,
                     playing_time, difficulty, designers, artists, publishers, bgg_link, playing_mode,
-                    language, age, buying_price, stock, max_time, by_player, tags, topics, mechanism, add_on, multi_add_on)
+                    language, age, buying_price, stock, max_time, by_player, tags, topics, mechanism,
+                    add_on, multi_add_on, external_image)
                 binding.rbAddOn.isChecked -> registerAddOn(name, player_min, player_max,
                     playing_time, difficulty, designers, artists, publishers, bgg_link, playing_mode,
-                    language, age, buying_price, stock, max_time, game)
+                    language, age, buying_price, stock, max_time, game, external_image)
                 binding.rbMultiAddOn.isChecked -> registerMultiAddOn(name, player_min, player_max,
                     playing_time, difficulty, designers, artists, publishers, bgg_link, playing_mode,
-                    language, age, buying_price, stock, max_time, games)
+                    language, age, buying_price, stock, max_time, games, external_image)
 
+            }
+            if(binding.cbDelImg.isChecked){
+                allImages.list_of_images.remove(changedObject?.name)
+                sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
             }
             sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
             sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns, addedMultiAddOns)),SerialKey.AddedContent.name)
@@ -141,7 +150,7 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
-    fun <T:CommonBase, U:CommonBase>modifyElement(originalChangedList:ArrayList<U>, changedList:ArrayList<T>,
+    private fun <T:CommonBase, U:CommonBase>modifyElement(originalChangedList:ArrayList<U>, changedList:ArrayList<T>,
                                                   originalAllList:ArrayList<U>, allList:ArrayList<T>,
                                                   originalData: U, modifiedData:T){
 
@@ -151,7 +160,7 @@ class AddElement : CommonType(), View.OnClickListener {
         allList.add(modifiedData)
     }
 
-    fun <T:CommonBase>handleCategoryChange(changedList:ArrayList<T>, allList:ArrayList<T>,
+    private fun <T:CommonBase>handleCategoryChange(changedList:ArrayList<T>, allList:ArrayList<T>,
                                            modifiedData:T){
         changedObject!!.id?.run{
             when(changedObject){
@@ -169,7 +178,7 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
-    fun deleteChangeObject(){
+    private fun deleteChangeObject(){
         when(changedObject){
             is GameBean -> deletedGames.add(changedObject as GameBean)
             is AddOnBean -> deletedAddOns.add(changedObject as AddOnBean)
@@ -177,7 +186,7 @@ class AddElement : CommonType(), View.OnClickListener {
         }
     }
 
-    fun registerGame(name: String,
+    private fun registerGame(name: String,
                      player_min: Int?,
                      player_max: Int?,
                      playing_time: String?,
@@ -197,7 +206,8 @@ class AddElement : CommonType(), View.OnClickListener {
                      topics: ArrayList<String>,
                      mechanism: ArrayList<String>,
                      add_on: ArrayList<AddOnBean>,
-                     multi_add_on: ArrayList<MultiAddOnBean>
+                     multi_add_on: ArrayList<MultiAddOnBean>,
+                     external_image:String?
     ){
         var id:Int? = null
         if (changedObject is GameBean){
@@ -225,7 +235,9 @@ class AddElement : CommonType(), View.OnClickListener {
             topics,
             mechanism,
             add_on,
-            multi_add_on
+            multi_add_on,
+            external_image,
+            null
         )
         changedObject?.run{
             game.id?.run{
@@ -242,7 +254,7 @@ class AddElement : CommonType(), View.OnClickListener {
 
 
 
-    fun registerAddOn(name: String,
+    private fun registerAddOn(name: String,
                       player_min: Int?,
                       player_max: Int?,
                       playing_time: String?,
@@ -257,7 +269,9 @@ class AddElement : CommonType(), View.OnClickListener {
                       buying_price:Int?,
                       stock: Int?,
                       max_time: Int?,
-                      game: String?){
+                      game: String?,
+                      external_image: String?
+    ){
         var id:Int? = null
         if (changedObject is AddOnBean){
             id = (changedObject as AddOnBean).id
@@ -278,7 +292,9 @@ class AddElement : CommonType(), View.OnClickListener {
             buying_price,
             stock,
             max_time,
-            game
+            game,
+            external_image,
+            null
         )
 
         changedObject?.run{
@@ -294,7 +310,7 @@ class AddElement : CommonType(), View.OnClickListener {
 
 
     }
-    fun registerMultiAddOn(name: String,
+    private fun registerMultiAddOn(name: String,
                       player_min: Int?,
                       player_max: Int?,
                       playing_time: String?,
@@ -309,7 +325,8 @@ class AddElement : CommonType(), View.OnClickListener {
                       buying_price:Int?,
                       stock: Int?,
                       max_time: Int?,
-                      games: ArrayList<String>){
+                      games: ArrayList<String>,
+                           external_image: String?){
         var id:Int? = null
         if (changedObject is MultiAddOnBean){
             id = (changedObject as MultiAddOnBean).id
@@ -331,7 +348,9 @@ class AddElement : CommonType(), View.OnClickListener {
             buying_price,
             stock,
             max_time,
-            games
+            games,
+            external_image,
+            null
         )
 
         changedObject?.run{
@@ -348,7 +367,7 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
-    fun setView(ll: LinearLayout){
+    private fun setView(ll: LinearLayout){
         binding.llGame.visibility = View.GONE
         binding.llAddOn.visibility = View.GONE
         binding.llMultiAddOn.visibility = View.GONE
@@ -370,7 +389,7 @@ class AddElement : CommonType(), View.OnClickListener {
     contains(it.name)}.
     toCollection(ArrayList())
 
-    fun fillPageRv(rvDifficulties: RecyclerView, rvTag: RecyclerView, rvMechanism: RecyclerView,
+    private fun fillPageRv(rvDifficulties: RecyclerView, rvTag: RecyclerView, rvMechanism: RecyclerView,
                      rvTopic: RecyclerView
     ){
         loadRv(rvDifficulties, difficulties, difficultyAdapter, allDifficulties())
@@ -394,7 +413,7 @@ class AddElement : CommonType(), View.OnClickListener {
         }
     }
 
-    fun autoAddElement(originalText:String, adding:String) = if(originalText == "") adding else if (originalText.contains(adding)) "$originalText" else "$originalText, $adding"
+    private fun autoAddElement(originalText:String, adding:String) = if(originalText == "") adding else if (originalText.contains(adding)) "$originalText" else "$originalText, $adding"
     override fun onElementClick(datum: CommonBase?) {
         when(datum){
             is GameBean -> {
@@ -428,6 +447,7 @@ class AddElement : CommonType(), View.OnClickListener {
         binding.etBggLink.setText(it.bgg_link?:"")
         binding.etStock.setText(it.stock?.toString()?:"")
         binding.etBuyingPrice.setText(it.buying_price?.toString()?:"")
+        binding.etExternalImage.setText(it.external_img?:"")
 
     }
 

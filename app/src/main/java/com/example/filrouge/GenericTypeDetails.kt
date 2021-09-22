@@ -1,7 +1,5 @@
 package com.example.filrouge
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
@@ -15,7 +13,7 @@ class GenericTypeDetails : CommonType(), OnGenericListListener {
     private val games = ArrayList<GameBean>()
     private val genericAddOnAdapter = GenericAdapter(addOns ,this)
     private val genericMultiAddOnAdapter = GenericAdapter(multiAddOns, this)
-    private val genericGameAdapater = GenericAdapter(games, this)
+    private val genericGameAdapter = GenericAdapter(games, this)
     private val type:String by lazy{intent.extras!!.getString(SerialKey.Type.name, "")}
     private val name:String by lazy{intent.extras!!.getString(SerialKey.Name.name, "")}
 
@@ -24,7 +22,7 @@ class GenericTypeDetails : CommonType(), OnGenericListListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        binding.rvGenericDetailGame.adapter = genericGameAdapater
+        binding.rvGenericDetailGame.adapter = genericGameAdapter
         binding.rvGenericDetailGame.layoutManager = GridLayoutManager(this, 1)
         binding.rvGenericDetailGame.addItemDecoration(MarginItemDecoration(5))
 
@@ -79,7 +77,7 @@ class GenericTypeDetails : CommonType(), OnGenericListListener {
         }
 
         binding.tvGenericDetailName.text = name
-        genericGameAdapater.notifyDataSetChanged()
+        genericGameAdapter.notifyDataSetChanged()
         genericAddOnAdapter.notifyDataSetChanged()
         genericMultiAddOnAdapter.notifyDataSetChanged()
     }

@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.CheckBox
 import android.widget.Toast
 import com.example.filrouge.databinding.ActivityCreateNewAccountBinding
 
@@ -15,7 +16,8 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.button.setOnClickListener(this)
+        binding.btnRegister.setOnClickListener(this)
+        binding.llCbox.visibility = if (allUsers.listOfUsers.isEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun onClick(v: View?) {
@@ -24,21 +26,44 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
             val regex = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$")
             val password = binding.editTextTextPassword.text.toString()
             val login = binding.editTextTextPersonName.text.toString()
+            if (allUsers.listOfUsers.any { it.login == login }){
+                Toast.makeText(this, "Login déjà pris", Toast.LENGTH_LONG).show()
+                return
+            }
             if (regex.matches(password) && login.isNotBlank()){
-                sharedPreference.save(SHA256.encryptThisString(password), login)
-                Toast.makeText(this, "Success!", Toast.LENGTH_LONG).show()
-                sharedPreference.save(login, SerialKey.AccountName.name)
+
+                val user =  UserBean(login, SHA256.encryptThisString(password), PermissionBean(
+                    isSuperAccount(binding.cbAdd),
+                    isSuperAccount(binding.cbChange),
+                    isSuperAccount(binding.cbDelete),
+                    isSuperAccount(binding.cbSynchronize),
+                    isSuperAccount(binding.cbCreateAccount),
+                    isSuperAccount(binding.cbDeleteAccount)
+                )
+                )
+                allUsers.listOfUsers.add(user)
+                sharedPreference.save(gson.toJson(allUsers), SerialKey.AllUsersStorage.name)
+                Toast.makeText(this, "Succés!", Toast.LENGTH_LONG).show()
+
                 startActivity(Intent(this, ViewGamesActivity::class.java))
                 finish()
 
             }
             else{
-                binding.tvError.text = "login must not be empty\npassword must contain at least:1 minuscule letter, 1 majuscule letter, 1 number and 1 special character and 6 characters"
+                binding.tvError.text = "le login ne doit pas être vide\n" +
+                        "le mot de passe doit contenir au moins:\n" +
+                        "- 1 lettre minuscule\n" +
+                        "- 1 lettre majuscule\n" +
+                        "- 1 nombre\n" +
+                        "- 1 caractère spécial\n" +
+                        "- 6 caractères"
                 binding.tvError.visibility = View.VISIBLE
             }
         }else{
-            binding.tvError.text =  "password didn't match"
+            binding.tvError.text =  "les mots de passe ne sont pas identiques"
             binding.tvError.visibility = View.VISIBLE
         }
     }
+
+    private fun isSuperAccount(view:CheckBox) = if (allUsers.listOfUsers.isEmpty()) true else view.isChecked
 }

@@ -29,6 +29,7 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         binding.tvMultiAddOnDetailPlayingTime.text = "jusqu'à ${multiAddOn.max_time} minutes" + if(parent != null && parent!!.by_player == true) "/ Joueur" else ""
 
         loadRv(binding.rvMultiAddOn, gamesList, adapter, multiAddOn.games)
+        loadImage(multiAddOn, binding.ivDetails)
 
     }
 

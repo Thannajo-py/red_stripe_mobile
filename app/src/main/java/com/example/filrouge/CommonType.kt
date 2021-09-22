@@ -1,18 +1,17 @@
 package com.example.filrouge
 
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.view.Gravity
 import android.view.Menu
 import android.view.MenuItem
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.io.File
 
 
 abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericTypeAdapter.GenericListener{
@@ -215,6 +214,16 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         return tempSet
     }
 
+    fun<T:CommonBase> loadImage(element:T, image:ImageView){
+        if (allImages.list_of_images.contains(element.name)){
+            val file = File(image.context.filesDir, element.name)
+            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
+            image.setImageBitmap(compressedBitMap)
+        }
+        else{
+            image.setImageBitmap(null)
+        }
+    }
 
 
 

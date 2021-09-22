@@ -1,9 +1,5 @@
 package com.example.filrouge
 
-enum class APIUrl(val url:String){
-    ALL_GAMES("https://fil-rouge-ja.herokuapp.com/api/synchronize-change/")
-}
-
 enum class SerialKey{
     Game,
     AddOn,
@@ -15,12 +11,15 @@ enum class SerialKey{
     RememberNameStorage,
     RememberPasswordStorage,
     SearchResult,
-    AccountName,
     AddedContent,
     APIDeleteStorage,
     APIModifyStorage,
     APIAddStorage,
-    ToModifyData
+    ToModifyData,
+    AllImagesStorage,
+    AllUsersStorage,
+    APIUrl,
+    APIStaticUrl
 
 }
 
@@ -35,9 +34,7 @@ enum class Type{
     Mechanism,
     Topic,
     Search,
-    Game,
-    AddOn,
-    MultiAddOn,
+
 }
 
 enum class MenuId{
@@ -47,5 +44,7 @@ enum class MenuId{
     DeleteAccount,
     AddContent,
     DeleteThis,
-    ModifyThis
+    ModifyThis,
+    CreateAccount,
+    SynchronizeParameter
 }

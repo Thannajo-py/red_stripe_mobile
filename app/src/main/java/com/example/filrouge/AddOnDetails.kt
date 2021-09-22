@@ -2,10 +2,15 @@ package com.example.filrouge
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.core.graphics.drawable.toBitmap
 import com.example.filrouge.databinding.ActivityAddOnDetailsBinding
+import java.io.ByteArrayOutputStream
+import java.io.File
 
 class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
@@ -34,7 +39,9 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             intent.putExtra(SerialKey.Game.name, parent)
             startActivity(intent)
             finish()
+
         }
+        loadImage(addOn, binding.ivDetails)
 
 
     }

@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/accoun_list.xml" value="0.22" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/account_list.xml" value="0.11302083333333333" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_add_element.xml" value="0.33" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_add_on_details.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_create_new_account.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_delete_account.xml" value="0.2015625" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_game_details.xml" value="0.20520833333333333" />
@@ -12,6 +15,8 @@
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_multi_add_on_detail.xml" value="0.23641304347826086" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_search.xml" value="0.18" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_view_games.xml" value="0.25" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/game_list.xml" value="0.19166666666666668" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/game_list2.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/name_list.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/pwd_login_confirm.xml" value="0.19895833333333332" />
       </map>

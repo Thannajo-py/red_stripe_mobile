@@ -16,25 +16,33 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        API_URL = sharedPreference.getValueString(SerialKey.APIUrl.name)
+        API_STATIC = sharedPreference.getValueString(SerialKey.APIStaticUrl.name)
         binding.btnLogin.setOnClickListener(this)
         binding.etLogin.setText(sharedPreference.getValueString(SerialKey.RememberNameStorage.name)?:"")
         binding.etPassword.setText(sharedPreference.getValueString(SerialKey.RememberPasswordStorage.name)?:"")
-        val test = sharedPreference.getValueString(SerialKey.AccountName.name)
-        if (sharedPreference.getValueString(SerialKey.AccountName.name).isNullOrBlank()){
+        refreshUsers()
+        if (allUsers.listOfUsers.isEmpty()){
             startActivity(Intent(this, CreateNewAccount::class.java))
         }
 
+
     }
 
+    override fun onResume() {
+        refreshUsers()
+        super.onResume()
+    }
     override fun onClick(v: View?) {
 
         binding.tvLoginError.visibility = View.GONE
         binding.progressBarLogin.visibility = View.VISIBLE
         val password = binding.etPassword.text.toString()
         val login = binding.etLogin.text.toString()
+        val userLogin = allUsers.listOfUsers.filter{it.login == login}
 
-        if (sharedPreference.getValueString(login) != null &&
-            SHA256.encryptThisString(password) == sharedPreference.getValueString(login)?:""){
+        if (userLogin.isNotEmpty() &&
+            SHA256.encryptThisString(password) == userLogin[0].password){
                 if(binding.checkBox.isChecked){
                     sharedPreference.save(login, SerialKey.RememberNameStorage.name)
                     sharedPreference.save(password, SerialKey.RememberPasswordStorage.name)
@@ -43,6 +51,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
                     sharedPreference.removeValue(SerialKey.RememberNameStorage.name)
                     sharedPreference.removeValue(SerialKey.RememberPasswordStorage.name)
                 }
+            currentUser = userLogin[0]
             startActivity(Intent(this, ViewGamesActivity::class.java))
         }
         else{
@@ -50,5 +59,16 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             binding.tvLoginError.visibility = View.VISIBLE
         }
         binding.progressBarLogin.visibility = View.GONE
+    }
+
+    private fun refreshUsers(){
+        allUsers.listOfUsers.clear()
+        val savedInstance = sharedPreference.getValueString(SerialKey.AllUsersStorage.name)
+        if (!savedInstance.isNullOrBlank()){
+            allUsers.listOfUsers.addAll(
+                gson.fromJson(savedInstance,
+                    AllUsers::class.java).listOfUsers)
+        }
+
     }
 }

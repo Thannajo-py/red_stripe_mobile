@@ -25,7 +25,9 @@ class GameBean(
         val topics:ArrayList<String>,
         val mechanism:ArrayList<String>,
         val add_on: ArrayList<AddOnBean>,
-        val multi_add_on: ArrayList<MultiAddOnBean>
+        val multi_add_on: ArrayList<MultiAddOnBean>,
+        external_img: String?,
+        picture: String?
 ): CommonBase(id,
         name,
         player_min,
@@ -41,7 +43,9 @@ class GameBean(
         age,
         buying_price,
         stock,
-        max_time),Serializable{
+        max_time,
+        external_img,
+        picture),Serializable{
         override fun equals(other: Any?): Boolean {
                 if(other !is GameBean){
                         return false
@@ -71,6 +75,8 @@ class AddOnBean(
         stock: Int?,
         max_time: Int?,
         val game: String?,
+        external_img: String?,
+        picture: String?
 ): CommonBase(id,
         name,
 player_min,
@@ -86,7 +92,9 @@ language,
 age,
 buying_price,
 stock,
-max_time),Serializable
+max_time,
+external_img,
+picture),Serializable
 {
         override fun equals(other: Any?): Boolean {
                 if(other !is AddOnBean){
@@ -117,7 +125,9 @@ class MultiAddOnBean(
         buying_price:Int?,
         stock: Int?,
         max_time: Int?,
-        val games: ArrayList<String>
+        val games: ArrayList<String>,
+        external_img: String?,
+        picture: String?
 ): CommonBase(id,
         name,
         player_min,
@@ -133,7 +143,9 @@ class MultiAddOnBean(
         age,
         buying_price,
         stock,
-        max_time),Serializable
+        max_time,
+        external_img,
+        picture),Serializable
 {
         override fun equals(other: Any?): Boolean {
                 if(other !is MultiAddOnBean){
@@ -163,8 +175,19 @@ open class CommonBase(
         val buying_price:Int?,
         val stock: Int?,
         val max_time: Int?,
+        val external_img:String?,
+        val picture:String?,
 ):Serializable
 
 class SendApiChange(val login:String, val password:String, val addedList:ApiResponse, val modifiedList:ApiResponse, val deletedList:ApiResponse)
 
 class ApiBody(val body:SendApiChange)
+
+class AllImages(val list_of_images: MutableSet<String>)
+
+class AllUsers(val listOfUsers: ArrayList<UserBean>)
+
+class UserBean (val login:String, val password:String, val permission:PermissionBean)
+
+class PermissionBean ( val add:Boolean, val change:Boolean, val delete:Boolean, val synchronize:Boolean, val addAccount:Boolean, val deleteAccount: Boolean)
+

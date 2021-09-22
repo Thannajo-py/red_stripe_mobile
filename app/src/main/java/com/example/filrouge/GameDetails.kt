@@ -2,6 +2,7 @@ package com.example.filrouge
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
 import com.example.filrouge.databinding.ActivityMainBinding
+import java.io.File
 
 class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
 
@@ -55,6 +57,8 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
         loadRv(binding.rvTag, tags, tagAdapter, game.tags)
         loadRv(binding.rvGameDetailAddOn, addOns, addOnAdapter, game.add_on)
         loadRv(binding.rvGameDetailMultiAddOn, multiAddOns, multiAddOnAdapter, game.multi_add_on)
+        loadImage(game, binding.ivDetails)
+
 
 
     }
