@@ -55,8 +55,8 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
         loadRv(binding.rvTopic, topics, topicAdapter, game.topics)
         loadRv(binding.rvMechanism, mechanism, mechanismAdapter, game.mechanism)
         loadRv(binding.rvTag, tags, tagAdapter, game.tags)
-        loadRv(binding.rvGameDetailAddOn, addOns, addOnAdapter, game.add_on)
-        loadRv(binding.rvGameDetailMultiAddOn, multiAddOns, multiAddOnAdapter, game.multi_add_on)
+        loadRv(binding.rvGameDetailAddOn, addOns, addOnAdapter, allAddOns.filter{it.game == game.name})
+        loadRv(binding.rvGameDetailMultiAddOn, multiAddOns, multiAddOnAdapter, allMultiAddOns.filter{it.games.any{l-> l == game.name} })
         loadImage(game, binding.ivDetails)
 
 

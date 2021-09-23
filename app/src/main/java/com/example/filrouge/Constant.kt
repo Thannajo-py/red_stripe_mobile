@@ -65,3 +65,15 @@ enum class CommonString(val string:String){
             "- 1 caractère spécial\n" +
             "- 6 caractères")
 }
+
+enum class AddedContent{
+    Designer,
+    Artist,
+    Publisher,
+    Tag,
+    Topic,
+    Language,
+    Mechanism,
+    PlayingMod
+}
+

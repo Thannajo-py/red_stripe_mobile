@@ -24,8 +24,8 @@ class GameBean(
         val tags: ArrayList<String>,
         val topics:ArrayList<String>,
         val mechanism:ArrayList<String>,
-        val add_on: ArrayList<AddOnBean>,
-        val multi_add_on: ArrayList<MultiAddOnBean>,
+        val add_on: ArrayList<String>,
+        val multi_add_on: ArrayList<String>,
         external_img: String?,
         picture: String?
 ): CommonBase(id,
@@ -74,7 +74,7 @@ class AddOnBean(
         buying_price:Int?,
         stock: Int?,
         max_time: Int?,
-        val game: String?,
+        var game: String?,
         external_img: String?,
         picture: String?
 ): CommonBase(id,

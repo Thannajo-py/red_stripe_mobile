@@ -1,43 +1,63 @@
 package com.example.filrouge
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.Button
+import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.databinding.ActivityAddElementBinding
-import javax.crypto.ExemptionMechanism
 
-class AddElement : CommonType(), View.OnClickListener {
+class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, GenericCbListener {
 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
     private val sharedPreference by lazy{ SharedPreference(this)}
+
+    private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(ArrayList<String>(), ArrayList<String>(), ArrayList<String>()
+        , ArrayList<String>(), ArrayList<String>(), ArrayList<String>(), ArrayList<String>(), ArrayList<String>())
+
+    private val addedEditText: ArrayList<ArrayList<EditText>> = arrayListOf(ArrayList(), ArrayList(), ArrayList()
+        , ArrayList(), ArrayList(), ArrayList(), ArrayList(), ArrayList())
+
+    private val designerAdapter = GenericTypeCbAdapter(designers,this, Type.Designer.name, addedStringContent[AddedContent.Designer.ordinal])
+    private val artistAdapter = GenericTypeCbAdapter(artists,this, Type.Artist.name, addedStringContent[AddedContent.Artist.ordinal])
+    private val publisherAdapter = GenericTypeCbAdapter(publishers,this, Type.Publisher.name, addedStringContent[AddedContent.Publisher.ordinal])
+    private val languageAdapter = GenericTypeCbAdapter(languages,this, Type.Language.name, addedStringContent[AddedContent.Language.ordinal])
+    private val playingModeAdapter = GenericTypeCbAdapter(playing_mode,this, Type.PlayingMode.name, addedStringContent[AddedContent.PlayingMod.ordinal])
 
     private val difficulties = ArrayList<String>()
     private val difficultyAdapter = GenericTypeAdapter(difficulties, this, Type.Difficulty.name)
 
     private val tags = ArrayList<String>()
-    private val tagAdapter = GenericTypeAdapter(tags, this, Type.Tag.name)
+    private val tagAdapter = GenericTypeCbAdapter(tags, this, Type.Tag.name, addedStringContent[AddedContent.Tag.ordinal])
 
     private val topics = ArrayList<String>()
-    private val topicAdapter = GenericTypeAdapter(topics, this, Type.Topic.name)
+    private val topicAdapter = GenericTypeCbAdapter(topics, this, Type.Topic.name, addedStringContent[AddedContent.Topic.ordinal])
 
     private val mechanism = ArrayList<String>()
-    private val mechanismAdapter = GenericTypeAdapter(mechanism, this, Type.Mechanism.name)
+    private val mechanismAdapter = GenericTypeCbAdapter(mechanism, this, Type.Mechanism.name, addedStringContent[AddedContent.Mechanism.ordinal])
 
+
+
+    private val addedToListAddons = ArrayList<AddOnBean>()
+    private val freeAddOn = allAddOns.filter{it.game == null}.toCollection(ArrayList())
     private val addOns = ArrayList<AddOnBean>()
+    private val addOnAdapter = GenericAdapterWithCheckBox(addOns ,this, addedToListAddons)
+
+    private val addedToListMultiAddOns = ArrayList<MultiAddOnBean>()
     private val multiAddOns = ArrayList<MultiAddOnBean>()
+    private val multiAddOnAdapter = GenericAdapterWithCheckBox(multiAddOns, this,
+        addedToListMultiAddOns
+    )
 
-    private val addOnAdapter = GenericAdapter(addOns ,this)
-    private val multiAddOnAdapter = GenericAdapter(multiAddOns, this)
-
+    private val addedToListGames = ArrayList<GameBean>()
     private val games = ArrayList<GameBean>()
-    private val gamesAdapter = GenericAdapter(games, this)
+    private val gamesAdapter = GenericAdapterWithCheckBox(games, this, addedToListGames)
 
     private val game = ArrayList<GameBean>()
-    private val gameAdapter = GenericAdapter(game, this)
+    private val gameAdapter = GameAddOnAdapterWithCheckBox(game, this)
 
     private val changedObject: CommonBase? by lazy{intent.getSerializableExtra(SerialKey.ToModifyData.name) as CommonBase?}
 
@@ -46,6 +66,7 @@ class AddElement : CommonType(), View.OnClickListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        addOnGame = null
         setContentView(binding.root)
         binding.btnAdd.setOnClickListener(this)
         binding.rbGame.setOnClickListener{
@@ -65,7 +86,7 @@ class AddElement : CommonType(), View.OnClickListener {
         }
         fillCommonRv(binding.rvDesigner, binding.rvArtist, binding.rvPublisher, binding.rvLanguage, binding.rvPlayingMode)
         fillPageRv(binding.rvDifficulty, binding.rvTag, binding.rvMechanism, binding.rvTopic)
-        loadRv(binding.rvGameAddOn, addOns, addOnAdapter, allAddOns)
+        loadRv(binding.rvGameAddOn, addOns, addOnAdapter, freeAddOn)
         loadRv(binding.rvGameMultiAddOn, multiAddOns, multiAddOnAdapter, allMultiAddOns)
         loadRv(binding.rvGame, game, gameAdapter, allGames)
         loadRv(binding.rvGames, games, gamesAdapter, allGames)
@@ -77,18 +98,66 @@ class AddElement : CommonType(), View.OnClickListener {
             when(this){
                 is GameBean -> {setGameBeanElement(this)}
                 is AddOnBean -> {
-                    binding.etAddOnGame.setText(this.game)
+
+                    addOnGame = loadAddOnGame(this)
                     binding.rbAddOn.isChecked = true
                     setView(binding.llAddOn)
+                    allGames.filter{it.add_on.remove(this.name)}
+                    gameAdapter.notifyDataSetChanged()
                 }
                 is MultiAddOnBean -> {
-                    binding.etMultiAddOnGames.setText(this.games.joinToString(", "))
+                    addedToListGames.addAll(allGames.filter{this.games.contains(it.name)})
                     binding.rbMultiAddOn.isChecked = true
                     setView(binding.llMultiAddOn)
+                    gamesAdapter.notifyDataSetChanged()
+                    allGames.forEach { it.multi_add_on.remove(this.name) }
                 }
             }
         }
+        btnAddDeleteModule(binding.btnDesignerAdd, binding.btnDesignerDelete, binding.llDesigner, AddedContent.Designer.ordinal)
+        btnAddDeleteModule(binding.btnArtistAdd, binding.btnArtistDelete, binding.llArtist, AddedContent.Artist.ordinal)
+        btnAddDeleteModule(binding.btnPublisherAdd, binding.btnPublisherDelete, binding.llPublisher, AddedContent.Publisher.ordinal)
+        btnAddDeleteModule(binding.btnLanguageAdd, binding.btnLanguageDelete, binding.llLanguage, AddedContent.Language.ordinal)
+        btnAddDeleteModule(binding.btnTagAdd, binding.btnTagDelete, binding.llTag, AddedContent.Tag.ordinal)
+        btnAddDeleteModule(binding.btnTopicAdd, binding.btnTopicDelete, binding.llTopic, AddedContent.Topic.ordinal)
+        btnAddDeleteModule(binding.btnMechanismAdd, binding.btnMechanismDelete, binding.llMechanism, AddedContent.Mechanism.ordinal)
+        btnAddDeleteModule(binding.btnPlayingModeAdd, binding.btnPlayingModeDelete, binding.llPlayingMode, AddedContent.PlayingMod.ordinal)
 
+
+
+    }
+
+    fun loadAddOnGame(element:AddOnBean):GameBean?{
+        val possibleGame = allGames.filter{it.name == element.game}
+        return if (possibleGame.size == 1) possibleGame[0] else null
+    }
+
+    fun btnAddDeleteModule(btnAdd:Button, btnDel:Button, ll:LinearLayout, position: Int){
+        btnAdd.setOnClickListener {
+            setOnClickAddButton(ll, position)
+            btnDel.visibility = View.VISIBLE
+        }
+
+        btnDel.setOnClickListener {
+            setOnClickDeleteButton(ll, position)
+            if (addedEditText[position].isEmpty()) it.visibility = View.GONE
+        }
+    }
+
+    fun setOnClickAddButton(ll:LinearLayout, position:Int){
+        val et = EditText(this)
+        ll.addView(et)
+        addedEditText[position].add(et)
+    }
+
+
+
+    fun setOnClickDeleteButton(ll:LinearLayout, position:Int){
+        if (addedEditText[position].isNotEmpty()){
+            val et = addedEditText[position].last()
+            ll.removeView(et)
+            addedEditText[position].removeLast()
+        }
 
     }
 
@@ -113,37 +182,35 @@ class AddElement : CommonType(), View.OnClickListener {
             val player_max = testNull(binding.etNbPlayerMax.text.toString())?.toInt()
             val playing_time = testNull(binding.etMaxTime.text.toString())
             val difficulty = testNull(binding.etDifficulty.text.toString())
-            val designers = returnList(binding.etDesigner.text.toString())
-            val artists = returnList(binding.etArtist.text.toString())
-            val publishers = returnList(binding.etPublisher.text.toString())
+            val designers = addAllEditText(addedStringContent[AddedContent.Designer.ordinal], binding.etDesigner, addedEditText[AddedContent.Designer.ordinal])
+            val artists = addAllEditText(addedStringContent[AddedContent.Artist.ordinal], binding.etArtist, addedEditText[AddedContent.Artist.ordinal])
+            val publishers = addAllEditText(addedStringContent[AddedContent.Publisher.ordinal], binding.etPublisher, addedEditText[AddedContent.Publisher.ordinal])
             val bgg_link = testNull(binding.etBggLink.text.toString())
-            val playing_mode = returnList(binding.etPlayingMode.text.toString())
-            val language = returnList(binding.etLanguage.text.toString())
+            val playing_mode = addAllEditText(addedStringContent[AddedContent.PlayingMod.ordinal], binding.etPlayingMode, addedEditText[AddedContent.PlayingMod.ordinal])
+            val language = addAllEditText(addedStringContent[AddedContent.Language.ordinal], binding.etLanguage, addedEditText[AddedContent.Language.ordinal])
             val age = testNull(binding.etAge.text.toString())?.toInt()
             val buying_price = testNull(binding.etBuyingPrice.text.toString())?.toInt()?:0
             val stock = testNull(binding.etStock.text.toString())?.toInt()
             val max_time = testNull(binding.etStock.text.toString())?.toInt()
             val by_player = binding.rbByPlayerTrue.isChecked
-            val tags = returnList(binding.etPlayingMode.text.toString())
-            val topics = returnList(binding.etTopic.text.toString())
-            val mechanism = returnList(binding.etMechanism.text.toString())
-            val game = testNull(binding.etGameAddOn.text.toString())
-            val games = returnList(binding.etGameAddOn.text.toString())
-            val add_on = returnMemberByName(binding.etAddOnGame.text.toString(), allAddOns)
-            val multi_add_on = returnMemberByName(binding.etMultiAddOnGames.text.toString(), allMultiAddOns)
+            val tags = addAllEditText(addedStringContent[AddedContent.Tag.ordinal], binding.etTag, addedEditText[AddedContent.Tag.ordinal])
+            val topics = addAllEditText(addedStringContent[AddedContent.Topic.ordinal], binding.etTopic, addedEditText[AddedContent.Topic.ordinal])
+            val mechanism = addAllEditText(addedStringContent[AddedContent.Mechanism.ordinal], binding.etMechanism, addedEditText[AddedContent.Mechanism.ordinal])
+            val game = addOnGame
+            val games = addedToListGames
             val external_image = testNull(binding.etExternalImage.text.toString())
 
             when (true) {
                 binding.rbGame.isChecked -> registerGame(name, player_min, player_max,
                     playing_time, difficulty, designers, artists, publishers, bgg_link, playing_mode,
                     language, age, buying_price, stock, max_time, by_player, tags, topics, mechanism,
-                    add_on, multi_add_on, external_image)
+                    addedToListAddons.map{it.name}.toCollection(ArrayList()), addedToListMultiAddOns.map{it.name}.toCollection(ArrayList()), external_image)
                 binding.rbAddOn.isChecked -> registerAddOn(name, player_min, player_max,
                     playing_time, difficulty, designers, artists, publishers, bgg_link, playing_mode,
-                    language, age, buying_price, stock, max_time, game, external_image)
+                    language, age, buying_price, stock, max_time, game?.name, external_image)
                 binding.rbMultiAddOn.isChecked -> registerMultiAddOn(name, player_min, player_max,
                     playing_time, difficulty, designers, artists, publishers, bgg_link, playing_mode,
-                    language, age, buying_price, stock, max_time, games, external_image)
+                    language, age, buying_price, stock, max_time, games.map{it.name}.toCollection(ArrayList()), external_image)
 
             }
             if(binding.cbDelImg.isChecked){
@@ -151,13 +218,21 @@ class AddElement : CommonType(), View.OnClickListener {
                 sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
             }
             sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
-            sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns, addedMultiAddOns)),SerialKey.AddedContent.name)
+            sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns,
+                addedMultiAddOns
+            )),SerialKey.AddedContent.name)
             startActivity(Intent(this,ViewGamesActivity::class.java))
             finish()
         }
 
     }
 
+
+    private fun addAllEditText(list:ArrayList<String>, et:EditText, etList: ArrayList<EditText>): ArrayList<String>{
+        if (et.text.toString().isNotBlank()) list.add(et.text.toString())
+        list.addAll(etList.map{it.text.toString()}.filter{it.isNotBlank()})
+        return list
+    }
     private fun <T:CommonBase, U:CommonBase>modifyElement(originalChangedList:ArrayList<U>, changedList:ArrayList<T>,
                                                   originalAllList:ArrayList<U>, allList:ArrayList<T>,
                                                   originalData: U, modifiedData:T){
@@ -178,9 +253,9 @@ class AddElement : CommonType(), View.OnClickListener {
             }
         }?:run{
             when(changedObject){
-                is GameBean -> modifyElement(addedGames, changedList, allGames, allList, changedObject as GameBean, modifiedData)
+                is GameBean -> modifyElement(addedToListGames, changedList, allGames, allList, changedObject as GameBean, modifiedData)
                 is AddOnBean -> modifyElement(addedAddOns, changedList, allAddOns, allList, changedObject as AddOnBean, modifiedData)
-                is MultiAddOnBean -> modifyElement(addedMultiAddOns, changedList, allMultiAddOns, allList, changedObject as MultiAddOnBean, modifiedData)
+                is MultiAddOnBean -> modifyElement(com.example.filrouge.addedMultiAddOns, changedList, allMultiAddOns, allList, changedObject as MultiAddOnBean, modifiedData)
             }
         }
 
@@ -213,8 +288,8 @@ class AddElement : CommonType(), View.OnClickListener {
                      tags: ArrayList<String>,
                      topics: ArrayList<String>,
                      mechanism: ArrayList<String>,
-                     add_on: ArrayList<AddOnBean>,
-                     multi_add_on: ArrayList<MultiAddOnBean>,
+                     add_on: ArrayList<String>,
+                     multi_add_on: ArrayList<String>,
                      external_image:String?
     ){
         var id:Int? = null
@@ -257,6 +332,8 @@ class AddElement : CommonType(), View.OnClickListener {
             allGames.add(game)
             addedGames.add(game)
         }
+        allAddOns.forEach { if (game.add_on.contains(it.name)) it.game = game.name }
+        allMultiAddOns.forEach { if (game.multi_add_on.contains(it.name)) it.games.add(game.name)}
 
     }
 
@@ -314,6 +391,8 @@ class AddElement : CommonType(), View.OnClickListener {
             }}?:run{
             allAddOns.add(addOn)
             addedAddOns.add(addOn)
+            val addOnGame = allGames.filter{it.name == addOn.game}
+            if (addOnGame.size == 1) addOnGame[0].add_on.add(addOn.name)
         }
 
 
@@ -371,6 +450,7 @@ class AddElement : CommonType(), View.OnClickListener {
             allMultiAddOns.add(multiAddOn)
             addedMultiAddOns.add(multiAddOn)
         }
+        allGames.filter{multiAddOn.games.contains(it.name)}.forEach{it.multi_add_on.add(multiAddOn.name)}
 
 
     }
@@ -384,18 +464,6 @@ class AddElement : CommonType(), View.OnClickListener {
 
     private fun testNull(etContent:String) = if(etContent.isBlank()) null else etContent
 
-    private fun returnList(etContent:String) = testNull(etContent)?.
-        trim(',')?.
-        split(",")?.
-        map{it.trim()}?.
-        toCollection(ArrayList())?:
-        ArrayList()
-
-    private fun <T:CommonBase> returnMemberByName(etContent:String, globalList:ArrayList<T>):ArrayList<T> = globalList.
-    filter{
-        (testNull(etContent)?.trim(',')?.split(",")?.map{it.trim()}?.toCollection(ArrayList())?:ArrayList()).
-    contains(it.name)}.
-    toCollection(ArrayList())
 
     private fun fillPageRv(rvDifficulties: RecyclerView, rvTag: RecyclerView, rvMechanism: RecyclerView,
                      rvTopic: RecyclerView
@@ -407,51 +475,21 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
-    override fun onGenericClick(datum: String, type: String) {
-        when(type){
-            Type.Difficulty.name -> binding.etDifficulty.setText("${datum}")
-            Type.Designer.name -> binding.etDesigner.setText(autoAddElement(binding.etDesigner.text.toString(),datum))
-            Type.Artist.name -> binding.etArtist.setText(autoAddElement(binding.etArtist.text.toString(),datum))
-            Type.Publisher.name -> binding.etPublisher.setText(autoAddElement(binding.etPublisher.text.toString(),datum))
-            Type.Language.name -> binding.etLanguage.setText(autoAddElement(binding.etLanguage.text.toString(),datum))
-            Type.PlayingMode.name -> binding.etPlayingMode.setText(autoAddElement(binding.etPlayingMode.text.toString(),datum))
-            Type.Tag.name -> binding.etTag.setText(autoAddElement(binding.etTag.text.toString(),datum))
-            Type.Mechanism.name -> binding.etMechanism.setText(autoAddElement(binding.etMechanism.text.toString(),datum))
-            Type.Topic.name -> binding.etTopic.setText(autoAddElement(binding.etTopic.text.toString(),datum))
-        }
-    }
 
-    private fun autoAddElement(originalText:String, adding:String) = if(originalText == "") adding else if (originalText.contains(adding)) "$originalText" else "$originalText, $adding"
-    override fun onElementClick(datum: CommonBase?) {
-        when(datum){
-            is GameBean -> {
-                binding.etAddOnGame.setText(datum.name)
-                binding.etMultiAddOnGames.setText(autoAddElement(binding.etMultiAddOnGames.text.toString(),datum.name))
-            }
 
-            is MultiAddOnBean -> {
-                binding.etGameMultiAddOn.setText(autoAddElement(binding.etGameMultiAddOn.text.toString(),datum.name))
-            }
-
-            is AddOnBean -> {
-                binding.etGameAddOn.setText(autoAddElement(binding.etGameAddOn.text.toString(),datum.name))
-            }
-
-        }
-    }
 
     private fun setCommonElement(it:CommonBase){
         binding.etNom.setText(it.name)
-        binding.etDesigner.setText(it.designers.joinToString(", "))
-        binding.etArtist.setText(it.artists.joinToString(", "))
-        binding.etPublisher.setText(it.publishers.joinToString(", "))
+        addedStringContent[AddedContent.Designer.ordinal].addAll(it.designers)
+        addedStringContent[AddedContent.Artist.ordinal].addAll(it.artists)
+        addedStringContent[AddedContent.Publisher.ordinal].addAll(it.publishers)
+        addedStringContent[AddedContent.Language.ordinal].addAll(it.language)
+        addedStringContent[AddedContent.PlayingMod.ordinal].addAll(it.playing_mode)
         binding.etNbPlayerMin.setText(it.player_min?.toString()?:"")
         binding.etNbPlayerMax.setText(it.player_max?.toString()?:"")
         binding.etMaxTime.setText(it.max_time?.toString()?:"")
         binding.etDifficulty.setText(it.difficulty?:"")
         binding.etAge.setText(it.age?.toString()?:"")
-        binding.etPlayingMode.setText(it.playing_mode.joinToString(", "))
-        binding.etLanguage.setText(it.language.joinToString(", "))
         binding.etBggLink.setText(it.bgg_link?:"")
         binding.etStock.setText(it.stock?.toString()?:"")
         binding.etBuyingPrice.setText(it.buying_price?.toString()?:"")
@@ -459,18 +497,84 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
-    private fun setGameBeanElement(it:GameBean){
+    private fun setGameBeanElement(game:GameBean){
+
         binding.rbGame.isChecked = true
         setView(binding.llGame)
-        binding.etTag.setText(it.tags.joinToString(", "))
-        binding.etTopic.setText(it.topics.joinToString(", "))
-        binding.etMechanism.setText(it.mechanism.joinToString(", "))
-        binding.etGameAddOn.setText(it.add_on.joinToString (", "){ add_on -> add_on.name })
-        binding.etGameMultiAddOn.setText(it.multi_add_on.joinToString (", "){ multi_add_on -> multi_add_on.name })
-        if (it.by_player == true) binding.rbByPlayerTrue.isChecked = true
+        addedStringContent[AddedContent.Tag.ordinal].addAll(game.tags)
+        addedStringContent[AddedContent.Topic.ordinal].addAll(game.topics)
+        addedStringContent[AddedContent.Mechanism.ordinal].addAll(game.mechanism)
+
+        tagAdapter.notifyDataSetChanged()
+        topicAdapter.notifyDataSetChanged()
+        mechanismAdapter.notifyDataSetChanged()
+
+        addOns.addAll(allAddOns.filter{game.name == it.game})
+        addedToListAddons.addAll(allAddOns.filter{game.name == it.game})
+        addedToListMultiAddOns.addAll(allMultiAddOns.filter{it.games.contains(game.name)})
+        multiAddOnAdapter.notifyDataSetChanged()
+        addOnAdapter.notifyDataSetChanged()
+        if (game.by_player == true) binding.rbByPlayerTrue.isChecked = true
+
+        allMultiAddOns.filter{ game.multi_add_on.contains(it.name)}.forEach { it.games.remove(game.name) }
+        allAddOns.filter{ it.game == game.name }.forEach { it.game = null }
 
     }
 
+    override fun fillCommonRv(
+        rvDesigner: RecyclerView,
+        rvArtist: RecyclerView,
+        rvPublisher: RecyclerView,
+        rvLanguage: RecyclerView,
+        rvPlayingMod: RecyclerView
+    ) {
+        loadRv(rvDesigner, designers, designerAdapter, allDesigners())
+        loadRv(rvArtist, artists, artistAdapter, allArtists())
+        loadRv(rvPublisher, publishers, publisherAdapter, allPublishers())
+        loadRv(rvLanguage, languages, languageAdapter, allLanguages())
+        loadRv(rvPlayingMod, playing_mode, playingModeAdapter, allPlayingModes())
+    }
+
+    override fun onElementClick(datum: CommonBase?, position: Int) {
+        when(datum){
+            is GameBean -> {
+                addOnGame = if(addOnGame == datum) null else datum
+                gameAdapter.notifyDataSetChanged()
+                addedListManager(addedToListGames, datum, position, gamesAdapter)
+            }
+
+            is MultiAddOnBean -> addedListManager(addedToListMultiAddOns, datum, position, multiAddOnAdapter)
+
+            is AddOnBean -> addedListManager(addedToListAddons, datum, position, addOnAdapter)
+
+        }
+    }
+
+    override fun onGenericClick(datum: String, type: String, position: Int) {
+        when(type){
+            Type.Difficulty.name -> binding.etDifficulty.setText("${datum}")
+            Type.Designer.name -> addedListManager(addedStringContent[AddedContent.Designer.ordinal], datum, position, designerAdapter)
+            Type.Artist.name ->  addedListManager(addedStringContent[AddedContent.Artist.ordinal], datum, position, artistAdapter)
+            Type.Publisher.name ->  addedListManager(addedStringContent[AddedContent.Publisher.ordinal], datum, position, publisherAdapter)
+            Type.Language.name ->  addedListManager(addedStringContent[AddedContent.Language.ordinal], datum, position, languageAdapter)
+            Type.PlayingMode.name -> addedListManager(addedStringContent[AddedContent.PlayingMod.ordinal], datum, position, playingModeAdapter)
+            Type.Tag.name ->  addedListManager(addedStringContent[AddedContent.Tag.ordinal], datum, position, tagAdapter)
+            Type.Mechanism.name ->  addedListManager(addedStringContent[AddedContent.Mechanism.ordinal], datum, position, mechanismAdapter)
+            Type.Topic.name ->  addedListManager(addedStringContent[AddedContent.Topic.ordinal], datum, position, topicAdapter)
+        }
+    }
+
+    fun <T, U:RecyclerView.ViewHolder>addedListManager(list:ArrayList<T>,
+                                                       element:T, position: Int,
+                                                       adapter:RecyclerView.Adapter<U>){
+        if (list.contains(element)){
+            list.remove(element)
+        }
+        else{
+            list.add(element)
+        }
+        adapter.notifyItemChanged(position)
+    }
 
 
 }

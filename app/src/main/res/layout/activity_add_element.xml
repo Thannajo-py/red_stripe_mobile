@@ -139,6 +139,30 @@
                 android:hint="Klaus"
                 android:inputType="textPersonName" />
 
+            <LinearLayout
+                android:id="@+id/llDesigner"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_designer_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_designer_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDesigner"
                 android:layout_width="match_parent"
@@ -168,6 +192,30 @@
                 android:hint="Dutrait"
                 android:inputType="textPersonName" />
 
+            <LinearLayout
+                android:id="@+id/llArtist"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_artist_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_artist_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvArtist"
                 android:layout_width="match_parent"
@@ -195,6 +243,30 @@
                 android:ems="10"
                 android:hint="Asmodée"
                 android:inputType="textPersonName" />
+
+            <LinearLayout
+                android:id="@+id/llPublisher"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_publisher_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_publisher_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPublisher"
@@ -339,6 +411,30 @@
                 android:hint="coopératif"
                 android:inputType="textPersonName" />
 
+            <LinearLayout
+                android:id="@+id/llPlayingMode"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_playing_mode_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_playing_mode_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPlayingMode"
                 android:layout_width="match_parent"
@@ -367,6 +463,30 @@
                 android:ems="10"
                 android:hint="français"
                 android:inputType="textPersonName" />
+
+            <LinearLayout
+                android:id="@+id/llLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:padding="10dp">
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_language_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <Button
+                android:id="@+id/btn_language_add"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLanguage"
@@ -472,6 +592,30 @@
                     android:hint="classique"
                     android:inputType="textPersonName" />
 
+                <LinearLayout
+                    android:id="@+id/llTag"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_tag_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btn_tag_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTag"
                     android:layout_width="match_parent"
@@ -500,6 +644,30 @@
                     android:hint="pathfinder"
                     android:inputType="textPersonName" />
 
+                <LinearLayout
+                    android:id="@+id/llTopic"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_topic_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btn_topic_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTopic"
                     android:layout_width="match_parent"
@@ -527,6 +695,30 @@
                     android:hint="parcours"
                     android:inputType="textPersonName" />
 
+                <LinearLayout
+                    android:id="@+id/llMechanism"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:padding="10dp">
+
+                </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_mechanism_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
+
+                <Button
+                    android:id="@+id/btn_mechanism_add"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="+" />
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvMechanism"
                     android:layout_width="match_parent"
@@ -542,17 +734,6 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/et_game_multi_add_on"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="boite de classe, deck de classe"
-                    android:inputType="textPersonName" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvGameMultiAddOn"
@@ -568,18 +749,6 @@
                     android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/et_game_add_on"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="extension 5-6 joueurs, to the moon"
-                    android:inputType="textPersonName" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvGameAddOn"
@@ -642,18 +811,6 @@
                     android:textStyle="bold" />
 
 
-                <EditText
-                    android:id="@+id/et_add_on_game"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="pathfinder"
-                    android:inputType="textPersonName" />
-
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvGame"
                     android:layout_width="match_parent"
@@ -678,18 +835,6 @@
                     android:textColor="#000000"
                     android:textSize="18sp"
                     android:textStyle="bold" />
-
-                <EditText
-                    android:id="@+id/et_multi_add_on_games"
-                    android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="pathfinder, 6 qui prend"
-                    android:inputType="textPersonName" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvGames"
