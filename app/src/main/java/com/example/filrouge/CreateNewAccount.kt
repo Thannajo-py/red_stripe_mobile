@@ -23,7 +23,7 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View?) {
         binding.tvError.visibility = View.GONE
         if (binding.editTextTextPassword.text.toString() == binding.editTextTextPassword2.text.toString()){
-            val regex = Regex("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$")
+            val regex = Regex(RegexPattern.PassWord.pattern)
             val password = binding.editTextTextPassword.text.toString()
             val login = binding.editTextTextPersonName.text.toString()
             if (allUsers.listOfUsers.any { it.login == login }){
@@ -41,22 +41,18 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
                     isSuperAccount(binding.cbDeleteAccount)
                 )
                 )
+                if (allUsers.listOfUsers.isEmpty()){
+                    currentUser = user}
                 allUsers.listOfUsers.add(user)
                 sharedPreference.save(gson.toJson(allUsers), SerialKey.AllUsersStorage.name)
-                Toast.makeText(this, "Succés!", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Succès!", Toast.LENGTH_LONG).show()
 
                 startActivity(Intent(this, ViewGamesActivity::class.java))
                 finish()
 
             }
             else{
-                binding.tvError.text = "le login ne doit pas être vide\n" +
-                        "le mot de passe doit contenir au moins:\n" +
-                        "- 1 lettre minuscule\n" +
-                        "- 1 lettre majuscule\n" +
-                        "- 1 nombre\n" +
-                        "- 1 caractère spécial\n" +
-                        "- 6 caractères"
+                binding.tvError.text = CommonString.PassWordRequirement.string
                 binding.tvError.visibility = View.VISIBLE
             }
         }else{

@@ -3,14 +3,12 @@ package com.example.filrouge
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.InputType
 import android.text.method.PasswordTransformationMethod
 import android.view.*
-import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -20,7 +18,6 @@ import com.example.filrouge.databinding.ActivityViewGamesBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
@@ -71,62 +68,20 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         if(currentUser?.permission?.add == true){
             menu?.add(0,MenuId.AddContent.ordinal,0,"Ajouter un élément")
         }
+        menu?.add(0,MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            MenuId.CancelAndSynchronize.ordinal -> {
-                val (input, pwd, ll) = alertDialogLoginBox("Login", "Mot de passe", true)
-                AlertDialog.Builder(this)
-                    .setMessage("Voulez vous annuler toutes vos modifications et re-synchroniser?")
-                    .setTitle("Attention")
-                    .setPositiveButton("ok") { dialog, which ->
-                        run {
-                            synchronize(input.text.toString(),pwd.text.toString(), true)
-                        }
-                    }.setNegativeButton("cancel") { dialog, which ->
-                        Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                    }.setView(ll)
-                    .show()
-            }
+            MenuId.CancelAndSynchronize.ordinal -> synchronizeBox("Voulez vous annuler toutes vos modifications et re-synchroniser?", true)
             MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
             MenuId.DeleteAccount.ordinal -> startActivity(Intent(this, DeleteAccount::class.java))
             MenuId.AddContent.ordinal -> startActivity(Intent(this, AddElement::class.java))
             MenuId.CreateAccount.ordinal -> startActivity(Intent(this, CreateNewAccount::class.java))
-            MenuId.Synchronize.ordinal -> {
-                val (input, pwd, ll) = alertDialogLoginBox("Login", "Mot de passe", true)
-                AlertDialog.Builder(this)
-                    .setMessage("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?")
-                    .setTitle("Attention")
-                    .setPositiveButton("ok") { dialog, which ->
-                        run {
-                            synchronize(input.text.toString(),pwd.text.toString(), false)
-                        }
-                    }.setNegativeButton("cancel") { dialog, which ->
-                        Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                    }.setView(ll)
-                    .show()
-            }
-            MenuId.SynchronizeParameter.ordinal -> {
-
-                val (url, staticUrl, ll) = alertDialogLoginBox("API url", "API Static url", false)
-                url.setText(API_URL)
-                staticUrl.setText(API_STATIC)
-                AlertDialog.Builder(this)
-                    .setMessage("Entrez votre adresse d'api et de fichiers statiques")
-                    .setTitle("Paramètres")
-                    .setPositiveButton("ok") { dialog, which ->
-                        API_URL = url.text.toString()
-                        API_STATIC = staticUrl.text.toString()
-                        sharedPreference.save(url.text.toString(),SerialKey.APIUrl.name)
-                        sharedPreference.save(staticUrl.text.toString(), SerialKey.APIStaticUrl.name)
-
-                    }.setNegativeButton("cancel") { dialog, which ->
-                        Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                    }.setView(ll)
-                    .show()
-            }
+            MenuId.Synchronize.ordinal -> synchronizeBox("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?", false)
+            MenuId.SynchronizeParameter.ordinal -> urlParameterBox()
+            MenuId.ChangePassword.ordinal -> changePasswordBox()
         }
         return super.onOptionsItemSelected(item)
     }
@@ -172,12 +127,17 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         if (body.isNotBlank()){
             sharedPreference.save(body, SerialKey.APIStorage.name)
             val result = gson.fromJson(body, ApiResponse::class.java)
-            refreshAll(result)
+            if(result.games.isNotEmpty() || result.add_ons.isNotEmpty() || result.multi_add_ons.isNotEmpty()){
+                refreshAll(result)
+                runOnUiThread {
+                    adapter.notifyDataSetChanged()
+                }
+            }
+
         }
 
-
         runOnUiThread {
-            adapter.notifyDataSetChanged()
+
             binding.progressBar.visibility = View.GONE
         }
 
@@ -238,7 +198,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         loadImages(allGames)
         loadImages(allAddOns)
         loadImages(allMultiAddOns)
-        clean_image_list()
+        cleanImageList()
 
 
 
@@ -246,12 +206,17 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
     private fun <T:CommonBase> loadImages(listOfObject:ArrayList<T>){
         CoroutineScope(SupervisorJob()).run{
-            for (game in listOfObject){
+            for ((index, game) in listOfObject.withIndex()){
                 if (!allImages.list_of_images.contains(game.name)){
 
                     if (!game.external_img.isNullOrBlank()){
                         launch{
                             getImage(game.external_img, game.name)
+                            if (game is GameBean){
+                                runOnUiThread {
+                                    adapter.notifyItemChanged(index)
+                                }
+                            }
 
                         }
 
@@ -259,11 +224,18 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
                     else if (!game.picture.isNullOrBlank() && API_STATIC != null){
                         launch{
                             getImage("${API_STATIC}${game.picture}", game.name)
+                            if (game is GameBean){
+                                runOnUiThread {
+                                    adapter.notifyItemChanged(index)
+                                }
+                            }
                         }
                     }
                 }
 
             }
+
+
         }
     }
 
@@ -282,44 +254,128 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         }
     }
 
-    fun alertDialogLoginBox(box1Text:String, box2Text:String, isSecondBoxPassword:Boolean):Triple<EditText, EditText, LinearLayout>{
-        val loginText = TextView(this)
-        loginText.text = box1Text
-        loginText.typeface = Typeface.DEFAULT_BOLD
-        loginText.layoutParams = LinearLayout.LayoutParams(
+
+    private fun addTextView(text:String):TextView{
+        val textView = TextView(this)
+        textView.text = text
+        textView.typeface = Typeface.DEFAULT_BOLD
+        textView.layoutParams = LinearLayout.LayoutParams(
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        val login = EditText(this)
-        val pwdText = TextView(this)
-        pwdText.text = box2Text
-        pwdText.typeface = Typeface.DEFAULT_BOLD
-        pwdText.layoutParams = LinearLayout.LayoutParams(
-            ViewGroup.LayoutParams.WRAP_CONTENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        val pwd = EditText(this)
-        if (isSecondBoxPassword){
-            pwd.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
-            pwd.transformationMethod = PasswordTransformationMethod.getInstance()
-        }
+        return textView
+    }
+
+    private fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
         val ll = LinearLayout(this)
         ll.orientation = LinearLayout.VERTICAL
         ll.gravity = Gravity.CENTER
         ll.setPadding(20,0,20,0)
-        ll.addView(loginText)
-        ll.addView(login)
-        ll.addView(pwdText)
-        ll.addView(pwd)
-        return Triple(login, pwd, ll)
+        elements.forEach { ll.addView(it) }
+        return ll
     }
 
-    private fun clean_image_list(){
+    private fun addEditTextPassword():EditText{
+        val pwd = EditText(this)
+        pwd.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
+        pwd.transformationMethod = PasswordTransformationMethod.getInstance()
+        return pwd
+
+    }
+
+    private fun cleanImageList(){
         allImages.list_of_images.removeIf {
             !allGames.any {game -> game.name == it } && !allAddOns.any {game -> game.name == it }
                 && !allMultiAddOns.any {game -> game.name == it }
         }
         sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
+    }
+
+    private fun synchronizeBox(message:String, cancel:Boolean){
+        val login = EditText(this)
+        val pwd = addEditTextPassword()
+        val view = arrayListOf<View>(addTextView("Login"),login,addTextView("Mot de passe"), pwd)
+        val ll = addLinearLayout(view)
+        AlertDialog.Builder(this)
+            .setMessage(message)
+            .setTitle("Attention")
+            .setPositiveButton("ok") { dialog, which ->
+                run {
+                    synchronize(login.text.toString(),pwd.text.toString(), cancel)
+                }
+            }.setNegativeButton("cancel") { dialog, which ->
+                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+            }.setView(ll)
+            .show()
+    }
+
+    private fun urlParameterBox(){
+        val url = EditText(this)
+        val staticUrl = EditText(this)
+        val view = arrayListOf<View>(addTextView("API url"),url,addTextView("API static url"), staticUrl)
+        val ll = addLinearLayout(view)
+        url.setText(API_URL)
+        staticUrl.setText(API_STATIC)
+        AlertDialog.Builder(this)
+            .setMessage("Entrez votre adresse d'api et de fichiers statiques")
+            .setTitle("Paramètres")
+            .setPositiveButton("ok") { dialog, which ->
+                API_URL = url.text.toString()
+                API_STATIC = staticUrl.text.toString()
+                sharedPreference.save(url.text.toString(),SerialKey.APIUrl.name)
+                sharedPreference.save(staticUrl.text.toString(), SerialKey.APIStaticUrl.name)
+
+            }.setNegativeButton("cancel") { dialog, which ->
+                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+            }.setView(ll)
+            .show()
+    }
+
+    private fun changePasswordBox(){
+        val exPwd = addEditTextPassword()
+        val pwd = addEditTextPassword()
+        val pwdConfirm = addEditTextPassword()
+        val view = arrayListOf<View>(addTextView("Ancien mot de passe"),exPwd,addTextView("nouveau mot de passe"), pwd, addTextView("Confirmer nouveau mot de passe"), pwdConfirm)
+        val ll = addLinearLayout(view)
+        AlertDialog.Builder(this)
+            .setTitle("Changer mot de passe")
+            .setPositiveButton("ok") { dialog, which ->
+                run {
+                    passwordChange(exPwd, pwd, pwdConfirm)
+
+                }
+            }.setNegativeButton("cancel") { dialog, which ->
+                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+            }.setView(ll)
+            .show()
+    }
+
+    private fun passwordChange(exPwd:EditText, pwd:EditText, pwdConfirm:EditText){
+        if(SHA256.encryptThisString(exPwd.text.toString()) == currentUser?.password && currentUser != null){
+            val cUser = currentUser
+            if(pwd.text.toString() == pwdConfirm.text.toString() && cUser != null){
+                if(Regex(RegexPattern.PassWord.pattern).matches(pwd.text.toString())){
+                    val newPasswordUser = UserBean(cUser.login,
+                        SHA256.encryptThisString(pwd.text.toString()),
+                                cUser.permission)
+                    allUsers.listOfUsers.remove(currentUser)
+                    allUsers.listOfUsers.add(newPasswordUser)
+                    currentUser = newPasswordUser
+                    sharedPreference.save(gson.toJson(allUsers), SerialKey.AllUsersStorage.name)
+                    Toast.makeText(this, "changement de mot de passe effectué", Toast.LENGTH_SHORT).show()
+                }
+                else{
+                    Toast.makeText(this, CommonString.PassWordRequirement.string, Toast.LENGTH_LONG).show()
+                }
+            }
+            else{
+                Toast.makeText(this, "les nouveaux mots de passe ne sont pas identiques", Toast.LENGTH_SHORT).show()
+            }
+        }
+        else{
+            Toast.makeText(this, "mauvais mot de passe", Toast.LENGTH_SHORT).show()
+        }
+
     }
 
 
