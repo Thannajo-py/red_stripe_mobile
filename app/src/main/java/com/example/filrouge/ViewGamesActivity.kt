@@ -96,6 +96,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             , ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns),
             ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)
         )
+
         if (cancel){
             modification = SendApiChange(login,password,ApiResponse(
                 ArrayList(), ArrayList(), ArrayList())
@@ -104,7 +105,6 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             )
         }
         val content = gson.toJson(ApiBody(modification))
-
 
 
         CoroutineScope(SupervisorJob()).launch {
@@ -172,7 +172,6 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
     private fun getSave(){
         val savedContent = sharedPreference.getValueString(SerialKey.APIStorage.name)
         if (savedContent != null && savedContent.isNotBlank()) {
-            println(sharedPreference.getValueString(SerialKey.APIStorage.name))
             val answer = gson.fromJson(
                 sharedPreference.getValueString(SerialKey.APIStorage.name),
                 ApiResponse::class.java
@@ -199,6 +198,15 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         loadImages(allAddOns)
         loadImages(allMultiAddOns)
         cleanImageList()
+        addedGames.clear()
+        addedAddOns.clear()
+        addedMultiAddOns.clear()
+        modifiedGames.clear()
+        modifiedAddOns.clear()
+        modifiedMultiAddOns.clear()
+        deletedGames.clear()
+        deletedAddOns.clear()
+        deletedMultiAddOns.clear()
 
 
 

@@ -66,7 +66,7 @@ enum class CommonString(val string:String){
             "- 6 caractères")
 }
 
-enum class AddedStringContent{
+enum class AddedContent{
     Designer,
     Artist,
     Publisher,

@@ -131,11 +131,19 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
         }
     }
 
-    fun <T:CommonBase>deleteFromList(game:T, allGames:ArrayList<T>, addedGames:ArrayList<T>, deletedGames:ArrayList<T>, modifiedGames:ArrayList<T>){
-        allGames.removeIf{it == game}
+    fun <T:CommonBase>deleteFromList(game:T, allTypeGames:ArrayList<T>, addedGames:ArrayList<T>, deletedGames:ArrayList<T>, modifiedGames:ArrayList<T>){
+        allTypeGames.removeIf{it == game}
         modifiedGames.removeIf{it == game}
         addedGames.removeIf{it == game}
         game.id?.run{deletedGames.add(game)}
+        when (game){
+            is GameBean -> {
+                allAddOns.forEach { if (it.game == game.name) it.game = null }
+                allMultiAddOns.forEach { it.games.remove(game.name) }
+            }
+            is AddOnBean -> allGames.forEach { it.add_on.remove(game.name) }
+            is MultiAddOnBean -> allGames.forEach { it.multi_add_on.remove(game.name) }
+        }
     }
 
 

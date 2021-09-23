@@ -32,6 +32,8 @@ var currentUser:UserBean? = null
 var API_URL:String? = null
 var API_STATIC:String? = null
 
+var addOnGame:GameBean? = null
+
 
 
 
@@ -158,7 +160,7 @@ interface UserListener{
 }
 
 
-open class GenericAdapterWithCheckBox<T:CommonBase> (val data: ArrayList<T>, val client: OnGenericListListener,
+open class GenericAdapterWithCheckBox<T:CommonBase> (val data: ArrayList<T>, val client: OnGenericCbListListener,
                                                      val addedObject:ArrayList<T>)
     : RecyclerView.Adapter<GenericAdapterWithCheckBox.ViewHolder>() {
 
@@ -182,7 +184,8 @@ open class GenericAdapterWithCheckBox<T:CommonBase> (val data: ArrayList<T>, val
             holder.bind.ivPicture.setImageBitmap(null)
         }
         holder.bind.cbObject.isChecked = addedObject.contains(datum)
-        holder.bind.cvGameListCb.setOnClickListener { client.onElementClick(datum) }
+        holder.bind.cvGameListCb.setOnClickListener { client.onElementClick(datum, position) }
+        holder.bind.cbObject.setOnClickListener { client.onElementClick(datum, position) }
     }
 
     override fun getItemCount() = data.size
@@ -190,8 +193,12 @@ open class GenericAdapterWithCheckBox<T:CommonBase> (val data: ArrayList<T>, val
 
 
 }
+interface OnGenericCbListListener{
+    fun onElementClick(datum:CommonBase?, position:Int)
+}
 
-class GenericTypeCbAdapter (val data: ArrayList<String>, val client: CommonType, val type:String,
+
+class GenericTypeCbAdapter (val data: ArrayList<String>, val client: GenericCbListener, val type:String,
 val addedGeneric:ArrayList<String>) : RecyclerView.Adapter<GenericTypeCbAdapter.ViewHolder>(){
     class ViewHolder(val bind: NameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -204,7 +211,8 @@ val addedGeneric:ArrayList<String>) : RecyclerView.Adapter<GenericTypeCbAdapter.
         val datum = data[position]
         holder.bind.tvName.text = datum
         holder.bind.cbName.isChecked = addedGeneric.contains(datum)
-        holder.bind.cvNameListCb.setOnClickListener { client.onGenericClick(datum, type) }
+        holder.bind.llNameList.setOnClickListener { client.onGenericClick(datum, type, position) }
+        holder.bind.cbName.setOnClickListener { client.onGenericClick(datum, type, position) }
     }
 
 
@@ -212,4 +220,43 @@ val addedGeneric:ArrayList<String>) : RecyclerView.Adapter<GenericTypeCbAdapter.
 
 
 }
+
+interface GenericCbListener{
+    fun onGenericClick(datum:String, type: String, poisition:Int)
+
+}
+
+open class GameAddOnAdapterWithCheckBox(val data: ArrayList<GameBean>, val client: OnGenericCbListListener)
+    : RecyclerView.Adapter<GameAddOnAdapterWithCheckBox.ViewHolder>() {
+
+
+    class ViewHolder(val bind:GameListCbBinding) : RecyclerView.ViewHolder(bind.root)
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListCbBinding.inflate(
+        LayoutInflater.from(parent.context)))
+
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val datum = data[position]
+        holder.bind.tvName.text = datum.name
+        holder.bind.tvDesigner.text = if (datum.designers.size > 0) datum.designers[0] else ""
+        if (allImages.list_of_images.contains(datum.name)){
+            val file = File(holder.bind.tvDesigner.context.filesDir, datum.name)
+            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
+            holder.bind.ivPicture.setImageBitmap(compressedBitMap)
+        }else{
+            holder.bind.ivPicture.setImageBitmap(null)
+        }
+        holder.bind.cbObject.isChecked = addOnGame == datum
+        holder.bind.cvGameListCb.setOnClickListener { client.onElementClick(datum, position) }
+        holder.bind.cbObject.setOnClickListener { client.onElementClick(datum, position) }
+    }
+
+    override fun getItemCount() = data.size
+
+
+
+}
+
 

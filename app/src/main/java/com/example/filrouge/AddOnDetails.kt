@@ -42,6 +42,16 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
         }
         loadImage(addOn, binding.ivDetails)
+        parent?.run{
+            loadImage(this, binding.ivPicture)
+        }
+        addOn.game?.run{
+            val gameBean = allGames.filter{this == it.name}
+            if (gameBean.size == 1){
+                loadImage(gameBean[0], binding.ivPicture)
+            }
+        }
+
 
 
     }

@@ -144,16 +144,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <Button
-                    android:id="@+id/btn_designer_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_designer_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btn_designer_add"
@@ -195,16 +197,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <Button
-                    android:id="@+id/btn_artist_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_artist_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btn_artist_add"
@@ -245,16 +249,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <Button
-                    android:id="@+id/btn_publisher_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_publisher_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btn_publisher_add"
@@ -410,16 +416,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <Button
-                    android:id="@+id/btn_playing_mode_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_playing_mode_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btn_playing_mode_add"
@@ -461,16 +469,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:padding="10dp">
 
-                <Button
-                    android:id="@+id/btn_language_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
             </LinearLayout>
+
+            <Button
+                android:id="@+id/btn_language_delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="-"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btn_language_add"
@@ -587,16 +597,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-                    <Button
-                        android:id="@+id/btn_tag_delete"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_tag_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <Button
                     android:id="@+id/btn_tag_add"
@@ -637,16 +649,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-                    <Button
-                        android:id="@+id/btn_topic_delete"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_topic_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <Button
                     android:id="@+id/btn_topic_add"
@@ -686,16 +700,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:orientation="vertical">
+                    android:orientation="vertical"
+                    android:padding="10dp">
 
-                    <Button
-                        android:id="@+id/btn_mechanism_delete"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="-"
-                        android:visibility="gone"
-                        tools:visibility="visible" />
                 </LinearLayout>
+
+                <Button
+                    android:id="@+id/btn_mechanism_delete"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="-"
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <Button
                     android:id="@+id/btn_mechanism_add"
