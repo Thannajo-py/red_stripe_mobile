@@ -76,8 +76,16 @@ class AddElement : CommonType(), View.OnClickListener {
             setCommonElement(this)
             when(this){
                 is GameBean -> {setGameBeanElement(this)}
-                is AddOnBean -> binding.etAddOnGame.setText(this.game)
-                is MultiAddOnBean -> binding.etMultiAddOnGames.setText(this.games.joinToString(", "))
+                is AddOnBean -> {
+                    binding.etAddOnGame.setText(this.game)
+                    binding.rbAddOn.isChecked = true
+                    setView(binding.llAddOn)
+                }
+                is MultiAddOnBean -> {
+                    binding.etMultiAddOnGames.setText(this.games.joinToString(", "))
+                    binding.rbMultiAddOn.isChecked = true
+                    setView(binding.llMultiAddOn)
+                }
             }
         }
 

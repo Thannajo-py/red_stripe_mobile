@@ -4,8 +4,8 @@
     <option name="filePathToZoomLevelMap">
       <map>
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/accoun_list.xml" value="0.22" />
-        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/account_list.xml" value="0.11302083333333333" />
-        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_add_element.xml" value="0.33" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/account_list.xml" value="0.25" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_add_element.xml" value="0.10033020066040133" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_add_on_details.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_create_new_account.xml" value="0.20520833333333333" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_delete_account.xml" value="0.2015625" />
@@ -17,6 +17,8 @@
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/activity_view_games.xml" value="0.25" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/game_list.xml" value="0.19166666666666668" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/game_list2.xml" value="0.19166666666666668" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/game_list_cb.xml" value="0.19010416666666666" />
+        <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/name_lis_cb.xml" value="0.19010416666666666" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/name_list.xml" value="0.19427083333333334" />
         <entry key="..\:/Users/wolga/AndroidStudioProjects/FilRouge/app/src/main/res/layout/pwd_login_confirm.xml" value="0.19895833333333332" />
       </map>
