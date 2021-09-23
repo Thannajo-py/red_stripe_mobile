@@ -15,26 +15,40 @@ class AddElement : CommonType(), View.OnClickListener {
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
     private val sharedPreference by lazy{ SharedPreference(this)}
 
+    private val addedStringContent = arrayListOf(ArrayList<String>(), ArrayList<String>(), ArrayList<String>()
+        , ArrayList<String>(), ArrayList<String>(), ArrayList<String>(), ArrayList<String>(), ArrayList<String>())
+
+    private val designerAdapter = GenericTypeCbAdapter(designers,this, Type.Designer.name, addedStringContent[AddedStringContent.Designer.ordinal])
+    private val artistAdapter = GenericTypeCbAdapter(artists,this, Type.Artist.name, addedStringContent[AddedStringContent.Artist.ordinal])
+    private val publisherAdapter = GenericTypeCbAdapter(publishers,this, Type.Publisher.name, addedStringContent[AddedStringContent.Publisher.ordinal])
+    private val languageAdapter = GenericTypeCbAdapter(languages,this, Type.Language.name, addedStringContent[AddedStringContent.Language.ordinal])
+    private val playingModeAdapter = GenericTypeCbAdapter(playing_mode,this, Type.PlayingMode.name, addedStringContent[AddedStringContent.PlayingMod.ordinal])
+
     private val difficulties = ArrayList<String>()
     private val difficultyAdapter = GenericTypeAdapter(difficulties, this, Type.Difficulty.name)
 
     private val tags = ArrayList<String>()
-    private val tagAdapter = GenericTypeAdapter(tags, this, Type.Tag.name)
+    private val tagAdapter = GenericTypeCbAdapter(tags, this, Type.Tag.name, addedStringContent[AddedStringContent.Tag.ordinal])
 
     private val topics = ArrayList<String>()
-    private val topicAdapter = GenericTypeAdapter(topics, this, Type.Topic.name)
+    private val topicAdapter = GenericTypeCbAdapter(topics, this, Type.Topic.name, addedStringContent[AddedStringContent.Topic.ordinal])
 
     private val mechanism = ArrayList<String>()
-    private val mechanismAdapter = GenericTypeAdapter(mechanism, this, Type.Mechanism.name)
+    private val mechanismAdapter = GenericTypeCbAdapter(mechanism, this, Type.Mechanism.name, addedStringContent[AddedStringContent.Mechanism.ordinal])
 
+
+
+    private val addedAddons = ArrayList<AddOnBean>()
     private val addOns = ArrayList<AddOnBean>()
+    private val addOnAdapter = GenericAdapterWithCheckBox(addOns ,this, addedAddons)
+
+    private val addedMultiAddons = ArrayList<MultiAddOnBean>()
     private val multiAddOns = ArrayList<MultiAddOnBean>()
+    private val multiAddOnAdapter = GenericAdapterWithCheckBox(multiAddOns, this, addedMultiAddons)
 
-    private val addOnAdapter = GenericAdapter(addOns ,this)
-    private val multiAddOnAdapter = GenericAdapter(multiAddOns, this)
-
+    private val addedGames = ArrayList<GameBean>()
     private val games = ArrayList<GameBean>()
-    private val gamesAdapter = GenericAdapter(games, this)
+    private val gamesAdapter = GenericAdapterWithCheckBox(games, this, addedGames)
 
     private val game = ArrayList<GameBean>()
     private val gameAdapter = GenericAdapter(game, this)
@@ -76,7 +90,7 @@ class AddElement : CommonType(), View.OnClickListener {
             setCommonElement(this)
             when(this){
                 is GameBean -> {setGameBeanElement(this)}
-                is AddOnBean -> binding.etAddOnGame.setText(this.game)
+                is AddOnBean -> addedAddons.addAll(allAddOns.filter{it == this})binding.etAddOnGame.setText(this.game)
                 is MultiAddOnBean -> binding.etMultiAddOnGames.setText(this.games.joinToString(", "))
             }
         }
@@ -399,6 +413,8 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
+
+
     override fun onGenericClick(datum: String, type: String) {
         when(type){
             Type.Difficulty.name -> binding.etDifficulty.setText("${datum}")
@@ -463,6 +479,19 @@ class AddElement : CommonType(), View.OnClickListener {
 
     }
 
+    override fun fillCommonRv(
+        rvDesigner: RecyclerView,
+        rvArtist: RecyclerView,
+        rvPublisher: RecyclerView,
+        rvLanguage: RecyclerView,
+        rvPlayingMod: RecyclerView
+    ) {
+        loadRv(rvDesigner, designers, designerAdapter, allDesigners())
+        loadRv(rvArtist, artists, artistAdapter, allArtists())
+        loadRv(rvPublisher, publishers, publisherAdapter, allPublishers())
+        loadRv(rvLanguage, languages, languageAdapter, allLanguages())
+        loadRv(rvPlayingMod, playing_mode, playingModeAdapter, allPlayingModes())
+    }
 
 
 }

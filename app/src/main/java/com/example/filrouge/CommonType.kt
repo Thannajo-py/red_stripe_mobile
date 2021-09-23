@@ -14,23 +14,23 @@ import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 
 
-abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericTypeAdapter.GenericListener{
+abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericListener{
 
 
 
-    private val designers = ArrayList<String>()
+    protected val designers = ArrayList<String>()
     private val designerAdapter = GenericTypeAdapter(designers, this, Type.Designer.name)
 
-    private val artists = ArrayList<String>()
+    protected val artists = ArrayList<String>()
     private val artistAdapter = GenericTypeAdapter(artists, this, Type.Artist.name)
 
-    private val publishers = ArrayList<String>()
+    protected val publishers = ArrayList<String>()
     private val publisherAdapter = GenericTypeAdapter(publishers, this, Type.Publisher.name)
 
-    private val languages = ArrayList<String>()
+    protected val languages = ArrayList<String>()
     private val languageAdapter = GenericTypeAdapter(languages, this, Type.Language.name)
 
-    private val playing_mode = ArrayList<String>()
+    protected val playing_mode = ArrayList<String>()
     private val playingModeAdapter = GenericTypeAdapter(playing_mode, this, Type.PlayingMode.name)
 
 
@@ -81,7 +81,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericT
         loadRv(rvPlayingMod, playing_mode, playingModeAdapter, element.playing_mode)
     }
 
-    fun fillCommonRv(rvDesigner:RecyclerView, rvArtist:RecyclerView, rvPublisher:RecyclerView,
+    open fun fillCommonRv(rvDesigner:RecyclerView, rvArtist:RecyclerView, rvPublisher:RecyclerView,
                      rvLanguage:RecyclerView, rvPlayingMod:RecyclerView){
         loadRv(rvDesigner, designers, designerAdapter, allDesigners())
         loadRv(rvArtist, artists, artistAdapter, allArtists())
