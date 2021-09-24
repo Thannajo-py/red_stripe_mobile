@@ -131,11 +131,8 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
         }
     }
 
-    fun <T:CommonBase>deleteFromList(game:T, allTypeGames:ArrayList<T>, addedGames:ArrayList<T>, deletedGames:ArrayList<T>, modifiedGames:ArrayList<T>){
+    fun <T:CommonBase>deleteFromList(game:T, allTypeGames:ArrayList<T>){
         allTypeGames.removeIf{it == game}
-        modifiedGames.removeIf{it == game}
-        addedGames.removeIf{it == game}
-        game.id?.run{deletedGames.add(game)}
         when (game){
             is GameBean -> {
                 allAddOns.forEach { if (it.game == game.name) it.game = null }
@@ -150,9 +147,6 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
 
     fun refreshedSavedData(sharedPreference:SharedPreference){
         sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
-        sharedPreference.save(gson.toJson(ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)),SerialKey.APIDeleteStorage.name)
-        sharedPreference.save(gson.toJson(ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns)),SerialKey.APIModifyStorage.name)
-        sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns, addedMultiAddOns)),SerialKey.APIAddStorage.name)
         startActivity(Intent(this,ViewGamesActivity::class.java))
         finish()
     }

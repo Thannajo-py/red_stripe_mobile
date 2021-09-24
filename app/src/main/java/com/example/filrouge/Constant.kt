@@ -1,6 +1,5 @@
 package com.example.filrouge
 
-import java.util.regex.Pattern
 
 enum class SerialKey{
     Game,
@@ -13,9 +12,6 @@ enum class SerialKey{
     RememberNameStorage,
     RememberPasswordStorage,
     SearchResult,
-    APIDeleteStorage,
-    APIModifyStorage,
-    APIAddStorage,
     ToModifyData,
     AllImagesStorage,
     AllUsersStorage,

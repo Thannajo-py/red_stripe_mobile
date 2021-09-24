@@ -37,7 +37,7 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         when (item.itemId){
             MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension partagée?").setTitle("Attention")
                 .setPositiveButton("ok"){
-                        dialog, which -> run{deleteFromList(multiAddOn, allMultiAddOns, addedMultiAddOns, deletedMultiAddOns, modifiedMultiAddOns)
+                        dialog, which -> run{deleteFromList(multiAddOn, allMultiAddOns)
                     refreshedSavedData(sharedPreference)
 
                         }

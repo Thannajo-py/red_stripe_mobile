@@ -117,6 +117,8 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         }
         val content = gson.toJson(ApiBody(modification))
 
+        println(content)
+
 
         CoroutineScope(SupervisorJob()).launch {
             try {
@@ -202,24 +204,12 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
                 binding.tvGameError.text = "Liste vide synchonisez là!"
                 binding.tvGameError.visibility = View.VISIBLE
         }
-        loadModificationSave(SerialKey.APIAddStorage.name, addedGames, addedAddOns, addedMultiAddOns)
-        loadModificationSave(SerialKey.APIDeleteStorage.name, deletedGames, deletedAddOns, deletedMultiAddOns)
-        loadModificationSave(SerialKey.APIModifyStorage.name, modifiedGames, modifiedAddOns, modifiedMultiAddOns)
+
 
 
     }
 
-    private fun loadModificationSave(serialKey: String, gameList:ArrayList<GameBean>,
-                                     addOnList:ArrayList<AddOnBean>,
-                                     multiAddOnList: ArrayList<MultiAddOnBean>){
-        val savedContent = sharedPreference.getValueString(serialKey)
-        if (!savedContent.isNullOrBlank()){
-            val answer = gson.fromJson(savedContent, ApiResponse::class.java)
-            fillList(gameList, answer.games)
-            fillList(addOnList, answer.add_ons)
-            fillList(multiAddOnList, answer.multi_add_ons)
-        }
-    }
+
 
     private fun refreshAll(answer:ApiResponse){
         fillList(allGames, answer.games)
@@ -229,15 +219,6 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         loadImages(allAddOns)
         loadImages(allMultiAddOns)
         cleanImageList()
-        addedGames.clear()
-        addedAddOns.clear()
-        addedMultiAddOns.clear()
-        modifiedGames.clear()
-        modifiedAddOns.clear()
-        modifiedMultiAddOns.clear()
-        deletedGames.clear()
-        deletedAddOns.clear()
-        deletedMultiAddOns.clear()
         refreshedSavedData(sharedPreference)
 
     }

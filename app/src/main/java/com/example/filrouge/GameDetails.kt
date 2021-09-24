@@ -73,7 +73,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
                 .setPositiveButton("ok"){
                         dialog, which -> run{
 
-                    deleteFromList(game, allGames, addedGames, deletedGames, modifiedGames)
+                    deleteFromList(game, allGames)
                                             refreshedSavedData(sharedPreference)
                         }
                 }.setNegativeButton("cancel"){

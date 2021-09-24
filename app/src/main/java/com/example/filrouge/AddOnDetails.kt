@@ -60,7 +60,7 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         when (item.itemId){
             MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension?").setTitle("Attention")
                 .setPositiveButton("ok"){
-                        dialog, which -> run{deleteFromList(addOn, allAddOns, addedAddOns, deletedAddOns, modifiedAddOns)
+                        dialog, which -> run{deleteFromList(addOn, allAddOns)
                     refreshedSavedData(sharedPreference)
                 }
                 }.setNegativeButton("cancel"){

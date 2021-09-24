@@ -30,8 +30,5 @@ class SharedPreference(val context: Context) {
 
 fun refreshedSavedData(sharedPreference:SharedPreference){
     sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
-    sharedPreference.save(gson.toJson(ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)),SerialKey.APIDeleteStorage.name)
-    sharedPreference.save(gson.toJson(ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns)),SerialKey.APIModifyStorage.name)
-    sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns, addedMultiAddOns)),SerialKey.APIAddStorage.name)
 
 }

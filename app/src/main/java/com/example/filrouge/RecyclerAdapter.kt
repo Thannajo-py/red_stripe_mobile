@@ -10,19 +10,10 @@ import java.io.File
 
 
 val allGames = ArrayList<GameBean>()
-val addedGames = ArrayList<GameBean>()
-val modifiedGames = ArrayList<GameBean>()
-val deletedGames = ArrayList<GameBean>()
 
 val allAddOns = ArrayList<AddOnBean>()
-val addedAddOns = ArrayList<AddOnBean>()
-val modifiedAddOns = ArrayList<AddOnBean>()
-val deletedAddOns = ArrayList<AddOnBean>()
 
 val allMultiAddOns = ArrayList<MultiAddOnBean>()
-val addedMultiAddOns = ArrayList<MultiAddOnBean>()
-val modifiedMultiAddOns = ArrayList<MultiAddOnBean>()
-val deletedMultiAddOns = ArrayList<MultiAddOnBean>()
 
 val allImages = AllImages(mutableSetOf())
 val allUsers = AllUsers(ArrayList())

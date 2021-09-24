@@ -240,31 +240,8 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
         allList.add(modifiedData)
     }
 
-    private fun <T:CommonBase>handleCategoryChange(changedList:ArrayList<T>, allList:ArrayList<T>,
-                                           modifiedData:T){
-        changedObject!!.id?.run{
-            when(changedObject){
-                is GameBean -> modifyElement(modifiedGames, changedList, allGames, allList, changedObject as GameBean, modifiedData)
-                is AddOnBean -> modifyElement(modifiedAddOns, changedList, allAddOns, allList, changedObject as AddOnBean, modifiedData)
-                is MultiAddOnBean -> modifyElement(modifiedMultiAddOns, changedList, allMultiAddOns, allList, changedObject as MultiAddOnBean, modifiedData)
-            }
-        }?:run{
-            when(changedObject){
-                is GameBean -> modifyElement(addedToListGames, changedList, allGames, allList, changedObject as GameBean, modifiedData)
-                is AddOnBean -> modifyElement(addedAddOns, changedList, allAddOns, allList, changedObject as AddOnBean, modifiedData)
-                is MultiAddOnBean -> modifyElement(com.example.filrouge.addedMultiAddOns, changedList, allMultiAddOns, allList, changedObject as MultiAddOnBean, modifiedData)
-            }
-        }
 
-    }
 
-    private fun deleteChangeObject(){
-        when(changedObject){
-            is GameBean -> deletedGames.add(changedObject as GameBean)
-            is AddOnBean -> deletedAddOns.add(changedObject as AddOnBean)
-            is MultiAddOnBean -> deletedMultiAddOns.add(changedObject as MultiAddOnBean)
-        }
-    }
 
     private fun registerGame(name: String,
                      player_min: Int?,
@@ -320,15 +297,11 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
             null
         )
         changedObject?.run{
-            game.id?.run{
-                handleCategoryChange(modifiedGames, allGames, game)
-        }?:run{
-                changedObject?.id?.run{deleteChangeObject()}
-                handleCategoryChange(addedGames, allGames, game)
-            }}?:run{
-            allGames.add(game)
-            addedGames.add(game)
+            allGames.removeIf { it == changedObject }
+            allAddOns.removeIf { it == changedObject }
+            allMultiAddOns.removeIf { it == changedObject }
         }
+        allGames.add(game)
         allAddOns.forEach { if (game.add_on.contains(it.name)) it.game = game.name }
         allMultiAddOns.forEach { if (game.multi_add_on.contains(it.name)) it.games.add(game.name)}
 
@@ -380,17 +353,11 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
         )
 
         changedObject?.run{
-            addOn.id?.run{
-                handleCategoryChange(modifiedAddOns, allAddOns, addOn)
-            }?:run{
-                changedObject?.id?.run{deleteChangeObject()}
-                handleCategoryChange(addedAddOns, allAddOns, addOn)
-            }}?:run{
-            allAddOns.add(addOn)
-            addedAddOns.add(addOn)
-            val addOnGame = allGames.filter{it.name == addOn.game}
-            if (addOnGame.size == 1) addOnGame[0].add_on.add(addOn.name)
+            allGames.removeIf { it == changedObject }
+            allAddOns.removeIf { it == changedObject }
+            allMultiAddOns.removeIf { it == changedObject }
         }
+        allAddOns.add(addOn)
 
 
     }
@@ -438,18 +405,12 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
         )
 
         changedObject?.run{
-            multiAddOn.id?.run{
-                handleCategoryChange(modifiedMultiAddOns, allMultiAddOns, multiAddOn)
-            }?:run{
-                changedObject?.id?.run{deleteChangeObject()}
-                handleCategoryChange(addedMultiAddOns, allMultiAddOns, multiAddOn)
-            }}?:run{
-            allMultiAddOns.add(multiAddOn)
-            addedMultiAddOns.add(multiAddOn)
+            allGames.removeIf { it == changedObject }
+            allAddOns.removeIf { it == changedObject }
+            allMultiAddOns.removeIf { it == changedObject }
         }
+        allMultiAddOns.add(multiAddOn)
         allGames.filter{multiAddOn.games.contains(it.name)}.forEach{it.multi_add_on.add(multiAddOn.name)}
-
-
     }
 
     private fun setView(ll: LinearLayout){
