@@ -2,6 +2,9 @@ package com.example.filrouge
 
 import java.io.Serializable
 
+fun listEquality( list:ArrayList<String>, otherList:ArrayList<String>) = list.size == otherList.size && list.all{otherList.contains(it)}
+
+
 data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>):Serializable
 class GameBean(
         id: Int?,
@@ -51,8 +54,25 @@ class GameBean(
                         return false
                 }
                 else{
-                        return this.id == other.id && this.name == other.name
 
+                        return this.id == other.id && this.name == other.name &&
+                                this.player_min == other.player_min &&
+                                this.player_max == other.player_max &&
+                                this.playing_time == other.playing_time &&
+                                this.difficulty == other.difficulty &&
+                                this.bgg_link == other.bgg_link &&
+                                this.age == other.age &&
+                                this.buying_price == other.buying_price &&
+                                this.stock == other.stock &&
+                                this.max_time == other.max_time &&
+                                this.external_img == other.external_img &&
+                                listEquality(this.designers, other.designers) &&
+                                listEquality(this.artists, other.artists) &&
+                                listEquality(this.publishers, other.publishers) &&
+                                listEquality(this.playing_mode, other.playing_mode) &&
+                                listEquality(this.language, other.language) &&
+                                listEquality(this.add_on, other.add_on) &&
+                                listEquality(this.multi_add_on, other.multi_add_on)
                 }
         }
         }
@@ -101,7 +121,26 @@ picture),Serializable
                         return false
                 }
                 else{
-                        return this.id == other.id && this.name == other.name
+                        return this.id == other.id && this.name == other.name &&
+                                this.player_min == other.player_min &&
+                                this.player_max == other.player_max &&
+                                this.playing_time == other.playing_time &&
+                                this.difficulty == other.difficulty &&
+                                this.bgg_link == other.bgg_link &&
+                                this.age == other.age &&
+                                this.buying_price == other.buying_price &&
+                                this.stock == other.stock &&
+                                this.max_time == other.max_time &&
+                                this.external_img == other.external_img &&
+                                this.game == other.game &&
+                                listEquality(this.designers, other.designers) &&
+                                listEquality(this.artists, other.artists) &&
+                                listEquality(this.publishers, other.publishers) &&
+                                listEquality(this.playing_mode, other.playing_mode) &&
+                                listEquality(this.language, other.language)
+
+
+
 
                 }
         }
@@ -152,10 +191,29 @@ class MultiAddOnBean(
                         return false
                 }
                 else{
-                        return this.id == other.id && this.name == other.name
+                        return this.id == other.id && this.name == other.name &&
+                                this.player_min == other.player_min &&
+                                this.player_max == other.player_max &&
+                                this.playing_time == other.playing_time &&
+                                this.difficulty == other.difficulty &&
+                                this.bgg_link == other.bgg_link &&
+                                this.age == other.age &&
+                                this.buying_price == other.buying_price &&
+                                this.stock == other.stock &&
+                                this.max_time == other.max_time &&
+                                this.external_img == other.external_img &&
+                                listEquality(this.designers, other.designers) &&
+                                listEquality(this.artists, other.artists) &&
+                                listEquality(this.publishers, other.publishers) &&
+                                listEquality(this.playing_mode, other.playing_mode) &&
+                                listEquality(this.language, other.language) &&
+                                listEquality(this.games, other.games)
+
 
                 }
         }
+
+
 }
 
 open class CommonBase(

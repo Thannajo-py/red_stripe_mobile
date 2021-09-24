@@ -15,8 +15,8 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
     private val sharedPreference by lazy{ SharedPreference(this)}
 
-    private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(ArrayList<String>(), ArrayList<String>(), ArrayList<String>()
-        , ArrayList<String>(), ArrayList<String>(), ArrayList<String>(), ArrayList<String>(), ArrayList<String>())
+    private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(ArrayList(), ArrayList(), ArrayList()
+        , ArrayList(), ArrayList(), ArrayList(), ArrayList(), ArrayList())
 
     private val addedEditText: ArrayList<ArrayList<EditText>> = arrayListOf(ArrayList(), ArrayList(), ArrayList()
         , ArrayList(), ArrayList(), ArrayList(), ArrayList(), ArrayList())
@@ -217,10 +217,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
                 allImages.list_of_images.remove(changedObject?.name)
                 sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
             }
-            sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
-            sharedPreference.save(gson.toJson(ApiResponse(addedGames, addedAddOns,
-                addedMultiAddOns
-            )),SerialKey.AddedContent.name)
+            refreshedSavedData(sharedPreference)
             startActivity(Intent(this,ViewGamesActivity::class.java))
             finish()
         }
@@ -229,9 +226,9 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
 
 
     private fun addAllEditText(list:ArrayList<String>, et:EditText, etList: ArrayList<EditText>): ArrayList<String>{
-        if (et.text.toString().isNotBlank()) list.add(et.text.toString())
+        if (et.text.toString().isNotBlank()) list.add(et.text.toString().trim())
         list.addAll(etList.map{it.text.toString()}.filter{it.isNotBlank()})
-        return list
+        return list.toCollection(mutableSetOf()).toCollection(ArrayList())
     }
     private fun <T:CommonBase, U:CommonBase>modifyElement(originalChangedList:ArrayList<U>, changedList:ArrayList<T>,
                                                   originalAllList:ArrayList<U>, allList:ArrayList<T>,

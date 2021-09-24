@@ -44,8 +44,8 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
     }
 
     override fun onResume() {
-        super.onResume()
         getSave()
+        super.onResume()
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (currentUser?.permission?.synchronize == true) {
@@ -91,18 +91,29 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         binding.progressBar.visibility = View.VISIBLE
         binding.tvGameError.visibility = View.GONE
 
-        var modification =SendApiChange(login,password,ApiResponse(
-            addedGames, addedAddOns, addedMultiAddOns)
-            , ApiResponse(modifiedGames, modifiedAddOns, modifiedMultiAddOns),
-            ApiResponse(deletedGames, deletedAddOns, deletedMultiAddOns)
+        var modification = SendApiChange(login,password,ApiResponse(
+            ArrayList(), ArrayList(), ArrayList())
+            , ApiResponse(ArrayList(), ArrayList(), ArrayList()),
+            ApiResponse(ArrayList(), ArrayList(), ArrayList())
         )
 
-        if (cancel){
-            modification = SendApiChange(login,password,ApiResponse(
-                ArrayList(), ArrayList(), ArrayList())
-                , ApiResponse(ArrayList(), ArrayList(), ArrayList()),
-                ApiResponse(ArrayList(), ArrayList(), ArrayList())
-            )
+
+        if (!cancel){
+            val lastSave = gson.fromJson(sharedPreference.getValueString(SerialKey.APILastSave.name), ApiResponse::class.java)
+            modification =SendApiChange(login,password,ApiResponse(
+                allGames.filter{it.id == null}.toCollection(ArrayList()),
+                allAddOns.filter{it.id == null}.toCollection(ArrayList()),
+                allMultiAddOns.filter{it.id == null}.toCollection(ArrayList()))
+                , ApiResponse(
+                    allGames.filter{ g -> lastSave.games.any{it.id == g.id && it != g}}.toCollection(ArrayList()),
+                    allAddOns.filter{ g -> lastSave.add_ons.any{it.id == g.id && it != g}}.toCollection(ArrayList()),
+                    allMultiAddOns.filter{ g -> lastSave.multi_add_ons.any{it.id == g.id && it != g}}.toCollection(ArrayList())
+                ),
+                ApiResponse(
+                    lastSave.games.filter{ g -> !allGames.any{it.id == g.id}}.toCollection(ArrayList()),
+                    lastSave.add_ons.filter{ g -> !allAddOns.any{it.id == g.id}}.toCollection(ArrayList()),
+                    lastSave.multi_add_ons.filter{ g -> !allMultiAddOns.any{it.id == g.id}}.toCollection(ArrayList())
+                    ))
         }
         val content = gson.toJson(ApiBody(modification))
 
@@ -128,6 +139,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             sharedPreference.save(body, SerialKey.APIStorage.name)
             val result = gson.fromJson(body, ApiResponse::class.java)
             if(result.games.isNotEmpty() || result.add_ons.isNotEmpty() || result.multi_add_ons.isNotEmpty()){
+                sharedPreference.save(body, SerialKey.APILastSave.name)
                 refreshAll(result)
                 runOnUiThread {
                     adapter.notifyDataSetChanged()
@@ -173,7 +185,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         val savedContent = sharedPreference.getValueString(SerialKey.APIStorage.name)
         if (savedContent != null && savedContent.isNotBlank()) {
             val answer = gson.fromJson(
-                sharedPreference.getValueString(SerialKey.APIStorage.name),
+                savedContent,
                 ApiResponse::class.java
             )
             fillList(allGames, answer.games)
@@ -181,13 +193,32 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             fillList(allAddOns, answer.add_ons)
             fillList(allMultiAddOns, answer.multi_add_ons)
             val savedList = sharedPreference.getValueString(SerialKey.AllImagesStorage.name)
-            allImages.list_of_images.clear()
-            allImages.list_of_images.addAll(gson.fromJson(savedList, AllImages::class.java)?.list_of_images?: mutableSetOf())
+            if (!savedList.isNullOrBlank()){
+                allImages.list_of_images.clear()
+                allImages.list_of_images.addAll(gson.fromJson(savedList, AllImages::class.java)?.list_of_images?: mutableSetOf())
+            }
+
         }else{
                 binding.tvGameError.text = "Liste vide synchonisez là!"
                 binding.tvGameError.visibility = View.VISIBLE
         }
+        loadModificationSave(SerialKey.APIAddStorage.name, addedGames, addedAddOns, addedMultiAddOns)
+        loadModificationSave(SerialKey.APIDeleteStorage.name, deletedGames, deletedAddOns, deletedMultiAddOns)
+        loadModificationSave(SerialKey.APIModifyStorage.name, modifiedGames, modifiedAddOns, modifiedMultiAddOns)
 
+
+    }
+
+    private fun loadModificationSave(serialKey: String, gameList:ArrayList<GameBean>,
+                                     addOnList:ArrayList<AddOnBean>,
+                                     multiAddOnList: ArrayList<MultiAddOnBean>){
+        val savedContent = sharedPreference.getValueString(serialKey)
+        if (!savedContent.isNullOrBlank()){
+            val answer = gson.fromJson(savedContent, ApiResponse::class.java)
+            fillList(gameList, answer.games)
+            fillList(addOnList, answer.add_ons)
+            fillList(multiAddOnList, answer.multi_add_ons)
+        }
     }
 
     private fun refreshAll(answer:ApiResponse){
@@ -207,8 +238,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         deletedGames.clear()
         deletedAddOns.clear()
         deletedMultiAddOns.clear()
-
-
+        refreshedSavedData(sharedPreference)
 
     }
 

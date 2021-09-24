@@ -13,7 +13,6 @@ enum class SerialKey{
     RememberNameStorage,
     RememberPasswordStorage,
     SearchResult,
-    AddedContent,
     APIDeleteStorage,
     APIModifyStorage,
     APIAddStorage,
@@ -21,7 +20,8 @@ enum class SerialKey{
     AllImagesStorage,
     AllUsersStorage,
     APIUrl,
-    APIStaticUrl
+    APIStaticUrl,
+    APILastSave
 
 }
 
