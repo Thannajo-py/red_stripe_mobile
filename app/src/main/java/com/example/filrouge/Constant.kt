@@ -17,7 +17,9 @@ enum class SerialKey{
     AllUsersStorage,
     APIUrl,
     APIStaticUrl,
-    APILastSave
+    APILastSave,
+    IsLocal,
+    Timestamp
 
 }
 
@@ -45,7 +47,9 @@ enum class MenuId{
     ModifyThis,
     CreateAccount,
     SynchronizeParameter,
-    ChangePassword
+    ChangePassword,
+    LoadImages,
+    ResetDB
 }
 
 enum class RegexPattern(val pattern:String){

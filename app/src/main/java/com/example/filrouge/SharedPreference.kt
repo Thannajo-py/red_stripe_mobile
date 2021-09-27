@@ -19,6 +19,24 @@ class SharedPreference(val context: Context) {
         return sharedPref.getString(KEY_NAME, "")
     }
 
+    fun getBoolean(KEY_NAME: String): Boolean {
+        return sharedPref.getBoolean(KEY_NAME, true)
+    }
+
+    fun getFloat(KEY_NAME: String) = sharedPref.getFloat(KEY_NAME, 0.0F)
+
+    fun saveFloat(serialKey: String, value:Float) {
+        val editor = sharedPref.edit()
+        editor.putFloat(serialKey, value)
+        editor.apply()
+    }
+
+    fun saveBoolean(serialKey: String, value:Boolean) {
+        val editor = sharedPref.edit()
+        editor.putBoolean(serialKey, value)
+        editor.apply()
+    }
+
     fun removeValue(KEY_NAME: String) {
 
         val editor: SharedPreferences.Editor = sharedPref.edit()

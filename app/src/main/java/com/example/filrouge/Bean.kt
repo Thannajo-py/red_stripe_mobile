@@ -6,6 +6,13 @@ fun listEquality( list:ArrayList<String>, otherList:ArrayList<String>) = list.si
 
 
 data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>):Serializable
+
+data class ApiDelete( val games:ArrayList<Int?>, val add_ons: ArrayList<Int?>, val multi_add_ons: ArrayList<Int?>):Serializable
+
+data class ApiReceive( val games:ArrayList<GameBean>?, val add_ons: ArrayList<AddOnBean>?, val multi_add_ons: ArrayList<MultiAddOnBean>?,
+                       val deleted_games: ArrayList<Int>?, val deleted_add_ons:ArrayList<Int>?, val deleted_multi_add_ons:ArrayList<Int>?
+                       ,val timestamp: Float)
+
 class GameBean(
         id: Int?,
         name: String,
@@ -237,7 +244,7 @@ open class CommonBase(
         val picture:String?,
 ):Serializable
 
-class SendApiChange(val login:String, val password:String, val addedList:ApiResponse, val modifiedList:ApiResponse, val deletedList:ApiResponse)
+class SendApiChange(val login:String, val password:String, val addedList:ApiResponse, val modifiedList:ApiResponse, val deletedList:ApiDelete, val timestamp:Float)
 
 class ApiBody(val body:SendApiChange)
 

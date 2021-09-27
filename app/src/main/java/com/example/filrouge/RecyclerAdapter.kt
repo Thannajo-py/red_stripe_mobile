@@ -25,6 +25,8 @@ var API_STATIC:String? = null
 
 var addOnGame:GameBean? = null
 
+var isLocal:Boolean = true
+
 
 
 

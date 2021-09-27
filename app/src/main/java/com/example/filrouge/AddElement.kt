@@ -127,12 +127,12 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
 
     }
 
-    fun loadAddOnGame(element:AddOnBean):GameBean?{
+    private fun loadAddOnGame(element:AddOnBean):GameBean?{
         val possibleGame = allGames.filter{it.name == element.game}
         return if (possibleGame.size == 1) possibleGame[0] else null
     }
 
-    fun btnAddDeleteModule(btnAdd:Button, btnDel:Button, ll:LinearLayout, position: Int){
+    private fun btnAddDeleteModule(btnAdd:Button, btnDel:Button, ll:LinearLayout, position: Int){
         btnAdd.setOnClickListener {
             setOnClickAddButton(ll, position)
             btnDel.visibility = View.VISIBLE
@@ -144,7 +144,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
         }
     }
 
-    fun setOnClickAddButton(ll:LinearLayout, position:Int){
+    private fun setOnClickAddButton(ll:LinearLayout, position:Int){
         val et = EditText(this)
         ll.addView(et)
         addedEditText[position].add(et)
@@ -152,7 +152,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
 
 
 
-    fun setOnClickDeleteButton(ll:LinearLayout, position:Int){
+    private fun setOnClickDeleteButton(ll:LinearLayout, position:Int){
         if (addedEditText[position].isNotEmpty()){
             val et = addedEditText[position].last()
             ll.removeView(et)
@@ -230,15 +230,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
         list.addAll(etList.map{it.text.toString()}.filter{it.isNotBlank()})
         return list.toCollection(mutableSetOf()).toCollection(ArrayList())
     }
-    private fun <T:CommonBase, U:CommonBase>modifyElement(originalChangedList:ArrayList<U>, changedList:ArrayList<T>,
-                                                  originalAllList:ArrayList<U>, allList:ArrayList<T>,
-                                                  originalData: U, modifiedData:T){
 
-        originalChangedList.removeIf{it == originalData}
-        originalAllList.removeIf{it == originalData }
-        changedList.add(modifiedData)
-        allList.add(modifiedData)
-    }
 
 
 
@@ -519,6 +511,12 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
             Type.Tag.name ->  addedListManager(addedStringContent[AddedContent.Tag.ordinal], datum, position, tagAdapter)
             Type.Mechanism.name ->  addedListManager(addedStringContent[AddedContent.Mechanism.ordinal], datum, position, mechanismAdapter)
             Type.Topic.name ->  addedListManager(addedStringContent[AddedContent.Topic.ordinal], datum, position, topicAdapter)
+        }
+    }
+
+    override fun onGenericClick(datum: String, type: String) {
+        if (type == Type.Difficulty.name){
+            binding.etDifficulty.setText(datum)
         }
     }
 
