@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,12 +8,12 @@ import android.widget.EditText
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityAddElementBinding
 
 class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, GenericCbListener {
 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
-    private val sharedPreference by lazy{ SharedPreference(this)}
 
     private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(ArrayList(), ArrayList(), ArrayList()
         , ArrayList(), ArrayList(), ArrayList(), ArrayList(), ArrayList())
@@ -127,7 +127,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
 
     }
 
-    private fun loadAddOnGame(element:AddOnBean):GameBean?{
+    private fun loadAddOnGame(element: AddOnBean): GameBean?{
         val possibleGame = allGames.filter{it.name == element.game}
         return if (possibleGame.size == 1) possibleGame[0] else null
     }
@@ -215,10 +215,10 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
             }
             if(binding.cbDelImg.isChecked){
                 allImages.list_of_images.remove(changedObject?.name)
-                sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
+                appInstance.sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
             }
-            refreshedSavedData(sharedPreference)
-            startActivity(Intent(this,ViewGamesActivity::class.java))
+            refreshedSavedData(appInstance.sharedPreference)
+            startActivity(Intent(this, ViewGamesActivity::class.java))
             finish()
         }
 
@@ -350,6 +350,9 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
             allMultiAddOns.removeIf { it == changedObject }
         }
         allAddOns.add(addOn)
+        addOn.game?.run{ val game = allGames.indexOfFirst{ it.name == this }
+        if (game > 0) allGames[game].add_on.add(addOn.name)}
+
 
 
     }
@@ -428,7 +431,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
 
 
 
-    private fun setCommonElement(it:CommonBase){
+    private fun setCommonElement(it: CommonBase){
         binding.etNom.setText(it.name)
         addedStringContent[AddedContent.Designer.ordinal].addAll(it.designers)
         addedStringContent[AddedContent.Artist.ordinal].addAll(it.artists)
@@ -447,7 +450,7 @@ class AddElement : CommonType(), View.OnClickListener, OnGenericCbListListener, 
 
     }
 
-    private fun setGameBeanElement(game:GameBean){
+    private fun setGameBeanElement(game: GameBean){
 
         binding.rbGame.isChecked = true
         setView(binding.llGame)

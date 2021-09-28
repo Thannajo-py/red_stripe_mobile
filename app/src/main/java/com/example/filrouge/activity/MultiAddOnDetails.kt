@@ -1,18 +1,18 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityMultiAddOnDetailBinding
 
 class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
     private val binding: ActivityMultiAddOnDetailBinding by lazy{ ActivityMultiAddOnDetailBinding.inflate(layoutInflater) }
-    private val sharedPreference by lazy {SharedPreference(this)}
-    private val parent:GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
-    private val multiAddOn:MultiAddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOn.name) as MultiAddOnBean}
+    private val parent: GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
+    private val multiAddOn: MultiAddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOn.name) as MultiAddOnBean }
     private val gamesList = ArrayList<String>()
     private val adapter = MultiAddOnGameAdapter(gamesList, this)
 
@@ -38,14 +38,15 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension partagée?").setTitle("Attention")
                 .setPositiveButton("ok"){
                         dialog, which -> run{deleteFromList(multiAddOn, allMultiAddOns)
-                    refreshedSavedData(sharedPreference)
+                    refreshedSavedData(appInstance.sharedPreference)
 
                         }
                 }.setNegativeButton("cancel"){
                         dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
                 .show()
-            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(SerialKey.ToModifyData.name, multiAddOn))
+            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(
+                SerialKey.ToModifyData.name, multiAddOn))
         }
         return super.onOptionsItemSelected(item)
     }

@@ -1,31 +1,16 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.BitmapFactory
-import android.graphics.Typeface
-import android.os.Build
 import android.os.Bundle
-import android.view.Gravity.CENTER
-import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.LinearLayout.TEXT_ALIGNMENT_CENTER
-import android.widget.LinearLayout.VERTICAL
-import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.RequiresApi
+import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
-import com.example.filrouge.databinding.ActivityMainBinding
-import java.io.File
 
-class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
+class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener {
 
     private val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
-    private val sharedPreference by lazy {SharedPreference(this)}
 
     private val addOns = ArrayList<AddOnBean>()
     private val multiAddOns = ArrayList<MultiAddOnBean>()
@@ -40,7 +25,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
     private val topics = ArrayList<String>()
     private val topicAdapter = GenericTypeAdapter(topics, this, Type.Topic.name)
 
-    private val game:GameBean by lazy{intent.extras!!.getSerializable(SerialKey.Game.name) as GameBean}
+    private val game: GameBean by lazy{intent.extras!!.getSerializable(SerialKey.Game.name) as GameBean }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,7 +41,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
         loadRv(binding.rvMechanism, mechanism, mechanismAdapter, game.mechanism)
         loadRv(binding.rvTag, tags, tagAdapter, game.tags)
         loadRv(binding.rvGameDetailAddOn, addOns, addOnAdapter, allAddOns.filter{it.game == game.name})
-        loadRv(binding.rvGameDetailMultiAddOn, multiAddOns, multiAddOnAdapter, allMultiAddOns.filter{it.games.any{l-> l == game.name} })
+        loadRv(binding.rvGameDetailMultiAddOn, multiAddOns, multiAddOnAdapter, allMultiAddOns.filter{it.games.any{ l-> l == game.name} })
         loadImage(game, binding.ivDetails)
 
 
@@ -74,7 +59,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
                         dialog, which -> run{
 
                     deleteFromList(game, allGames)
-                                            refreshedSavedData(sharedPreference)
+                                            refreshedSavedData(appInstance.sharedPreference)
                         }
                 }.setNegativeButton("cancel"){
                         dialog, which -> kotlin.run {
@@ -84,7 +69,8 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
                 }
                 }
                 .show()}
-            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(SerialKey.ToModifyData.name, game))
+            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(
+                SerialKey.ToModifyData.name, game))
         }
         return super.onOptionsItemSelected(item)
     }

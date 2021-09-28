@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".CreateNewAccount">
+    tools:context=".activity.CreateNewAccount">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -80,7 +80,9 @@
                 android:id="@+id/ll_cbox"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:visibility="gone"
+                tools:visibility="visible">
 
                 <CheckBox
                     android:id="@+id/cb_add"

@@ -1,9 +1,10 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivitySearchBinding
 
 class Search : AppCompatActivity(), View.OnClickListener {
@@ -35,19 +36,19 @@ class Search : AppCompatActivity(), View.OnClickListener {
 
     }
 
-    private fun checkAge(game:CommonBase, input:String) =  game.age == null || !Regex("^[0-9]+$").matches(input) || game.age > input.toInt()
+    private fun checkAge(game: CommonBase, input:String) =  game.age == null || !Regex("^[0-9]+$").matches(input) || game.age > input.toInt()
 
     private fun checkList(list:ArrayList<String>, input:String) = input.isBlank() || list.any{ it.lowercase().contains(Regex(".*${input.lowercase()}.*")) }
 
-    private fun checkMinNbPlayer(base:CommonBase, playerMin:String) = base.player_min == null || !Regex("^[0-9]+$").matches(playerMin) || base.player_min < playerMin.toInt()
+    private fun checkMinNbPlayer(base: CommonBase, playerMin:String) = base.player_min == null || !Regex("^[0-9]+$").matches(playerMin) || base.player_min < playerMin.toInt()
 
-    private fun checkMaxNbPlayer(base:CommonBase, playerMax:String) = base.player_max == null || !Regex("^[0-9]+$").matches(playerMax) || base.player_max > playerMax.toInt()
+    private fun checkMaxNbPlayer(base: CommonBase, playerMax:String) = base.player_max == null || !Regex("^[0-9]+$").matches(playerMax) || base.player_max > playerMax.toInt()
 
-    private fun checkPlayingTime(base:CommonBase, playingTime:String) = base.max_time == null || !Regex("^[0-9]+$").matches(playingTime) || base.max_time < playingTime.toInt()
+    private fun checkPlayingTime(base: CommonBase, playingTime:String) = base.max_time == null || !Regex("^[0-9]+$").matches(playingTime) || base.max_time < playingTime.toInt()
 
-    private fun checkDifficulty(base:CommonBase, difficulty:String) = base.difficulty == null || difficulty.isBlank() || base.difficulty.lowercase().contains(difficulty.lowercase())
+    private fun checkDifficulty(base: CommonBase, difficulty:String) = base.difficulty == null || difficulty.isBlank() || base.difficulty.lowercase().contains(difficulty.lowercase())
 
-    private fun checkCommon(games:CommonBase):Boolean{
+    private fun checkCommon(games: CommonBase):Boolean{
         return games.name.lowercase().contains(binding.etNom.text.toString().lowercase())&&
                 checkList(games.designers,binding.etDesigner.text.toString()) &&
                 checkList(games.artists,binding.etArtist.text.toString()) &&
@@ -61,7 +62,7 @@ class Search : AppCompatActivity(), View.OnClickListener {
                 checkDifficulty(games, binding.etDifficulty.text.toString())
 
     }
-    private fun checkGame(game:GameBean):Boolean{
+    private fun checkGame(game: GameBean):Boolean{
         return checkCommon(game) && checkList(game.mechanism, binding.etMechanism.text.toString())
                 && checkList(game.tags, binding.etTag.text.toString())
                 && checkList(game.topics, binding.etTopic.text.toString())

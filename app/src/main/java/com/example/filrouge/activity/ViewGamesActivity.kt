@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 
 import android.app.AlertDialog
@@ -11,6 +11,9 @@ import android.text.method.PasswordTransformationMethod
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.filrouge.*
+import com.example.filrouge.activity.*
+import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.ActivityViewGamesBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -18,13 +21,12 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
-class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
+class ViewGamesActivity : AppCompatActivity(), OnGenericListListener {
 
 
     private val binding: ActivityViewGamesBinding by lazy{ ActivityViewGamesBinding.inflate(layoutInflater) }
     private val gson = Gson()
     private val adapter = GenericAdapter(allGames, this)
-    private val sharedPreference by lazy{SharedPreference(this)}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,10 +44,11 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
     override fun onResume() {
         getSave()
+        println(currentUser)
         super.onResume()
     }
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (currentUser?.permission?.synchronize == true) {
+        if (currentUser?.synchronize == true) {
             if (!isLocal){
                 menu?.add(
                     0,
@@ -59,18 +62,18 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             }
             menu?.add(0, MenuId.SynchronizeParameter.ordinal, 0, "Paramètres de synchronisation")
         }
-        menu?.add(0,MenuId.Search.ordinal,0,"Rechercher")
-        menu?.add(0,MenuId.LoadImages.ordinal,0,"Recharger les images")
-        if (currentUser?.permission?.addAccount == true){
-            menu?.add(0,MenuId.CreateAccount.ordinal,0,"Ajouter un Compte")
+        menu?.add(0, MenuId.Search.ordinal,0,"Rechercher")
+        menu?.add(0, MenuId.LoadImages.ordinal,0,"Recharger les images")
+        if (currentUser?.addAccount == true){
+            menu?.add(0, MenuId.CreateAccount.ordinal,0,"Ajouter un Compte")
         }
-        if (currentUser?.permission?.deleteAccount == true){
-            menu?.add(0,MenuId.DeleteAccount.ordinal,0,"Supprimer compte")
+        if (currentUser?.deleteAccount == true){
+            menu?.add(0, MenuId.DeleteAccount.ordinal,0,"Supprimer compte")
         }
-        if(currentUser?.permission?.add == true){
-            menu?.add(0,MenuId.AddContent.ordinal,0,"Ajouter un élément")
+        if(currentUser?.add == true){
+            menu?.add(0, MenuId.AddContent.ordinal,0,"Ajouter un élément")
         }
-        menu?.add(0,MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
+        menu?.add(0, MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -92,7 +95,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             MenuId.SynchronizeParameter.ordinal -> urlParameterBox()
             MenuId.ChangePassword.ordinal -> changePasswordBox()
             MenuId.ResetDB.ordinal -> {
-                sharedPreference.saveFloat(SerialKey.Timestamp.name, 0.0F)
+                appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, 0.0F)
                 synchronizeBox("Voulez vous supprimer votre contenu et recharger la base de données?", true)
 
             }
@@ -104,9 +107,9 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
     private fun synchronize(login:String, password:String, cancel:Boolean){
         binding.progressBar.visibility = View.VISIBLE
         binding.tvGameError.visibility = View.GONE
-        val timestamp = sharedPreference.getFloat(SerialKey.Timestamp.name)
+        val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
 
-        var modification = SendApiChange(login,password,ApiResponse(
+        var modification = SendApiChange(login,password, ApiResponse(
             ArrayList(), ArrayList(), ArrayList())
             , ApiResponse(ArrayList(), ArrayList(), ArrayList()),
             ApiDelete(ArrayList(), ArrayList(), ArrayList()), timestamp
@@ -114,8 +117,8 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
 
         if (!cancel){
-            val lastSave = gson.fromJson(sharedPreference.getValueString(SerialKey.APILastSave.name), ApiResponse::class.java)
-            modification =SendApiChange(login,password,ApiResponse(
+            val lastSave = gson.fromJson(appInstance.sharedPreference.getValueString(SerialKey.APILastSave.name), ApiResponse::class.java)
+            modification = SendApiChange(login,password, ApiResponse(
                 allGames.filter{it.id == null}.toCollection(ArrayList()),
                 allAddOns.filter{it.id == null}.toCollection(ArrayList()),
                 allMultiAddOns.filter{it.id == null}.toCollection(ArrayList()))
@@ -154,17 +157,18 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         if (body.isNotBlank()){
             val result = gson.fromJson(body, ApiReceive::class.java)
             if (result.timestamp > 0.0){
-                sharedPreference.saveFloat(SerialKey.Timestamp.name, result.timestamp)
+                appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, result.timestamp)
             }
             if(!result.games.isNullOrEmpty() || !result.add_ons.isNullOrEmpty() || !result.add_ons.isNullOrEmpty()){
-                result.games?.run{allGames.removeIf {g -> this.any{g.name == it.name} || result.deleted_games?.contains(g.id) == true };
+                result.games?.run{
+                    allGames.removeIf { g -> this.any{g.name == it.name} || result.deleted_games?.contains(g.id) == true };
                 allGames.addAll(result.games)}
                 result.add_ons?.run{ allAddOns.removeIf { g -> this.any{g.name == it.name} || result.deleted_add_ons?.contains(g.id) == true }
                 allAddOns.addAll(result.add_ons)}
                 result.multi_add_ons?.run{ allMultiAddOns.removeIf { g -> this.any{g.name == it.name} || result.deleted_multi_add_ons?.contains(g.id) == true }
                 allMultiAddOns.addAll(result.multi_add_ons)}
 
-                sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)), SerialKey.APILastSave.name)
+                appInstance.sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)), SerialKey.APILastSave.name)
                 refreshAll()
                 runOnUiThread {
                     adapter.notifyDataSetChanged()
@@ -199,7 +203,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
     }
 
 
-    private fun <T:CommonBase>fillList(list:ArrayList<T>, fill:ArrayList<T>){
+    private fun <T: CommonBase>fillList(list:ArrayList<T>, fill:ArrayList<T>){
         list.clear()
         list.addAll(fill)
         list.sortBy{it.name}
@@ -207,8 +211,8 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
     }
 
     private fun getSave(){
-        isLocal = sharedPreference.getBoolean(SerialKey.IsLocal.name)
-        val savedContent = sharedPreference.getValueString(SerialKey.APIStorage.name)
+        isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
+        val savedContent = appInstance.sharedPreference.getValueString(SerialKey.APIStorage.name)
         if (savedContent != null && savedContent.isNotBlank()) {
             val answer = gson.fromJson(
                 savedContent,
@@ -218,7 +222,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             adapter.notifyDataSetChanged()
             fillList(allAddOns, answer.add_ons)
             fillList(allMultiAddOns, answer.multi_add_ons)
-            val savedList = sharedPreference.getValueString(SerialKey.AllImagesStorage.name)
+            val savedList = appInstance.sharedPreference.getValueString(SerialKey.AllImagesStorage.name)
             if (!savedList.isNullOrBlank()){
                 allImages.list_of_images.clear()
                 allImages.list_of_images.addAll(gson.fromJson(savedList, AllImages::class.java)?.list_of_images?: mutableSetOf())
@@ -240,11 +244,11 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
         loadImages(allAddOns)
         loadImages(allMultiAddOns)
         cleanImageList()
-        refreshedSavedData(sharedPreference)
+        refreshedSavedData(appInstance.sharedPreference)
 
     }
 
-    private fun <T:CommonBase> loadImages(listOfObject:ArrayList<T>){
+    private fun <T: CommonBase> loadImages(listOfObject:ArrayList<T>){
         CoroutineScope(SupervisorJob()).run{
             for ((index, game) in listOfObject.withIndex()){
                 if (!allImages.list_of_images.contains(game.name)){
@@ -263,7 +267,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
                     }
                     else if (!game.picture.isNullOrBlank() && API_STATIC != null){
                         launch{
-                            getImage("${API_STATIC}${game.picture}", game.name)
+                            getImage("$API_STATIC${game.picture}", game.name)
                             if (game is GameBean){
                                 runOnUiThread {
                                     adapter.notifyItemChanged(index)
@@ -286,7 +290,7 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
                 val file = File(this@ViewGamesActivity.filesDir, name)
                 file.writeBytes(this)
                 allImages.list_of_images.add(name)
-                sharedPreference.save(gson.toJson(allImages),SerialKey.AllImagesStorage.name)
+                appInstance.sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
             }
 
         }catch(e:Exception){
@@ -325,10 +329,10 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
 
     private fun cleanImageList(){
         allImages.list_of_images.removeIf {
-            !allGames.any {game -> game.name == it } && !allAddOns.any {game -> game.name == it }
-                && !allMultiAddOns.any {game -> game.name == it }
+            !allGames.any { game -> game.name == it } && !allAddOns.any { game -> game.name == it }
+                && !allMultiAddOns.any { game -> game.name == it }
         }
-        sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
+        appInstance.sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
     }
 
     private fun synchronizeBox(message:String, cancel:Boolean){
@@ -366,9 +370,9 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
                 API_URL = url.text.toString()
                 API_STATIC = staticUrl.text.toString()
                 isLocal = cbIsLocal.isChecked
-                sharedPreference.saveBoolean(SerialKey.IsLocal.name, isLocal)
-                sharedPreference.save(url.text.toString(),SerialKey.APIUrl.name)
-                sharedPreference.save(staticUrl.text.toString(), SerialKey.APIStaticUrl.name)
+                appInstance.sharedPreference.saveBoolean(SerialKey.IsLocal.name, isLocal)
+                appInstance.sharedPreference.save(url.text.toString(), SerialKey.APIUrl.name)
+                appInstance.sharedPreference.save(staticUrl.text.toString(), SerialKey.APIStaticUrl.name)
                 startActivity(Intent(this, ViewGamesActivity::class.java))
                 finish()
 
@@ -402,14 +406,15 @@ class ViewGamesActivity : AppCompatActivity(),  OnGenericListListener {
             val cUser = currentUser
             if(pwd.text.toString() == pwdConfirm.text.toString() && cUser != null){
                 if(Regex(RegexPattern.PassWord.pattern).matches(pwd.text.toString())){
-                    val newPasswordUser = UserBean(cUser.login,
-                        SHA256.encryptThisString(pwd.text.toString()),
-                                cUser.permission)
-                    allUsers.listOfUsers.remove(currentUser)
-                    allUsers.listOfUsers.add(newPasswordUser)
-                    currentUser = newPasswordUser
-                    sharedPreference.save(gson.toJson(allUsers), SerialKey.AllUsersStorage.name)
-                    Toast.makeText(this, "changement de mot de passe effectué", Toast.LENGTH_SHORT).show()
+                    CoroutineScope(SupervisorJob()).launch{
+                        val newPasswordUser = UserTableBean(cUser.id, cUser.login,
+                            SHA256.encryptThisString(pwd.text.toString()),
+                            cUser.add, cUser.change, cUser.delete, cUser.synchronize, cUser.addAccount,
+                        cUser.deleteAccount)
+                        appInstance.database.userDao().insert(newPasswordUser)
+                        currentUser = newPasswordUser
+                        Toast.makeText(this@ViewGamesActivity, "changement de mot de passe effectué", Toast.LENGTH_SHORT).show()
+                    }
                 }
                 else{
                     Toast.makeText(this, CommonString.PassWordRequirement.string, Toast.LENGTH_LONG).show()

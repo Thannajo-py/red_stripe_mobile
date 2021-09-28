@@ -1,7 +1,8 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
 
 

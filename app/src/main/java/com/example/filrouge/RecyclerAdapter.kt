@@ -4,7 +4,10 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.CheckBox
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.*
 import java.io.File
 
@@ -16,9 +19,8 @@ val allAddOns = ArrayList<AddOnBean>()
 val allMultiAddOns = ArrayList<MultiAddOnBean>()
 
 val allImages = AllImages(mutableSetOf())
-val allUsers = AllUsers(ArrayList())
 
-var currentUser:UserBean? = null
+var currentUser: UserTableBean? = null
 
 var API_URL:String? = null
 var API_STATIC:String? = null
@@ -125,8 +127,13 @@ interface GenericListener{
 }
 
 
-class UserBeanAdapter (val data: ArrayList<UserBean>, val client: UserListener, val addedUserList: ArrayList<UserBean>) : RecyclerView.Adapter<UserBeanAdapter.ViewHolder>(){
+class UserBeanAdapter (val client: UserListener, val addedUserList: ArrayList<UserTableBean>) : ListAdapter<UserTableBean, UserBeanAdapter.ViewHolder>(UserTableBeanComparator()){
     class ViewHolder(val bind: AccountListBinding) : RecyclerView.ViewHolder(bind.root)
+
+    class UserTableBeanComparator: DiffUtil.ItemCallback<UserTableBean>() {
+        override fun areItemsTheSame(oldItem: UserTableBean, newItem: UserTableBean) = oldItem === newItem
+        override fun areContentsTheSame(oldItem: UserTableBean, newItem: UserTableBean) = oldItem == newItem
+    }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(AccountListBinding.inflate(
@@ -134,7 +141,7 @@ class UserBeanAdapter (val data: ArrayList<UserBean>, val client: UserListener, 
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val datum = data[position]
+        val datum = getItem(position)
         holder.bind.cbSelect.text = datum.login
         holder.bind.cbSelect.isChecked = addedUserList.contains(datum)
         holder.bind.cbSelect.setOnClickListener { client.onUserClick(datum, position)
@@ -142,13 +149,11 @@ class UserBeanAdapter (val data: ArrayList<UserBean>, val client: UserListener, 
     }
 
 
-    override fun getItemCount() = data.size
-
 
 }
 
 interface UserListener{
-    fun onUserClick(datum:UserBean, position:Int)
+    fun onUserClick(datum:UserTableBean, position:Int)
 
 }
 

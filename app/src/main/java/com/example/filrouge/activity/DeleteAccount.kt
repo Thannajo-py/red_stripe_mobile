@@ -1,20 +1,23 @@
-package com.example.filrouge
+package com.example.filrouge.activity
 
 import android.app.AlertDialog
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.widget.CheckBox
 import android.widget.Toast
+import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.GridLayoutManager
+import com.example.filrouge.*
+import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.ActivityDeleteAccountBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
     private val binding by lazy{ActivityDeleteAccountBinding.inflate(layoutInflater)}
-    private val accountSelected = ArrayList<UserBean>()
-    private val accountAdapter = UserBeanAdapter(allUsers.listOfUsers, this, accountSelected)
-    private val sharedPreference by lazy{SharedPreference(this)}
+    private val accountSelected = ArrayList<UserTableBean>()
+    private val accountAdapter = UserBeanAdapter(this, accountSelected)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -22,17 +25,22 @@ class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
         binding.rvAccount.adapter = accountAdapter
         binding.rvAccount.layoutManager = GridLayoutManager(this, 1)
         binding.rvAccount.addItemDecoration(MarginItemDecoration(5))
-        accountAdapter.notifyDataSetChanged()
+        appInstance.database.userDao().getAll().asLiveData().observe(this, {it?.let{accountAdapter.submitList(it)}})
     }
 
     override fun onClick(v: View?) {
         AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer ce jeu?").setTitle("Attention")
             .setPositiveButton("ok"){
                     dialog, which -> run{
+                CoroutineScope(SupervisorJob()).launch{
+                    accountSelected.forEach {
+                        appInstance.database.userDao().deleteUser(it.id)
+                    }
+                    accountSelected.clear()
+                }
 
-                allUsers.listOfUsers.removeAll(accountSelected)
-                sharedPreference.save(gson.toJson(allUsers), SerialKey.AllUsersStorage.name)
-                accountAdapter.notifyDataSetChanged()
+
+
             }
             }.setNegativeButton("cancel"){
                     dialog, which -> kotlin.run {
@@ -43,13 +51,11 @@ class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
             .show()
     }
 
-    override fun onUserClick(datum: UserBean, position:Int) {
+    override fun onUserClick(datum: UserTableBean, position:Int) {
         if (accountSelected.contains(datum)) {
             accountSelected.remove(datum)
         }else{
             accountSelected.add(datum)
         }
-        accountAdapter.notifyItemChanged(position)
-        println(accountSelected)
     }
 }

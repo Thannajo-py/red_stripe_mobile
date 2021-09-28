@@ -2,15 +2,11 @@ package com.example.filrouge
 
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.graphics.Typeface
-import android.view.Gravity
-import android.view.Menu
-import android.view.MenuItem
-import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filrouge.activity.*
 import java.io.File
 
 
@@ -124,7 +120,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
             Toast.makeText(this, "Link Error!", Toast.LENGTH_SHORT).show()
         }
         else{
-            intent = Intent(this,GameDetails::class.java)
+            intent = Intent(this, GameDetails::class.java)
             intent.putExtra(SerialKey.Game.name, datum)
             startActivity(intent)
             finish()
@@ -147,7 +143,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
 
     fun refreshedSavedData(sharedPreference:SharedPreference){
         sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
-        startActivity(Intent(this,ViewGamesActivity::class.java))
+        startActivity(Intent(this, ViewGamesActivity::class.java))
         finish()
     }
 

@@ -5,6 +5,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name=".FilRougeApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,34 +13,34 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FilRouge">
         <activity
-            android:name=".AddElement"
+            android:name=".activity.AddElement"
             android:exported="true"
-            android:parentActivityName=".ViewGamesActivity"/>
+            android:parentActivityName=".activity.ViewGamesActivity"/>
         <activity
-            android:name=".DeleteAccount"
+            android:name=".activity.DeleteAccount"
             android:exported="true"
-            android:parentActivityName=".ViewGamesActivity"/>
+            android:parentActivityName=".activity.ViewGamesActivity"/>
         <activity
-            android:name=".Search"
+            android:name=".activity.Search"
             android:exported="true"
-            android:parentActivityName=".ViewGamesActivity" />
+            android:parentActivityName=".activity.ViewGamesActivity" />
         <activity
-            android:name=".CreateNewAccount"
+            android:name=".activity.CreateNewAccount"
             android:exported="true"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".GenericTypeDetails"
-            android:parentActivityName=".ViewGamesActivity"/>
-        <activity android:name=".MultiAddOnDetails"
-            android:parentActivityName=".ViewGamesActivity"/>
-        <activity android:name=".AddOnDetails"
-            android:parentActivityName=".ViewGamesActivity"/>
+            android:parentActivityName=".activity.MainActivity" />
+        <activity android:name=".activity.GenericTypeDetails"
+            android:parentActivityName=".activity.ViewGamesActivity"/>
+        <activity android:name=".activity.MultiAddOnDetails"
+            android:parentActivityName=".activity.ViewGamesActivity"/>
+        <activity android:name=".activity.AddOnDetails"
+            android:parentActivityName=".activity.ViewGamesActivity"/>
         <activity
-            android:name=".GameDetails"
-            android:parentActivityName=".ViewGamesActivity" />
+            android:name=".activity.GameDetails"
+            android:parentActivityName=".activity.ViewGamesActivity" />
         <activity
-            android:name=".ViewGamesActivity"
-            android:parentActivityName=".MainActivity" />
-        <activity android:name=".MainActivity">
+            android:name=".activity.ViewGamesActivity"
+            android:parentActivityName=".activity.MainActivity" />
+        <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
