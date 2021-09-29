@@ -22,7 +22,26 @@ import com.example.filrouge.dao.MechanismDao
     PublisherTableBean::class,
     PlayingModTableBean::class,
     LanguageTableBean::class,
-    UserTableBean::class], version = 1, exportSchema = false)
+    GameMultiAddOnTableBean::class,
+    GameTagTableBean::class,
+    GameTopicTableBean::class,
+    GameMechanismTableBean::class,
+    GameDesignerTableBean::class,
+    AddOnDesignerTableBean::class,
+    MultiAddOnDesignerTableBean::class,
+    GameArtistTableBean::class,
+    AddOnArtistTableBean::class,
+    MultiAddOnArtistTableBean::class,
+    GamePublisherTableBean::class,
+    AddOnPublisherTableBean::class,
+    MultiAddOnPublisherTableBean::class,
+    GamePlayingModTableBean::class,
+    AddOnPlayingModTableBean::class,
+    MultiAddOnPlayingModTableBean::class,
+    GameLanguageTableBean::class,
+    AddOnLanguageTableBean::class,
+    MultiAddOnLanguageTableBean::class,
+    UserTableBean::class], version = 2, exportSchema = false)
 abstract class FilRougeRoomDatabase : RoomDatabase(){
 abstract fun gameDao(): GameDao
 abstract fun addOnDao(): AddOnDao
@@ -44,3 +63,4 @@ abstract fun userDao(): UserDao
             .fallbackToDestructiveMigration().build().also { INSTANCE = it }
     }
 }
+        

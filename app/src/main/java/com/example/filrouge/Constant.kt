@@ -9,17 +9,15 @@ enum class SerialKey{
     Type,
     Name,
     APIStorage,
-    RememberNameStorage,
-    RememberPasswordStorage,
     SearchResult,
     ToModifyData,
     AllImagesStorage,
-    AllUsersStorage,
     APIUrl,
     APIStaticUrl,
     APILastSave,
     IsLocal,
-    Timestamp
+    Timestamp,
+    SavedUser
 
 }
 
@@ -49,7 +47,8 @@ enum class MenuId{
     SynchronizeParameter,
     ChangePassword,
     LoadImages,
-    ResetDB
+    ResetDB,
+    Disconnect
 }
 
 enum class RegexPattern(val pattern:String){

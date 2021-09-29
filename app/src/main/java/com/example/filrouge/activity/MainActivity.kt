@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import com.example.filrouge.*
+import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.ActivityMainBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
@@ -21,8 +22,19 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         API_URL = appInstance.sharedPreference.getValueString(SerialKey.APIUrl.name)
         API_STATIC = appInstance.sharedPreference.getValueString(SerialKey.APIStaticUrl.name)
         binding.btnLogin.setOnClickListener(this)
-        binding.etLogin.setText(appInstance.sharedPreference.getValueString(SerialKey.RememberNameStorage.name)?:"")
-        binding.etPassword.setText(appInstance.sharedPreference.getValueString(SerialKey.RememberPasswordStorage.name)?:"")
+        appInstance.sharedPreference.getValueString(SerialKey.SavedUser.name)?.run{
+            val userRemembered = gson.fromJson(this,UserTableBean::class.java)
+            CoroutineScope(SupervisorJob()).launch{
+                val savedUserList = dbUser.getUser(userRemembered.login)
+                if(savedUserList.isNotEmpty()){
+                    val savedUser = savedUserList[0]
+                    if (savedUser == userRemembered){
+                        currentUser = userRemembered
+                        startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
+                    }
+                }
+            }
+        }
         CoroutineScope(SupervisorJob()).launch {
             if (dbUser.checkEmpty().isEmpty()) {
                 startActivity(Intent(this@MainActivity, CreateNewAccount::class.java))
@@ -44,12 +56,10 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             if (userLogin.isNotEmpty() &&
                 SHA256.encryptThisString(password) == userLogin[0].password){
                 if(binding.checkBox.isChecked){
-                    appInstance.sharedPreference.save(login, SerialKey.RememberNameStorage.name)
-                    appInstance.sharedPreference.save(password, SerialKey.RememberPasswordStorage.name)
+                    appInstance.sharedPreference.save(gson.toJson(userLogin[0]), SerialKey.SavedUser.name)
                 }
                 else{
-                    appInstance.sharedPreference.removeValue(SerialKey.RememberNameStorage.name)
-                    appInstance.sharedPreference.removeValue(SerialKey.RememberPasswordStorage.name)
+                    appInstance.sharedPreference.removeValue(SerialKey.SavedUser.name)
                 }
                 currentUser = userLogin[0].copy()
                 startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))

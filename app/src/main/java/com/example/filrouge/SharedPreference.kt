@@ -16,7 +16,7 @@ class SharedPreference(val context: Context) {
     }
 
     fun getValueString(KEY_NAME: String): String? {
-        return sharedPref.getString(KEY_NAME, "")
+        return sharedPref.getString(KEY_NAME, null)
     }
 
     fun getBoolean(KEY_NAME: String): Boolean {

@@ -74,6 +74,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListListener {
             menu?.add(0, MenuId.AddContent.ordinal,0,"Ajouter un élément")
         }
         menu?.add(0, MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
+        menu?.add(0, MenuId.Disconnect.ordinal,0,"Se Déconnecter")
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -98,6 +99,12 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListListener {
                 appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, 0.0F)
                 synchronizeBox("Voulez vous supprimer votre contenu et recharger la base de données?", true)
 
+            }
+            MenuId.Disconnect.ordinal -> {
+                appInstance.sharedPreference.removeValue(SerialKey.SavedUser.name)
+                currentUser = null
+                startActivity(Intent(this, MainActivity::class.java))
+                finishAffinity()
             }
         }
         return super.onOptionsItemSelected(item)
