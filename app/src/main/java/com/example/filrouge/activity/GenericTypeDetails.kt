@@ -3,20 +3,23 @@ package com.example.filrouge.activity
 import android.os.Bundle
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
+import com.example.filrouge.bean.AddOnTableBean
+import com.example.filrouge.bean.DesignerWithAddOn
+import com.example.filrouge.bean.DesignerWithGame
+import com.example.filrouge.bean.DesignerWithMultiAddOn
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
 
 
 class GenericTypeDetails : CommonType(), OnGenericListListener {
 
     private val binding: ActivityGenericTypeDetailsBinding by lazy{ ActivityGenericTypeDetailsBinding.inflate(layoutInflater) }
-    private val addOns = ArrayList<AddOnBean>()
-    private val multiAddOns = ArrayList<MultiAddOnBean>()
-    private val games = ArrayList<GameBean>()
-    private val genericAddOnAdapter = GenericAdapter(addOns ,this)
-    private val genericMultiAddOnAdapter = GenericAdapter(multiAddOns, this)
-    private val genericGameAdapter = GenericAdapter(games, this)
+    private val genericAddOnAdapter = GenericListAdapter<DesignerWithAddOn>(this)
+    private val genericMultiAddOnAdapter = GenericListAdapter<DesignerWithMultiAddOn>(this)
+    private val genericGameAdapter = GenericListAdapter<DesignerWithGame>(this)
     private val type:String by lazy{intent.extras!!.getString(SerialKey.Type.name, "")}
+    private val id:Long by lazy{intent.extras!!.getLong(SerialKey.GenericId.name, 0L)}
     private val name:String by lazy{intent.extras!!.getString(SerialKey.Name.name, "")}
+    private val db = appInstance.database
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,63 +27,58 @@ class GenericTypeDetails : CommonType(), OnGenericListListener {
         setContentView(binding.root)
 
         binding.rvGenericDetailGame.adapter = genericGameAdapter
-        binding.rvGenericDetailGame.layoutManager = GridLayoutManager(this, 1)
-        binding.rvGenericDetailGame.addItemDecoration(MarginItemDecoration(5))
+        layout(binding.rvGenericDetailGame)
 
         binding.rvGenericDetailAddOn.adapter = genericAddOnAdapter
-        binding.rvGenericDetailAddOn.layoutManager = GridLayoutManager(this, 1)
-        binding.rvGenericDetailAddOn.addItemDecoration(MarginItemDecoration(5))
+        layout(binding.rvGenericDetailAddOn)
 
         binding.rvGenericDetailMultiAddOn.adapter = genericMultiAddOnAdapter
-        binding.rvGenericDetailMultiAddOn.layoutManager = GridLayoutManager(this, 1)
-        binding.rvGenericDetailMultiAddOn.addItemDecoration(MarginItemDecoration(5))
+        layout(binding.rvGenericDetailMultiAddOn)
+
 
         when (type){
             Type.Designer.name -> {
-                games.addAll(allGames.filter{it.designers.contains(name)})
-                addOns.addAll(allAddOns.filter{it.designers.contains(name)})
-                multiAddOns.addAll(allMultiAddOns.filter{it.designers.contains(name)})
+                db.gameDao().getWithDesignerFromDesignerId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                db.addOnDao().getWithDesignerFromDesignerId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
+                db.multiAddOnDao().getWithDesignerFromDesignerId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
+
             }
             Type.Artist.name -> {
-                games.addAll(allGames.filter{it.artists.contains(name)})
-                addOns.addAll(allAddOns.filter{it.artists.contains(name)})
-                multiAddOns.addAll(allMultiAddOns.filter{it.artists.contains(name)})
+                db.gameDao().getWithDesignerFromArtistId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                db.addOnDao().getWithDesignerFromArtistId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
+                db.multiAddOnDao().getWithDesignerFromArtistId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
             }
             Type.Publisher.name -> {
-                games.addAll(allGames.filter{it.publishers.contains(name)})
-                addOns.addAll(allAddOns.filter{it.publishers.contains(name)})
-                multiAddOns.addAll(allMultiAddOns.filter{it.publishers.contains(name)})
+                db.gameDao().getWithDesignerFromPublisherId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                db.addOnDao().getWithDesignerFromPublisherId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
+                db.multiAddOnDao().getWithDesignerFromPublisherId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
             }
             Type.Difficulty.name -> {
-                games.addAll(allGames.filter{it.difficulty == name})
-                addOns.addAll(allAddOns.filter{it.difficulty == name})
-                multiAddOns.addAll(allMultiAddOns.filter{it.difficulty == name})
+                db.gameDao().getWithDesignerFromDifficultyId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                db.addOnDao().getWithDesignerFromDifficultyId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
+                db.multiAddOnDao().getWithDesignerFromDifficultyId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
             }
             Type.PlayingMode.name -> {
-                games.addAll(allGames.filter{it.playing_mode.contains(name)})
-                addOns.addAll(allAddOns.filter{it.playing_mode.contains(name)})
-                multiAddOns.addAll(allMultiAddOns.filter{it.playing_mode.contains(name)})
+                db.gameDao().getWithDesignerFromPlayingModId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                db.addOnDao().getWithDesignerFromPlayingModId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
+                db.multiAddOnDao().getWithDesignerFromPlayingModId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
             }
             Type.Language.name -> {
-                games.addAll(allGames.filter{it.language.contains(name)})
-                addOns.addAll(allAddOns.filter{it.language.contains(name)})
-                multiAddOns.addAll(allMultiAddOns.filter{it.language.contains(name)})
+                db.gameDao().getWithDesignerFromLanguageId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                db.addOnDao().getWithDesignerFromLanguageId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
+                db.multiAddOnDao().getWithDesignerFromLanguageId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
+
             }
-            Type.Tag.name -> games.addAll(allGames.filter{it.tags.contains(name)})
-            Type.Mechanism.name -> games.addAll(allGames.filter{it.mechanism.contains(name)})
-            Type.Topic.name -> games.addAll(allGames.filter{it.topics.contains(name)})
+            Type.Tag.name -> db.gameDao().getWithDesignerFromTagId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+            Type.Mechanism.name -> db.gameDao().getWithDesignerFromMechanismId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+            Type.Topic.name -> db.gameDao().getWithDesignerFromTopicId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
             Type.Search.name -> {
-                val searchResult = intent.extras!!.getSerializable(SerialKey.SearchResult.name) as ApiResponse
-                games.addAll(searchResult.games)
-                addOns.addAll(searchResult.add_ons)
-                multiAddOns.addAll(searchResult.multi_add_ons)
+
             }
         }
 
         binding.tvGenericDetailName.text = name
-        genericGameAdapter.notifyDataSetChanged()
-        genericAddOnAdapter.notifyDataSetChanged()
-        genericMultiAddOnAdapter.notifyDataSetChanged()
+
     }
 
 

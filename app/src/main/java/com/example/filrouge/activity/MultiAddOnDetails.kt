@@ -5,16 +5,30 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.lifecycle.asLiveData
+import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
+import com.example.filrouge.bean.*
 import com.example.filrouge.databinding.ActivityMultiAddOnDetailBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 
 class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
     private val binding: ActivityMultiAddOnDetailBinding by lazy{ ActivityMultiAddOnDetailBinding.inflate(layoutInflater) }
-    private val parent: GameBean? by lazy{intent.extras!!.getSerializable(SerialKey.ParentGame.name) as GameBean?}
-    private val multiAddOn: MultiAddOnBean by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOn.name) as MultiAddOnBean }
-    private val gamesList = ArrayList<String>()
-    private val adapter = MultiAddOnGameAdapter(gamesList, this)
+
+    private val adapter = GenericListAdapter<DesignerWithMultiAddOn>( this)
+
+    private val designerListAdapter = GenericStringListAdapter<DesignerTableBean>(this, Type.Designer.name)
+    private val artistListAdapter = GenericStringListAdapter<ArtistTableBean>(this, Type.Artist.name)
+    private val publisherListAdapter = GenericStringListAdapter<PublisherTableBean>(this, Type.Publisher.name)
+    private val languageListAdapter = GenericStringListAdapter<LanguageTableBean>(this, Type.Language.name)
+    private val playingModListAdapter = GenericStringListAdapter<PlayingModTableBean>(this, Type.PlayingMode.name)
+
+
+
+    private val gameId by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOnId.name) as Long}
 
 
 
@@ -22,14 +36,20 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        fillCommonRv(binding.rvDesigner, binding.rvArtist, binding.rvPublisher, binding.rvLanguage,
-                binding.rvPlayingMode, multiAddOn)
+        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericStringListAdapter<out ID>>> =
+            arrayListOf(Pair(binding.rvDesigner,designerListAdapter), Pair(binding.rvArtist, artistListAdapter),
+                Pair(binding.rvPublisher,publisherListAdapter),Pair(binding.rvPlayingMode, playingModListAdapter),
+                Pair(binding.rvLanguage, languageListAdapter))
+        fillCommonRV(commonRvAdapterList)
 
-        fillCommonTextView(binding.tvDifficulty, binding.tvMultiAddOnDetailName, binding.tvMultiAddOnDetailPlayer, binding.tvMultiAddOnDetailAge, multiAddOn)
-        binding.tvMultiAddOnDetailPlayingTime.text = "jusqu'à ${multiAddOn.max_time} minutes" + if(parent != null && parent!!.by_player == true) "/ Joueur" else ""
+        fillCommonTextView()
 
-        loadRv(binding.rvMultiAddOn, gamesList, adapter, multiAddOn.games)
-        loadImage(multiAddOn, binding.ivDetails)
+        binding.rvMultiAddOn.adapter = adapter
+        layout(binding.rvMultiAddOn)
+        appInstance.database.multiAddOnDao().getGameFromMultiAddOn(gameId).observe(this, {it?.let{
+            adapter.submitList(it)
+        }})
+
 
     }
 
@@ -37,18 +57,50 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         when (item.itemId){
             MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension partagée?").setTitle("Attention")
                 .setPositiveButton("ok"){
-                        dialog, which -> run{deleteFromList(multiAddOn, allMultiAddOns)
-                    refreshedSavedData(appInstance.sharedPreference)
-
-                        }
+                        dialog, which -> CoroutineScope(SupervisorJob()).launch{
+                    val list = appInstance.database.multiAddOnDao().getObjectById(gameId)
+                    if(list.isNotEmpty())DbMethod().delete(list[0])
+                }
                 }.setNegativeButton("cancel"){
                         dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
                 .show()
-            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java).putExtra(
-                SerialKey.ToModifyData.name, multiAddOn))
+            MenuId.ModifyThis.ordinal -> TODO()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun fillCommonTextView(){
+        appInstance.database.multiAddOnDao().getById(gameId).asLiveData().observe(this, {if(it.size > 0) it?.let{
+            loadImage(it[0].name, binding.ivDetails)
+            binding.tvMultiAddOnDetailName.text = it[0].name
+            binding.tvMultiAddOnDetailAge.text = "${it[0].age} et +"
+            binding.tvMultiAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
+            binding.tvMultiAddOnDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
+        appInstance.database.multiAddOnDao().getDifficultyOfMultiAddOn(gameId).observe(this, {
+            if (it.size > 0) it?.let {
+                val name = it[0].name
+                val id = it[0].id
+                binding.tvDifficulty.text = it[0].name
+                binding.tvDifficulty.setOnClickListener { onDifficultyClick(name,id) }
+            }
+            else binding.tvDifficulty.text = "unknown"
+        })
+    }
+
+    fun fillCommonRV(listPairRecyclerViewAdapter:ArrayList<Pair<RecyclerView, GenericStringListAdapter<out ID>>>){
+        listPairRecyclerViewAdapter.forEach {
+            it.first.adapter = it.second
+            layout(it.first)
+        }
+
+        appInstance.database.multiAddOnDao().getDesignersOfMultiAddOn(gameId).asLiveData().observe(this, {it?.let{designerListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getArtistsOfMultiAddOn(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getPublishersOfMultiAddOn(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getPlayingModsOfMultiAddOn(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getLanguagesOfMultiAddOn(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
+
+
     }
 
 

@@ -1,117 +1,137 @@
 package com.example.filrouge.bean
 
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
-@Entity(tableName = "gameMultiAddOn", primaryKeys = ["gameId", "multiAddOnId"])
+@Entity(tableName = "gameMultiAddOn")
 data class GameMultiAddOnTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val multiAddOnId: Long
 )
 
-    @Entity(tableName = "gameTag", primaryKeys = ["gameId", "tagId"])
+    @Entity(tableName = "gameTag")
 data class GameTagTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val tagId: Long
 )
 
-    @Entity(tableName = "gameTopic", primaryKeys = ["gameId", "topicId"])
+    @Entity(tableName = "gameTopic")
 data class GameTopicTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val topicId: Long
 )
 
-    @Entity(tableName = "gameMechanism", primaryKeys = ["gameId", "mechanismId"])
+    @Entity(tableName = "gameMechanism")
 data class GameMechanismTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val mechanismId: Long
 )
 
-    @Entity(tableName = "gameDesigner", primaryKeys = ["gameId", "designerId"])
+    @Entity(tableName = "gameDesigner")
 data class GameDesignerTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val designerId: Long
 )
 
-    @Entity(tableName = "addOnDesigner", primaryKeys = ["addOnId", "designerId"])
+    @Entity(tableName = "addOnDesigner")
 data class AddOnDesignerTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val addOnId:Long,
     val designerId: Long
 )
 
-    @Entity(tableName = "multiAddOnDesigner", primaryKeys = ["multiAddOnId", "designerId"])
+    @Entity(tableName = "multiAddOnDesigner")
 data class MultiAddOnDesignerTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val multiAddOnId:Long,
     val designerId: Long
 )
 
-    @Entity(tableName = "gameArtist", primaryKeys = ["gameId", "artistId"])
+    @Entity(tableName = "gameArtist")
 data class GameArtistTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val artistId: Long
 )
 
-    @Entity(tableName = "addOnArtist", primaryKeys = ["addOnId", "artistId"])
+    @Entity(tableName = "addOnArtist")
 data class AddOnArtistTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val addOnId:Long,
     val artistId: Long
 )
 
-    @Entity(tableName = "multiAddOnArtist", primaryKeys = ["multiAddOnId", "artistId"])
+    @Entity(tableName = "multiAddOnArtist")
 data class MultiAddOnArtistTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val multiAddOnId:Long,
     val artistId: Long
 )
 
-    @Entity(tableName = "gamePublisher", primaryKeys = ["gameId", "publisherId"])
+    @Entity(tableName = "gamePublisher")
 data class GamePublisherTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val publisherId: Long
 )
 
-    @Entity(tableName = "addOnPublisher", primaryKeys = ["addOnId", "publisherId"])
+    @Entity(tableName = "addOnPublisher")
 data class AddOnPublisherTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val addOnId:Long,
     val publisherId: Long
 )
 
-    @Entity(tableName = "multiAddOnPublisher", primaryKeys = ["multiAddOnId", "publisherId"])
+    @Entity(tableName = "multiAddOnPublisher")
 data class MultiAddOnPublisherTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val multiAddOnId:Long,
     val publisherId: Long
 )
 
-    @Entity(tableName = "gamePlayingMod", primaryKeys = ["gameId", "playingModId"])
+    @Entity(tableName = "gamePlayingMod")
 data class GamePlayingModTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val playingModId: Long
 )
 
-    @Entity(tableName = "addOnPlayingMod", primaryKeys = ["addOnId", "playingModId"])
+    @Entity(tableName = "addOnPlayingMod")
 data class AddOnPlayingModTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val addOnId:Long,
     val playingModId: Long
 )
 
-    @Entity(tableName = "multiAddOnPlayingMod", primaryKeys = ["multiAddOnId", "playingModId"])
+    @Entity(tableName = "multiAddOnPlayingMod")
 data class MultiAddOnPlayingModTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val multiAddOnId:Long,
     val playingModId: Long
 )
 
-    @Entity(tableName = "gameLanguage", primaryKeys = ["gameId", "languageId"])
+    @Entity(tableName = "gameLanguage")
 data class GameLanguageTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val gameId:Long,
     val languageId: Long
 )
 
-    @Entity(tableName = "addOnLanguage", primaryKeys = ["addOnId", "languageId"])
+    @Entity(tableName = "addOnLanguage")
 data class AddOnLanguageTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val addOnId:Long,
     val languageId: Long
 )
 
-    @Entity(tableName = "multiAddOnLanguage", primaryKeys = ["multiAddOnId", "languageId"])
+    @Entity(tableName = "multiAddOnLanguage")
 data class MultiAddOnLanguageTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val multiAddOnId:Long,
     val languageId: Long
 )

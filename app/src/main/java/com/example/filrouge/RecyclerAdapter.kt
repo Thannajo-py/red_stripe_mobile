@@ -7,6 +7,8 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filrouge.bean.CommonGame
+import com.example.filrouge.bean.ID
 import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.*
 import java.io.File
@@ -257,4 +259,69 @@ open class GameAddOnAdapterWithCheckBox(val data: ArrayList<GameBean>, val clien
 
 }
 
+open class GenericListAdapter<T:CommonGame> (val client: OnGenericListAdapterListener) : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
+
+
+    class ViewHolder(val bind:GameListBinding) : RecyclerView.ViewHolder(bind.root)
+
+    class GameComparator<T:CommonGame>: DiffUtil.ItemCallback<T>() {
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+    }
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
+
+    override fun onBindViewHolder(holder: GenericListAdapter.ViewHolder, position: Int) {
+        val datum = getItem(position)
+        holder.bind.tvName.text = datum.name
+        holder.bind.tvDesigner.text = datum?.designer?:""
+        if (allImages.list_of_images.contains(datum.name)){
+            val file = File(holder.bind.tvDesigner.context.filesDir, datum.name)
+            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
+            holder.bind.ivPicture.setImageBitmap(compressedBitMap)
+        }else{
+            holder.bind.ivPicture.setImageBitmap(null)
+        }
+        holder.bind.cvGameList.setOnClickListener { client.onElementClick(datum) }
+    }
+
+
+
+
+
+}
+
+interface OnGenericListAdapterListener{
+    fun onElementClick(datum:CommonGame)
+}
+
+interface OnGenericStringListAdapterListener{
+    fun onElementClick(datum:ID, type:String)
+}
+
+open class GenericStringListAdapter<T: ID> (val client: OnGenericStringListAdapterListener, val type:String) : ListAdapter<ID, GenericStringListAdapter.ViewHolder>(GameComparator()) {
+
+
+    class ViewHolder(val bind:NameListBinding) : RecyclerView.ViewHolder(bind.root)
+
+    class GameComparator<T:ID>: DiffUtil.ItemCallback<T>() {
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
+    }
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
+
+    override fun onBindViewHolder(holder: GenericStringListAdapter.ViewHolder, position: Int) {
+        val datum = getItem(position)
+        holder.bind.tvName.text = datum.name
+        holder.bind.cvNameList.setOnClickListener { client.onElementClick(datum, type) }
+    }
+
+
+
+
+
+}
 

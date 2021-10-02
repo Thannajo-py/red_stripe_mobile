@@ -17,7 +17,11 @@ enum class SerialKey{
     APILastSave,
     IsLocal,
     Timestamp,
-    SavedUser
+    SavedUser,
+    GameId,
+    AddOnId,
+    MultiAddOnId,
+    GenericId
 
 }
 
