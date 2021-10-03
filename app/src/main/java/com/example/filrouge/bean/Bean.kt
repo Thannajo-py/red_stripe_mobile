@@ -7,11 +7,13 @@ fun listEquality( list:ArrayList<String>, otherList:ArrayList<String>) = list.si
 
 data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>):Serializable
 
-data class ApiDelete( val games:ArrayList<Int?>, val add_ons: ArrayList<Int?>, val multi_add_ons: ArrayList<Int?>):Serializable
+data class ApiDelete( val games:ArrayList<DeletedObject>, val add_ons: ArrayList<DeletedObject>, val multi_add_ons: ArrayList<DeletedObject>):Serializable
 
 data class ApiReceive( val games:ArrayList<GameBean>?, val add_ons: ArrayList<AddOnBean>?, val multi_add_ons: ArrayList<MultiAddOnBean>?,
                        val deleted_games: ArrayList<Int>?, val deleted_add_ons:ArrayList<Int>?, val deleted_multi_add_ons:ArrayList<Int>?
                        ,val timestamp: Float)
+
+data class DeletedObject(val id:Int)
 
 class GameBean(
         id: Int?,
@@ -250,9 +252,24 @@ class ApiBody(val body:SendApiChange)
 
 class AllImages(val list_of_images: MutableSet<String>)
 
-class AllUsers(val listOfUsers: ArrayList<UserBean>)
 
-class UserBean (val login:String, val password:String, val permission:PermissionBean)
 
-class PermissionBean ( val add:Boolean, val change:Boolean, val delete:Boolean, val synchronize:Boolean, val addAccount:Boolean, val deleteAccount: Boolean)
+
+data class SearchQuery(
+        val name:String?,
+        val designer:String?,
+        val artist:String?,
+        val publisher:String?,
+        val playerMin:Int?,
+        val playerMax:Int?,
+        val maxTime:Int?,
+        val difficulty: String?,
+        val age:Int?,
+        val playingMod: String?,
+        val language:String?,
+        val tag:String?,
+        val topic:String?,
+        val mechanism:String?,
+
+):Serializable
 

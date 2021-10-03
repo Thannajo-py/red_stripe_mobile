@@ -9,8 +9,9 @@ enum class SerialKey{
     Type,
     Name,
     APIStorage,
-    SearchResult,
-    ToModifyData,
+    ToModifyDataId,
+    ToModifyDataType,
+    ToModifyDataName,
     AllImagesStorage,
     APIUrl,
     APIStaticUrl,
@@ -21,7 +22,8 @@ enum class SerialKey{
     GameId,
     AddOnId,
     MultiAddOnId,
-    GenericId
+    GenericId,
+    QueryContent
 
 }
 
@@ -36,6 +38,9 @@ enum class Type{
     Mechanism,
     Topic,
     Search,
+    Game,
+    AddOn,
+    MultiAddOn
 
 }
 

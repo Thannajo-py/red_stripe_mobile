@@ -42,7 +42,8 @@ AddOnPlayingModTableBean::class,
 MultiAddOnPlayingModTableBean::class,
 GameLanguageTableBean::class,
 AddOnLanguageTableBean::class,
-MultiAddOnLanguageTableBean::class,], version = 6, exportSchema = false)
+MultiAddOnLanguageTableBean::class,
+    DeletedContentTableBean::class], version = 7, exportSchema = false)
 abstract class FilRougeRoomDatabase : RoomDatabase(){
 
 abstract fun gameDao(): GameDao
@@ -77,6 +78,7 @@ abstract fun multiAddOnPlayingModDao(): MultiAddOnPlayingModDao
 abstract fun gameLanguageDao(): GameLanguageDao
 abstract fun addOnLanguageDao(): AddOnLanguageDao
 abstract fun multiAddOnLanguageDao(): MultiAddOnLanguageDao
+abstract fun deletedItemDao(): DeletedItemDao
 companion object{
         private var INSTANCE: FilRougeRoomDatabase? = null
 

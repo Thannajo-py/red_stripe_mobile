@@ -10,7 +10,7 @@ import com.example.filrouge.bean.DesignerWithMultiAddOn
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
 
 
-class GenericTypeDetails : CommonType(), OnGenericListListener {
+class GenericTypeDetails : CommonType() {
 
     private val binding: ActivityGenericTypeDetailsBinding by lazy{ ActivityGenericTypeDetailsBinding.inflate(layoutInflater) }
     private val genericAddOnAdapter = GenericListAdapter<DesignerWithAddOn>(this)
@@ -73,7 +73,23 @@ class GenericTypeDetails : CommonType(), OnGenericListListener {
             Type.Mechanism.name -> db.gameDao().getWithDesignerFromMechanismId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
             Type.Topic.name -> db.gameDao().getWithDesignerFromTopicId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
             Type.Search.name -> {
+                val search = intent.extras!!.getSerializable(SerialKey.QueryContent.name) as SearchQuery
+                db.gameDao().getWithDesignerFromSearchQuery(search.name, search.designer, search.artist,
+                search.publisher, search.playerMin, search.playerMax, search.maxTime, search.difficulty, search.age,
+                search.playingMod, search.language, search.tag, search.topic, search.mechanism)
+                    .observe(this, {it?.let{genericGameAdapter.submitList(it)}})
+                if(search.topic == null && search.tag == null && search.mechanism == null){
+                    db.addOnDao().getWithDesignerFromSearchQuery(search.name, search.designer, search.artist,
+                        search.publisher, search.playerMin, search.playerMax, search.maxTime, search.difficulty, search.age,
+                        search.playingMod, search.language)
+                        .observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
 
+                    db.multiAddOnDao().getWithDesignerFromSearchQuery(search.name, search.designer, search.artist,
+                        search.publisher, search.playerMin, search.playerMax, search.maxTime, search.difficulty, search.age,
+                        search.playingMod, search.language)
+                        .observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
+
+                }
             }
         }
 

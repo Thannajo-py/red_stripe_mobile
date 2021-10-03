@@ -2,10 +2,8 @@ package com.example.filrouge.activity
 
 import android.app.AlertDialog
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +13,8 @@ import com.example.filrouge.databinding.ActivityGameDetailsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
-import java.io.File
 
-class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
+class GameDetails : GameAddOnMultiAddOnCommonMenu(){
 
     private val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
 
@@ -70,7 +67,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
             binding.tvGameDetailAge.text = "${it[0].age} et +"
             binding.tvGameDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
             binding.tvGameDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
-        appInstance.database.gameDao().getDifficultyOfGame(gameId).observe(this, {
+        appInstance.database.gameDao().getDifficulty(gameId).observe(this, {
             if (it.size > 0) it?.let {
                 val name = it[0].name
                 val id = it[0].id
@@ -87,11 +84,11 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
             layout(it.first)
         }
 
-        appInstance.database.gameDao().getDesignersOfGame(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
-        appInstance.database.gameDao().getArtistsOfGame(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
-        appInstance.database.gameDao().getPublishersOfGame(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
-        appInstance.database.gameDao().getPlayingModsOfGame(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
-        appInstance.database.gameDao().getLanguagesOfGame(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
+        appInstance.database.gameDao().getDesigners(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
+        appInstance.database.gameDao().getArtists(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
+        appInstance.database.gameDao().getPublishers(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
+        appInstance.database.gameDao().getPlayingMods(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
+        appInstance.database.gameDao().getLanguages(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
 
 
     }
@@ -109,6 +106,8 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
                     CoroutineScope(SupervisorJob()).launch{
                         val list = appInstance.database.gameDao().getObjectById(gameId)
                         if(list.isNotEmpty())DbMethod().delete(list[0])
+                     startActivity(Intent(this@GameDetails, ViewGamesActivity::class.java))
+                     finish()
                     }
 
                         }
@@ -120,7 +119,10 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(), OnGenericListListener{
                 }
                 }
                 .show()}
-            MenuId.ModifyThis.ordinal -> TODO()
+            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java)
+                .putExtra(SerialKey.ToModifyDataId.name, gameId)
+                .putExtra(SerialKey.ToModifyDataName.name, binding.tvGameDetailName.text)
+                .putExtra(SerialKey.ToModifyDataType.name, Type.Game.name))
         }
         return super.onOptionsItemSelected(item)
     }

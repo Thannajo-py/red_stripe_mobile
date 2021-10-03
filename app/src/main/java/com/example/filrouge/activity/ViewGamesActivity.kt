@@ -14,7 +14,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
 import com.example.filrouge.activity.*
 import com.example.filrouge.bean.*
-import com.example.filrouge.dao.CommonComponentDao
 import com.example.filrouge.dao.CommonCustomInsert
 import com.example.filrouge.dao.CommonDao
 import com.example.filrouge.dao.CommonJunctionDAo
@@ -22,7 +21,6 @@ import com.example.filrouge.databinding.ActivityViewGamesBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
@@ -44,12 +42,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         binding.rvGames.layoutManager = GridLayoutManager(this, 1)
         binding.rvGames.addItemDecoration(MarginItemDecoration(5))
         getSave()
-        CoroutineScope(SupervisorJob()).launch{
-            println(db.gameDao().getDesignerWithGame())
-        }
-
-
-
 
     }
 
@@ -100,9 +92,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             MenuId.CreateAccount.ordinal -> startActivity(Intent(this, CreateNewAccount::class.java))
             MenuId.Synchronize.ordinal -> synchronizeBox("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?", false)
             MenuId.LoadImages.ordinal -> {
-                loadImages(allGames)
-                loadImages(allAddOns)
-                loadImages(allMultiAddOns)
+                loadImages(appInstance.database.gameDao())
+                loadImages(appInstance.database.addOnDao())
+                loadImages(appInstance.database.multiAddOnDao())
                 cleanImageList()
             }
             MenuId.SynchronizeParameter.ordinal -> urlParameterBox()
@@ -126,6 +118,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     private fun synchronize(login:String, password:String, cancel:Boolean){
         binding.progressBar.visibility = View.VISIBLE
         binding.tvGameError.visibility = View.GONE
+        CoroutineScope(SupervisorJob()).launch {
         val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
 
         var modification = SendApiChange(login,password, ApiResponse(
@@ -136,27 +129,27 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
         if (!cancel){
-            val lastSave = gson.fromJson(appInstance.sharedPreference.getValueString(SerialKey.APILastSave.name), ApiResponse::class.java)
             modification = SendApiChange(login,password, ApiResponse(
-                allGames.filter{it.id == null}.toCollection(ArrayList()),
-                allAddOns.filter{it.id == null}.toCollection(ArrayList()),
-                allMultiAddOns.filter{it.id == null}.toCollection(ArrayList()))
+                appInstance.database.gameDao().getWithoutServerId().map{dbMethod.convertToGameBean(it)}.toCollection(ArrayList()),
+                appInstance.database.addOnDao().getWithoutServerId().map{dbMethod.convertToAddOnBean(it)}.toCollection(ArrayList()),
+                appInstance.database.multiAddOnDao().getWithoutServerId().map{dbMethod.convertToMultiAddOnBean(it)}.toCollection(ArrayList())
+            )
                 , ApiResponse(
-                    allGames.filter{ g -> lastSave.games.any{it.id == g.id && it != g}}.toCollection(ArrayList()),
-                    allAddOns.filter{ g -> lastSave.add_ons.any{it.id == g.id && it != g}}.toCollection(ArrayList()),
-                    allMultiAddOns.filter{ g -> lastSave.multi_add_ons.any{it.id == g.id && it != g}}.toCollection(ArrayList())
+                    appInstance.database.gameDao().getChanged().map{dbMethod.convertToGameBean(it)}.toCollection(ArrayList()),
+                    appInstance.database.addOnDao().getChanged().map{dbMethod.convertToAddOnBean(it)}.toCollection(ArrayList()),
+                    appInstance.database.multiAddOnDao().getChanged().map{dbMethod.convertToMultiAddOnBean(it)}.toCollection(ArrayList()),
                 ),
                 ApiDelete(
-                    lastSave.games.filter{ g -> !allGames.any{it.id == g.id}}.map{it.id}.toCollection(ArrayList()),
-                    lastSave.add_ons.filter{ g -> !allAddOns.any{it.id == g.id}}.map{it.id}.toCollection(ArrayList()),
-                    lastSave.multi_add_ons.filter{ g -> !allMultiAddOns.any{it.id == g.id}}.map{it.id}.toCollection(ArrayList())
+                    appInstance.database.deletedItemDao().getByType(Type.Game.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
+                    appInstance.database.deletedItemDao().getByType(Type.AddOn.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
+                    appInstance.database.deletedItemDao().getByType(Type.MultiAddOn.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
                     ), timestamp)
         }
         val content = gson.toJson(ApiBody(modification))
 
 
 
-        CoroutineScope(SupervisorJob()).launch {
+
             try {
                 API_URL?.run{
                     val body = sendPostOkHttpRequest(this, content)
@@ -187,9 +180,20 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             if(!result.games.isNullOrEmpty() || !result.add_ons.isNullOrEmpty() || !result.add_ons.isNullOrEmpty()) {
                 CoroutineScope(SupervisorJob()).launch {
                     db.runInTransaction {
-                        db.gameDao().getWithoutServerId().forEach { dbMethod.delete(it) }
-                        db.addOnDao().getWithoutServerId().forEach { dbMethod.delete(it) }
-                        db.multiAddOnDao().getWithoutServerId().forEach { dbMethod.delete(it) }
+                        db.gameDao().getWithoutServerId().forEach {
+                            dbMethod.delete_link(it)
+                            db.gameDao().deleteOne(it.id)
+                        }
+
+                        db.addOnDao().getWithoutServerId().forEach {
+                            dbMethod.delete_link(it)
+                            db.addOnDao().deleteOne(it.id)
+                        }
+
+                        db.multiAddOnDao().getWithoutServerId().forEach {
+                            dbMethod.delete_link(it)
+                            db.multiAddOnDao().deleteOne(it.id)
+                        }
 
                     }
                     result.games?.run {
@@ -235,18 +239,13 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                 }
                                 result?.deleted_games?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.delete(gameInDb[0])
+                                    if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
+                                    db.gameDao().deleteOne(it.toLong())
 
                                 }
 
                             }
 
-                        allGames.removeIf { g ->
-                            this.any { g.name == it.name } || result.deleted_games?.contains(
-                                g.id
-                            ) == true
-                        }
-                        allGames.addAll(result.games)
                     }
 
                     result.add_ons?.run {
@@ -265,7 +264,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                     }
                                     var gameId: Long? = null
                                     it.game?.run {
-                                        println(this)
                                         val listGame = appInstance.database.gameDao().getByName(this)
                                         if (listGame.isNotEmpty()) gameId = listGame[0].id
 
@@ -297,19 +295,12 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                 }
                                 result?.deleted_add_ons?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.delete(gameInDb[0])
+                                    if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
+                                    db.addOnDao().deleteOne(it.toLong())
 
                                 }
 
                             }
-
-
-                        allAddOns.removeIf { g ->
-                            this.any { g.name == it.name } || result.deleted_add_ons?.contains(
-                                g.id
-                            ) == true
-                        }
-                        allAddOns.addAll(result.add_ons)
                     }
 
                     result.multi_add_ons?.run {
@@ -351,17 +342,11 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                 }
                                 result?.deleted_multi_add_ons?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.delete(gameInDb[0])
+                                    if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
+                                    db.multiAddOnDao().deleteOne(it.toLong())
 
                                 }
                             }
-
-                        allMultiAddOns.removeIf { g ->
-                            this.any { g.name == it.name } || result.deleted_multi_add_ons?.contains(
-                                g.id
-                            ) == true
-                        }
-                        allMultiAddOns.addAll(result.multi_add_ons)
                     }
 
                     result.games?.run {
@@ -386,16 +371,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                         }
                     }
 
-
-                    appInstance.sharedPreference.save(
-                        gson.toJson(
-                            ApiResponse(
-                                allGames,
-                                allAddOns,
-                                allMultiAddOns
-                            )
-                        ), SerialKey.APILastSave.name
-                    )
                     refreshAll()
                 }
             }
@@ -509,26 +484,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     private fun getSave(){
         isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
-        val savedContent = appInstance.sharedPreference.getValueString(SerialKey.APIStorage.name)
-        if (savedContent != null && savedContent.isNotBlank()) {
-            val answer = gson.fromJson(
-                savedContent,
-                ApiResponse::class.java
-            )
-            fillList(allGames, answer.games)
-            fillList(allAddOns, answer.add_ons)
-            fillList(allMultiAddOns, answer.multi_add_ons)
-            val savedList = appInstance.sharedPreference.getValueString(SerialKey.AllImagesStorage.name)
-            if (!savedList.isNullOrBlank()){
-                allImages.list_of_images.clear()
-                allImages.list_of_images.addAll(gson.fromJson(savedList, AllImages::class.java)?.list_of_images?: mutableSetOf())
-            }
-
-        }else{
-                binding.tvGameError.text = "Liste vide synchonisez là!"
-                binding.tvGameError.visibility = View.VISIBLE
-        }
-
+        allImages.list_of_images.addAll(gson.fromJson(appInstance.sharedPreference.getValueString(SerialKey.AllImagesStorage.name), allImages::class.java).list_of_images)
 
 
     }
@@ -536,22 +492,21 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
     private fun refreshAll(){
-        loadImages(allGames)
-        loadImages(allAddOns)
-        loadImages(allMultiAddOns)
+        loadImages(appInstance.database.gameDao())
+        loadImages(appInstance.database.addOnDao())
+        loadImages(appInstance.database.multiAddOnDao())
         cleanImageList()
-        refreshedSavedData(appInstance.sharedPreference)
 
     }
 
-    private fun <T: CommonBase> loadImages(listOfObject:ArrayList<T>){
-        CoroutineScope(SupervisorJob()).run{
-            for ((index, game) in listOfObject.withIndex()){
+    private fun <T:CommonComponent> loadImages(dao:CommonDao<T>){
+        CoroutineScope(SupervisorJob()).launch{
+            for (game in dao.getList()){
                 if (!allImages.list_of_images.contains(game.name)){
 
                     if (!game.external_img.isNullOrBlank()){
                         launch{
-                            getImage(game.external_img, game.name)
+                            getImage(game.external_img!!, game.name)
 
                         }
 
@@ -614,11 +569,15 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     private fun cleanImageList(){
-        allImages.list_of_images.removeIf {
-            !allGames.any { game -> game.name == it } && !allAddOns.any { game -> game.name == it }
-                && !allMultiAddOns.any { game -> game.name == it }
+        CoroutineScope(SupervisorJob()).launch{
+            allImages.list_of_images.removeIf {
+                appInstance.database.gameDao().getByName(it).isEmpty() &&
+                        appInstance.database.addOnDao().getByName(it).isEmpty() &&
+                        appInstance.database.multiAddOnDao().getByName(it).isEmpty()
+
+            }
         }
-        appInstance.sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
+
     }
 
     private fun synchronizeBox(message:String, cancel:Boolean){

@@ -80,14 +80,22 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension?").setTitle("Attention")
                 .setPositiveButton("ok"){
                         dialog, which -> CoroutineScope(SupervisorJob()).launch{
-                    val list = appInstance.database.addOnDao().getObjectById(gameId)
-                    if(list.isNotEmpty())DbMethod().delete(list[0])
+                        val list = appInstance.database.addOnDao().getObjectById(gameId)
+                        if(list.isNotEmpty()){
+                            DbMethod().delete(list[0])
+                        }
+                        startActivity(Intent(this@AddOnDetails, ViewGamesActivity::class.java))
+                        finish()
+
                 }
                 }.setNegativeButton("cancel"){
                         dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
                 .show()
-            MenuId.ModifyThis.ordinal -> TODO()
+            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java)
+                .putExtra(SerialKey.ToModifyDataId.name, gameId)
+                .putExtra(SerialKey.ToModifyDataName.name, binding.tvAddOnDetailName.text)
+                .putExtra(SerialKey.ToModifyDataType.name, Type.AddOn.name))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -100,7 +108,7 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             binding.tvAddOnDetailAge.text = "${it[0].age} et +"
             binding.tvAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
             binding.tvAddOnDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
-        appInstance.database.addOnDao().getDifficultyOfAddOn(gameId).observe(this, {
+        appInstance.database.addOnDao().getDifficulty(gameId).observe(this, {
             if (it.size > 0) it?.let {
                 val name = it[0].name
                 val id = it[0].id
@@ -117,11 +125,11 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             layout(it.first)
         }
 
-        appInstance.database.addOnDao().getDesignersOfAddOn(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getArtistsOfAddOn(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getPublishersOfAddOn(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getPlayingModsOfAddOn(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getLanguagesOfAddOn(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
+        appInstance.database.addOnDao().getDesigners(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
+        appInstance.database.addOnDao().getArtists(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
+        appInstance.database.addOnDao().getPublishers(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
+        appInstance.database.addOnDao().getPlayingMods(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
+        appInstance.database.addOnDao().getLanguages(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
 
 
     }

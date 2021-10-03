@@ -11,36 +11,10 @@ import com.example.filrouge.bean.*
 import java.io.File
 
 
-abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericListener, OnGenericStringListAdapterListener, OnGenericListAdapterListener {
+abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterListener, OnGenericListAdapterListener {
 
 
 
-    protected val designers = ArrayList<String>()
-    private val designerAdapter = GenericTypeAdapter(designers, this, Type.Designer.name)
-
-    protected val artists = ArrayList<String>()
-    private val artistAdapter = GenericTypeAdapter(artists, this, Type.Artist.name)
-
-    protected val publishers = ArrayList<String>()
-    private val publisherAdapter = GenericTypeAdapter(publishers, this, Type.Publisher.name)
-
-    protected val languages = ArrayList<String>()
-    private val languageAdapter = GenericTypeAdapter(languages, this, Type.Language.name)
-
-    protected val playing_mode = ArrayList<String>()
-    private val playingModeAdapter = GenericTypeAdapter(playing_mode, this, Type.PlayingMode.name)
-
-
-
-
-
-    override fun onGenericClick(datum: String, type:String) {
-        intent = Intent(this, GenericTypeDetails::class.java)
-        intent.putExtra(SerialKey.Type.name, type)
-        intent.putExtra(SerialKey.Name.name, datum)
-        startActivity(intent)
-        finish()
-    }
 
     fun layout(list: RecyclerView){
         list.layoutManager = GridLayoutManager(this,1)
@@ -71,149 +45,8 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
 
     }
 
-    open fun fillCommonRv(rvDesigner:RecyclerView, rvArtist:RecyclerView, rvPublisher:RecyclerView,
-    rvLanguage:RecyclerView, rvPlayingMod:RecyclerView, element:CommonBase){
-        loadRv(rvDesigner, designers, designerAdapter, element.designers)
-        loadRv(rvArtist, artists, artistAdapter, element.artists)
-        loadRv(rvPublisher, publishers, publisherAdapter, element.publishers)
-        loadRv(rvLanguage, languages, languageAdapter, element.language)
-        loadRv(rvPlayingMod, playing_mode, playingModeAdapter, element.playing_mode)
-    }
-
-    open fun fillCommonRv(rvDesigner:RecyclerView, rvArtist:RecyclerView, rvPublisher:RecyclerView,
-                     rvLanguage:RecyclerView, rvPlayingMod:RecyclerView){
-        loadRv(rvDesigner, designers, designerAdapter, allDesigners())
-        loadRv(rvArtist, artists, artistAdapter, allArtists())
-        loadRv(rvPublisher, publishers, publisherAdapter, allPublishers())
-        loadRv(rvLanguage, languages, languageAdapter, allLanguages())
-        loadRv(rvPlayingMod, playing_mode, playingModeAdapter, allPlayingModes())
-
-    }
-
-    private fun onAddOnClick(datum: AddOnBean) {
-        intent = Intent(this, AddOnDetails::class.java)
-        intent.putExtra(SerialKey.AddOn.name, datum)
-        val parentList = allGames.filter{datum.game == it.name}
-        val parent:GameBean? = if(parentList.size == 1)parentList[0] else null
-        intent.putExtra(SerialKey.ParentGame.name, parent)
-        startActivity(intent)
-        finish()
-    }
 
 
-    private fun onMultiAddOnClick(datum: MultiAddOnBean) {
-        intent = Intent(this, MultiAddOnDetails::class.java)
-        intent.putExtra(SerialKey.MultiAddOn.name, datum)
-        val parent:GameBean? = null
-        intent.putExtra(SerialKey.ParentGame.name, parent)
-        startActivity(intent)
-        finish()
-    }
-
-    override fun onElementClick(datum:CommonBase?) {
-        when(datum){
-            is GameBean? -> onGameClick(datum)
-            is AddOnBean -> onAddOnClick(datum)
-            is MultiAddOnBean -> onMultiAddOnClick(datum)
-        }
-
-    }
-    open fun onGameClick(datum:GameBean?){
-        if (datum == null){
-            Toast.makeText(this, "Link Error!", Toast.LENGTH_SHORT).show()
-        }
-        else{
-            intent = Intent(this, GameDetails::class.java)
-            intent.putExtra(SerialKey.Game.name, datum)
-            startActivity(intent)
-            finish()
-        }
-    }
-
-    fun <T:CommonBase>deleteFromList(game:T, allTypeGames:ArrayList<T>){
-        allTypeGames.removeIf{it == game}
-        when (game){
-            is GameBean -> {
-                allAddOns.forEach { if (it.game == game.name) it.game = null }
-                allMultiAddOns.forEach { it.games.remove(game.name) }
-            }
-            is AddOnBean -> allGames.forEach { it.add_on.remove(game.name) }
-            is MultiAddOnBean -> allGames.forEach { it.multi_add_on.remove(game.name) }
-        }
-    }
-
-
-
-    fun refreshedSavedData(sharedPreference:SharedPreference){
-        sharedPreference.save(gson.toJson(ApiResponse(allGames, allAddOns, allMultiAddOns)),SerialKey.APIStorage.name)
-        startActivity(Intent(this, ViewGamesActivity::class.java))
-        finish()
-    }
-
-    fun allDesigners():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.designers)}
-        allAddOns.forEach { tempSet.addAll(it.designers) }
-        allMultiAddOns.forEach { tempSet.addAll(it.designers) }
-        return tempSet
-    }
-
-    fun allArtists():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.artists)}
-        allAddOns.forEach { tempSet.addAll(it.artists) }
-        allMultiAddOns.forEach { tempSet.addAll(it.artists) }
-        return tempSet
-    }
-    fun allPublishers():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.publishers)}
-        allAddOns.forEach { tempSet.addAll(it.publishers) }
-        allMultiAddOns.forEach { tempSet.addAll(it.publishers) }
-        return tempSet
-    }
-
-    fun allPlayingModes():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.playing_mode)}
-        allAddOns.forEach { tempSet.addAll(it.playing_mode) }
-        allMultiAddOns.forEach { tempSet.addAll(it.playing_mode) }
-        return tempSet
-    }
-
-    fun allDifficulties():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.add(it.difficulty?:"unknown")}
-        allAddOns.forEach { tempSet.add(it.difficulty?:"unknown") }
-        allMultiAddOns.forEach { tempSet.add(it.difficulty?:"unknown") }
-        return tempSet
-    }
-
-    fun allLanguages():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.language)}
-        allAddOns.forEach { tempSet.addAll(it.language) }
-        allMultiAddOns.forEach { tempSet.addAll(it.language) }
-        return tempSet
-    }
-
-    fun allTags():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.tags)}
-        return tempSet
-    }
-
-    fun allMechanism():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.mechanism)}
-        return tempSet
-    }
-
-    fun allTopics():MutableSet<String>{
-        val tempSet = mutableSetOf<String>()
-        allGames.forEach{tempSet.addAll(it.topics)}
-        return tempSet
-    }
 
     fun loadImage(element:String, image: ImageView){
         if (allImages.list_of_images.contains(element)){
@@ -225,6 +58,7 @@ abstract class CommonType : AppCompatActivity(), OnGenericListListener, GenericL
             image.setImageBitmap(null)
         }
     }
+
     override fun onElementClick(datum: ID, type:String) {
         startActivity(Intent(this, GenericTypeDetails::class.java)
             .putExtra(SerialKey.Type.name, type)

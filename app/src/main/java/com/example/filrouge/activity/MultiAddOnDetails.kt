@@ -59,13 +59,21 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
                 .setPositiveButton("ok"){
                         dialog, which -> CoroutineScope(SupervisorJob()).launch{
                     val list = appInstance.database.multiAddOnDao().getObjectById(gameId)
-                    if(list.isNotEmpty())DbMethod().delete(list[0])
+                    if(list.isNotEmpty()){
+                        DbMethod().delete(list[0])
+                    }
+                    startActivity(Intent(this@MultiAddOnDetails, ViewGamesActivity::class.java))
+                    finish()
                 }
                 }.setNegativeButton("cancel"){
                         dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
                 }
                 .show()
-            MenuId.ModifyThis.ordinal -> TODO()
+            MenuId.ModifyThis.ordinal -> startActivity(
+                Intent(this, AddElement::class.java)
+                .putExtra(SerialKey.ToModifyDataId.name, gameId)
+                .putExtra(SerialKey.ToModifyDataName.name, binding.tvMultiAddOnDetailName.text)
+                .putExtra(SerialKey.ToModifyDataType.name, Type.MultiAddOn.name))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -77,7 +85,7 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             binding.tvMultiAddOnDetailAge.text = "${it[0].age} et +"
             binding.tvMultiAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
             binding.tvMultiAddOnDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
-        appInstance.database.multiAddOnDao().getDifficultyOfMultiAddOn(gameId).observe(this, {
+        appInstance.database.multiAddOnDao().getDifficulty(gameId).observe(this, {
             if (it.size > 0) it?.let {
                 val name = it[0].name
                 val id = it[0].id
@@ -94,11 +102,11 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             layout(it.first)
         }
 
-        appInstance.database.multiAddOnDao().getDesignersOfMultiAddOn(gameId).asLiveData().observe(this, {it?.let{designerListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getArtistsOfMultiAddOn(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getPublishersOfMultiAddOn(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getPlayingModsOfMultiAddOn(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getLanguagesOfMultiAddOn(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getDesigners(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getArtists(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getPublishers(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getPlayingMods(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getLanguages(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
 
 
     }

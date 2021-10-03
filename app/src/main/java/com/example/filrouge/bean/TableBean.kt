@@ -1,10 +1,30 @@
 package com.example.filrouge.bean
 
 import androidx.room.*
-import com.example.filrouge.PermissionBean
+
 
 
 interface ID{
+    val id:Long
+    val name:String
+}
+
+interface CommonComponent{
+    val name: String
+    val player_min: Int?
+    val player_max: Int?
+    val playing_time: String?
+    val difficultyId: Long?
+    val bgg_link: String?
+    val age: Int?
+    val buying_price:Int?
+    val stock: Int?
+    val max_time: Int?
+    val external_img:String?
+    val picture:String?
+}
+
+interface OneToOne {
     val id:Long
     val name:String
 }
@@ -30,9 +50,9 @@ data class UserTableBean(
 
 @Entity(tableName = "difficulty")
 data class DifficultyTableBean(
-    @PrimaryKey(autoGenerate = true) var id: Long = 0,
-    val name:String
-)
+    @PrimaryKey(autoGenerate = true) override var id: Long = 0,
+    override val name:String
+):ID, OneToOne
 
 
 @Entity(tableName = "game", foreignKeys = [ForeignKey(entity = DifficultyTableBean::class,
@@ -42,20 +62,20 @@ data class GameTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     val serverId: Int?,
     override val name: String,
-    val player_min: Int?,
-    val player_max: Int?,
-    val playing_time: String?,
-    val difficultyId: Long?,
-    val bgg_link: String?,
-    val age: Int?,
-    val buying_price:Int?,
-    val stock: Int?,
-    val max_time: Int?,
-    val external_img:String?,
-    val picture:String?,
+    override val player_min: Int?,
+    override val player_max: Int?,
+    override val playing_time: String?,
+    override val difficultyId: Long?,
+    override val bgg_link: String?,
+    override val age: Int?,
+    override val buying_price:Int?,
+    override val stock: Int?,
+    override val max_time: Int?,
+    override val external_img:String?,
+    override val picture:String?,
     val by_player: Boolean?,
     val hasChanged: Boolean
-    ): ID
+    ): ID, CommonComponent
 
 @Entity(tableName = "addOn", foreignKeys = [ForeignKey(entity = GameTableBean::class,
     parentColumns = ["id"], childColumns = ["gameId"], onDelete = ForeignKey.NO_ACTION
@@ -66,21 +86,21 @@ data class AddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     val serverId: Int?,
     override val name: String,
-    val player_min: Int?,
-    val player_max: Int?,
-    val playing_time: String?,
-    val difficultyId: Long?,
-    val bgg_link: String?,
-    val age: Int?,
-    val buying_price:Int?,
-    val stock: Int?,
-    val max_time: Int?,
-    val external_img:String?,
-    val picture:String?,
+    override val player_min: Int?,
+    override val player_max: Int?,
+    override val playing_time: String?,
+    override val difficultyId: Long?,
+    override val bgg_link: String?,
+    override val age: Int?,
+    override val buying_price:Int?,
+    override val stock: Int?,
+    override val max_time: Int?,
+    override val external_img:String?,
+    override val picture:String?,
     val gameId: Long?,
     val hasChanged: Boolean
 
-): ID
+): ID, CommonComponent
 
 @Entity(tableName = "multiAddOn", foreignKeys = [androidx.room.ForeignKey(
     entity = DifficultyTableBean::class,
@@ -92,19 +112,19 @@ data class MultiAddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     val serverId: Int?,
     override val name: String,
-    val player_min: Int?,
-    val player_max: Int?,
-    val playing_time: String?,
-    val difficultyId: Long?,
-    val bgg_link: String?,
-    val age: Int?,
-    val buying_price:Int?,
-    val stock: Int?,
-    val max_time: Int?,
-    val external_img:String?,
-    val picture:String?,
+    override val player_min: Int?,
+    override val player_max: Int?,
+    override val playing_time: String?,
+    override val difficultyId: Long?,
+    override val bgg_link: String?,
+    override val age: Int?,
+    override val buying_price:Int?,
+    override val stock: Int?,
+    override val max_time: Int?,
+    override val external_img:String?,
+    override val picture:String?,
     val hasChanged: Boolean
-): ID
+): ID, CommonComponent
 
 @Entity(tableName = "image")
 data class ImageTableBean(
@@ -165,7 +185,7 @@ data class DesignerWithGame(
     override val name:String,
     override val designer: String?
 
-    ):CommonGame
+    ):CommonGame, OneToOne
 
 data class DesignerWithAddOn(
     override val id:Long,
@@ -173,9 +193,18 @@ data class DesignerWithAddOn(
     override val designer: String?
 
 ):CommonGame
+
 data class DesignerWithMultiAddOn(
     override val id:Long,
     override val name:String,
     override val designer: String?
 
 ):CommonGame
+
+
+@Entity(tableName = "deletedItems")
+data class DeletedContentTableBean(
+    @PrimaryKey(autoGenerate = true) var id: Long = 0,
+    val idContent: Long,
+    val type:String
+)
