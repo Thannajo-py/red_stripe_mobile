@@ -33,6 +33,7 @@ interface CommonGame {
     val id: Long
     val name: String
     val designer: String?
+    val image:String?
 }
 
 @Entity(tableName = "User")
@@ -129,7 +130,8 @@ data class MultiAddOnTableBean(
 @Entity(tableName = "image")
 data class ImageTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
-    override val name:String): ID
+    override val name:String
+    ): ID
 
 
 @Entity(tableName = "designer")
@@ -183,21 +185,22 @@ data class MechanismTableBean(
 data class DesignerWithGame(
     override val id:Long,
     override val name:String,
-    override val designer: String?
-
+    override val designer: String?,
+    override val image:String?
     ):CommonGame, OneToOne
 
 data class DesignerWithAddOn(
     override val id:Long,
     override val name:String,
-    override val designer: String?
-
+    override val designer: String?,
+    override val image:String?
 ):CommonGame
 
 data class DesignerWithMultiAddOn(
     override val id:Long,
     override val name:String,
-    override val designer: String?
+    override val designer: String?,
+    override val image:String?
 
 ):CommonGame
 
@@ -208,3 +211,4 @@ data class DeletedContentTableBean(
     val idContent: Long,
     val type:String
 )
+

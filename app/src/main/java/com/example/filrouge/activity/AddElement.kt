@@ -86,8 +86,16 @@ class AddElement : CommonType(), View.OnClickListener,
         }
 
         if(changedObjectId != 0L){
-            if (allImages.list_of_images.contains(changedObjectName)){
-                binding.cbDelImg.visibility = View.VISIBLE
+            CoroutineScope(SupervisorJob()).launch{
+                changedObjectName?.run{
+                    when(changedObjectType){
+                        Type.Game.name -> if (appInstance.database.gameDao().getImage(this).isNotEmpty())  binding.cbDelImg.visibility = View.VISIBLE
+                        Type.AddOn.name -> if (appInstance.database.addOnDao().getImage(this).isNotEmpty())  binding.cbDelImg.visibility = View.VISIBLE
+                        Type.MultiAddOn.name -> if (appInstance.database.multiAddOnDao().getImage(this).isNotEmpty())  binding.cbDelImg.visibility = View.VISIBLE
+                    }
+                }
+
+
             }
             fillView(changedObjectType, changedObjectId)
         }
@@ -277,18 +285,14 @@ class AddElement : CommonType(), View.OnClickListener,
 
                     }
                     if (binding.cbDelImg.isChecked) {
-                        allImages.list_of_images.remove(changedObjectName)
-                        appInstance.sharedPreference.save(
-                            gson.toJson(allImages),
-                            SerialKey.AllImagesStorage.name
-                        )
+                        appInstance.database.ImageDao().deleteByName("$changedObjectName$changedObjectType")
+                        startActivity(Intent(this@AddElement, ViewGamesActivity::class.java))
+                        finish()
                     }
-                    startActivity(Intent(this@AddElement, ViewGamesActivity::class.java))
-                    finish()
                 }
             }
-        }
 
+        }
     }
 
     private fun getDifficultyId(): Long?{

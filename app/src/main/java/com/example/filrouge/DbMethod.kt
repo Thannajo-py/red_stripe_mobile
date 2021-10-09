@@ -109,6 +109,7 @@ class DbMethod {
         }
     }
 
+
     fun convertToGameBean(game:GameTableBean):GameBean {
         val dao = appInstance.database.gameDao()
         var difficulty:String? = null
@@ -214,6 +215,45 @@ class DbMethod {
             dao.getGameObjectFromMultiAddOn(game.id).map{it.name}.toCollection(ArrayList()),
             game.external_img,
             game.picture)
+
+    }
+
+    fun convertToGameTableBean(it:GameBean):GameTableBean{
+        var gameId: Long = 0L
+        val gameInDb = db.gameDao().getByServerId(it.id?.toLong() ?: 0L)
+        var gameDifficulty: Long? = null
+        it.difficulty?.run {
+            val listGameDifficulty = db.difficultyDao().getByName(this)
+            if (listGameDifficulty.isNotEmpty()) {
+                gameDifficulty = listGameDifficulty[0].id
+            } else {
+                val id = db.difficultyDao()
+                    .insert(DifficultyTableBean(0, this))
+                gameDifficulty = id
+            }
+        }
+        if (gameInDb.isNotEmpty()) {
+            gameId = gameInDb[0].id
+        }
+
+        return GameTableBean(
+                gameId,
+                it.id,
+                it.name,
+                it.player_min,
+                it.player_max,
+                it.playing_time,
+                gameDifficulty,
+                it.bgg_link,
+                it.age,
+                it.buying_price,
+                it.stock,
+                it.max_time,
+                it.external_img,
+                it.picture,
+                it.by_player,
+                false
+            )
 
     }
 }

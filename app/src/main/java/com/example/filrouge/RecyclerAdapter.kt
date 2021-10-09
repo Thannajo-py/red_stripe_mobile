@@ -14,7 +14,7 @@ import java.io.File
 
 
 
-val allImages = AllImages(mutableSetOf())
+
 
 var currentUser: UserTableBean? = null
 
@@ -59,104 +59,8 @@ interface UserListener{
 }
 
 
-open class GenericAdapterWithCheckBox<T:CommonBase> (val data: ArrayList<T>, val client: OnGenericCbListListener,
-                                                     val addedObject:ArrayList<T>)
-    : RecyclerView.Adapter<GenericAdapterWithCheckBox.ViewHolder>() {
 
 
-    class ViewHolder(val bind:GameListCbBinding) : RecyclerView.ViewHolder(bind.root)
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListCbBinding.inflate(
-        LayoutInflater.from(parent.context)))
-
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val datum = data[position]
-        holder.bind.tvName.text = datum.name
-        holder.bind.tvDesigner.text = if (datum.designers.size > 0) datum.designers[0] else ""
-        if (allImages.list_of_images.contains(datum.name)){
-            val file = File(holder.bind.tvDesigner.context.filesDir, datum.name)
-            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
-            holder.bind.ivPicture.setImageBitmap(compressedBitMap)
-        }else{
-            holder.bind.ivPicture.setImageBitmap(null)
-        }
-        holder.bind.cbObject.isChecked = addedObject.contains(datum)
-        holder.bind.cvGameListCb.setOnClickListener { client.onElementClick(datum, position) }
-        holder.bind.cbObject.setOnClickListener { client.onElementClick(datum, position) }
-    }
-
-    override fun getItemCount() = data.size
-
-
-
-}
-interface OnGenericCbListListener{
-    fun onElementClick(datum:CommonBase?, position:Int)
-}
-
-
-class GenericTypeCbAdapter (val data: ArrayList<String>, val client: GenericCbListener, val type:String,
-                            val addedGeneric:ArrayList<String>) : RecyclerView.Adapter<GenericTypeCbAdapter.ViewHolder>(){
-    class ViewHolder(val bind: NameListCbBinding) : RecyclerView.ViewHolder(bind.root)
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(NameListCbBinding.inflate(
-        LayoutInflater.from(parent.context)))
-
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val datum = data[position]
-        holder.bind.tvName.text = datum
-        holder.bind.cbName.isChecked = addedGeneric.contains(datum)
-        holder.bind.llNameList.setOnClickListener { client.onGenericClick(datum, type, position) }
-        holder.bind.cbName.setOnClickListener { client.onGenericClick(datum, type, position) }
-    }
-
-
-    override fun getItemCount() = data.size
-
-
-}
-
-interface GenericCbListener{
-    fun onGenericClick(datum:String, type: String, poisition:Int)
-
-}
-
-open class GameAddOnAdapterWithCheckBox(val data: ArrayList<GameBean>, val client: OnGenericCbListListener)
-    : RecyclerView.Adapter<GameAddOnAdapterWithCheckBox.ViewHolder>() {
-
-
-    class ViewHolder(val bind:GameListCbBinding) : RecyclerView.ViewHolder(bind.root)
-
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListCbBinding.inflate(
-        LayoutInflater.from(parent.context)))
-
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val datum = data[position]
-        holder.bind.tvName.text = datum.name
-        holder.bind.tvDesigner.text = if (datum.designers.size > 0) datum.designers[0] else ""
-        if (allImages.list_of_images.contains(datum.name)){
-            val file = File(holder.bind.tvDesigner.context.filesDir, datum.name)
-            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
-            holder.bind.ivPicture.setImageBitmap(compressedBitMap)
-        }else{
-            holder.bind.ivPicture.setImageBitmap(null)
-        }
-        holder.bind.cbObject.isChecked = addOnGame == datum
-        holder.bind.cvGameListCb.setOnClickListener { client.onElementClick(datum, position) }
-        holder.bind.cbObject.setOnClickListener { client.onElementClick(datum, position) }
-    }
-
-    override fun getItemCount() = data.size
-
-
-
-}
 
 open class GenericListAdapter<T:CommonGame> (val client: OnGenericListAdapterListener) : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
 
@@ -175,11 +79,12 @@ open class GenericListAdapter<T:CommonGame> (val client: OnGenericListAdapterLis
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
         holder.bind.tvDesigner.text = datum?.designer?:""
-        if (allImages.list_of_images.contains(datum.name)){
-            val file = File(holder.bind.tvDesigner.context.filesDir, datum.name)
+        datum.image?.run{
+
+            val file = File(holder.bind.tvDesigner.context.filesDir, this)
             val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
             holder.bind.ivPicture.setImageBitmap(compressedBitMap)
-        }else{
+        }?:run{
             holder.bind.ivPicture.setImageBitmap(null)
         }
         holder.bind.cvGameList.setOnClickListener { client.onElementClick(datum) }
@@ -270,11 +175,12 @@ class GenericCommonGameListCbAdapter<T:CommonGame> (val client: GenericCommonGam
         holder.bind.tvName.text = datum.name
         holder.bind.tvDesigner.text = datum.designer
         holder.bind.cbObject.isChecked = addedGeneric.contains(datum)
-        if (allImages.list_of_images.contains(datum.name)){
-            val file = File(holder.bind.tvDesigner.context.filesDir, datum.name)
+        datum.image?.run{
+
+            val file = File(holder.bind.tvDesigner.context.filesDir, this)
             val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
             holder.bind.ivPicture.setImageBitmap(compressedBitMap)
-        }else{
+        }?:run{
             holder.bind.ivPicture.setImageBitmap(null)
         }
         holder.bind.rootGames.setOnClickListener { client.onGenericClick(datum, holder.bind.cbObject) }

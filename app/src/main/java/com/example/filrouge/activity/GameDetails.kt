@@ -54,6 +54,11 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
         layout(binding.rvGameDetailMultiAddOn)
         appInstance.database.multiAddOnDao().getDesignerWithMultiAddOnOfGame(gameId).observe(this, {it?.let{multiAddOnAdapter.submitList(it)}})
 
+        // TEST
+        /*CoroutineScope(SupervisorJob()).launch{
+            println(appInstance.database.gameDao().getDesignerWithGameAndImage())
+        }*/
+
 
 
 
@@ -62,7 +67,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
 
     fun fillCommonTextView(){
         appInstance.database.gameDao().getById(gameId).asLiveData().observe(this, {if(it.size > 0) it?.let{
-            loadImage(it[0].name, binding.ivDetails)
+            loadImage(it[0].name, binding.ivDetails, Type.Game.name)
             binding.tvGameDetailName.text = it[0].name
             binding.tvGameDetailAge.text = "${it[0].age} et +"
             binding.tvGameDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"

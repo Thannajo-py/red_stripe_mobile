@@ -8,6 +8,9 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.activity.*
 import com.example.filrouge.bean.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.launch
 import java.io.File
 
 
@@ -48,14 +51,28 @@ abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterList
 
 
 
-    fun loadImage(element:String, image: ImageView){
-        if (allImages.list_of_images.contains(element)){
-            val file = File(image.context.filesDir, element)
+    fun loadImage(element:String, image: ImageView, type:String){
+        CoroutineScope(SupervisorJob()).launch {
+            when (type) {
+                Type.Game.name -> if (appInstance.database.gameDao().getImage(element)
+                        .isNotEmpty()
+                ) getFile("$element$type", image) else image.setImageBitmap(null)
+                Type.AddOn.name -> if (appInstance.database.addOnDao().getImage(element)
+                        .isNotEmpty()
+                ) getFile("$element$type", image) else image.setImageBitmap(null)
+                Type.MultiAddOn.name -> if (appInstance.database.multiAddOnDao().getImage(element)
+                        .isNotEmpty()
+                ) getFile("$element$type", image) else image.setImageBitmap(null)
+            }
+        }
+
+    }
+
+    fun getFile(name:String, image:ImageView){
+        runOnUiThread {
+            val file = File(image.context.filesDir, name)
             val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
             image.setImageBitmap(compressedBitMap)
-        }
-        else{
-            image.setImageBitmap(null)
         }
     }
 

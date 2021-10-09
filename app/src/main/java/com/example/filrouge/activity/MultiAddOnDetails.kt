@@ -80,7 +80,7 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
     fun fillCommonTextView(){
         appInstance.database.multiAddOnDao().getById(gameId).asLiveData().observe(this, {if(it.size > 0) it?.let{
-            loadImage(it[0].name, binding.ivDetails)
+            loadImage(it[0].name, binding.ivDetails, Type.MultiAddOn.name)
             binding.tvMultiAddOnDetailName.text = it[0].name
             binding.tvMultiAddOnDetailAge.text = "${it[0].age} et +"
             binding.tvMultiAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"

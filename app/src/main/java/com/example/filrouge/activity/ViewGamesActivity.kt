@@ -38,7 +38,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.rvGames.adapter = newAdapter
-        db.gameDao().getDesignerWithGame().observe(this, {it?.let{newAdapter.submitList(it)}})
+        db.gameDao().getAllWithDesigner().observe(this, {it?.let{newAdapter.submitList(it)}})
         binding.rvGames.layoutManager = GridLayoutManager(this, 1)
         binding.rvGames.addItemDecoration(MarginItemDecoration(5))
         getSave()
@@ -92,10 +92,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             MenuId.CreateAccount.ordinal -> startActivity(Intent(this, CreateNewAccount::class.java))
             MenuId.Synchronize.ordinal -> synchronizeBox("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?", false)
             MenuId.LoadImages.ordinal -> {
-                loadImages(appInstance.database.gameDao())
-                loadImages(appInstance.database.addOnDao())
-                loadImages(appInstance.database.multiAddOnDao())
-                cleanImageList()
+                refreshAll()
             }
             MenuId.SynchronizeParameter.ordinal -> urlParameterBox()
             MenuId.ChangePassword.ordinal -> changePasswordBox()
@@ -180,6 +177,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             if(!result.games.isNullOrEmpty() || !result.add_ons.isNullOrEmpty() || !result.add_ons.isNullOrEmpty()) {
                 CoroutineScope(SupervisorJob()).launch {
                     db.runInTransaction {
+                        db.deletedItemDao().deleteAll()
                         db.gameDao().getWithoutServerId().forEach {
                             dbMethod.delete_link(it)
                             db.gameDao().deleteOne(it.id)
@@ -200,42 +198,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                             db.runInTransaction {
                                 val dbGame = db.gameDao()
                                 result.games.forEach {
-                                    var gameId: Long = 0L
-                                    val gameInDb = dbGame.getByServerId(it.id?.toLong() ?: 0L)
-                                    var gameDifficulty: Long? = null
-                                    it.difficulty?.run {
-                                        val listGameDifficulty = db.difficultyDao().getByName(this)
-                                        if (listGameDifficulty.isNotEmpty()) {
-                                            gameDifficulty = listGameDifficulty[0].id
-                                        } else {
-                                            val id = db.difficultyDao()
-                                                .insert(DifficultyTableBean(0, this))
-                                            gameDifficulty = id
-                                        }
-                                    }
-                                    if (gameInDb.isNotEmpty()) {
-                                        gameId = gameInDb[0].id
-                                    }
-                                    dbGame.insert(
-                                        GameTableBean(
-                                            gameId,
-                                            it.id,
-                                            it.name,
-                                            it.player_min,
-                                            it.player_max,
-                                            it.playing_time,
-                                            gameDifficulty,
-                                            it.bgg_link,
-                                            it.age,
-                                            it.buying_price,
-                                            it.stock,
-                                            it.max_time,
-                                            it.external_img,
-                                            it.picture,
-                                            it.by_player,
-                                            false
-                                        )
-                                    )
+                                    dbGame.insert(dbMethod.convertToGameTableBean(it))
                                 }
                                 result?.deleted_games?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
@@ -484,36 +447,32 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     private fun getSave(){
         isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
-        allImages.list_of_images.addAll(gson.fromJson(appInstance.sharedPreference.getValueString(SerialKey.AllImagesStorage.name), allImages::class.java).list_of_images)
-
-
     }
 
 
 
     private fun refreshAll(){
-        loadImages(appInstance.database.gameDao())
-        loadImages(appInstance.database.addOnDao())
-        loadImages(appInstance.database.multiAddOnDao())
+        loadImages(appInstance.database.gameDao(), Type.Game.name)
+        loadImages(appInstance.database.addOnDao(), Type.AddOn.name)
+        loadImages(appInstance.database.multiAddOnDao(), Type.MultiAddOn.name)
         cleanImageList()
 
     }
 
-    private fun <T:CommonComponent> loadImages(dao:CommonDao<T>){
+    private fun <T:CommonComponent> loadImages(dao:CommonDao<T>, type:String){
         CoroutineScope(SupervisorJob()).launch{
             for (game in dao.getList()){
-                if (!allImages.list_of_images.contains(game.name)){
+                if (dao.getImage(game.name).isEmpty()){
 
                     if (!game.external_img.isNullOrBlank()){
                         launch{
-                            getImage(game.external_img!!, game.name)
-
+                            getImage(game.external_img!!, "${game.name}$type")
                         }
 
                     }
                     else if (!game.picture.isNullOrBlank() && API_STATIC != null){
                         launch{
-                            getImage("$API_STATIC${game.picture}", game.name)
+                            getImage("$API_STATIC${game.picture}", "${game.name}$type")
                         }
                     }
                 }
@@ -528,10 +487,10 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         try {
             val img = sendGetOkHttpRequestImage(url)
             img?.run {
+                appInstance.database.ImageDao().insert(ImageTableBean(0, name))
                 val file = File(this@ViewGamesActivity.filesDir, name)
                 file.writeBytes(this)
-                allImages.list_of_images.add(name)
-                appInstance.sharedPreference.save(gson.toJson(allImages), SerialKey.AllImagesStorage.name)
+
             }
 
         }catch(e:Exception){
@@ -570,12 +529,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     private fun cleanImageList(){
         CoroutineScope(SupervisorJob()).launch{
-            allImages.list_of_images.removeIf {
-                appInstance.database.gameDao().getByName(it).isEmpty() &&
-                        appInstance.database.addOnDao().getByName(it).isEmpty() &&
-                        appInstance.database.multiAddOnDao().getByName(it).isEmpty()
-
-            }
+            println("clean")
         }
 
     }

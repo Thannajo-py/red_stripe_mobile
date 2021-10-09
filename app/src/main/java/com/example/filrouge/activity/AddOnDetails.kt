@@ -48,7 +48,7 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
                                     val game = it[0]
                                     binding.tvNomJeuAddon.text = game.name
                                     binding.tvNomAuteurAddOn.text = game.designer
-                                    loadImage(game.name, binding.ivPicture)
+                                    loadImage(game.name, binding.ivPicture, Type.Game.name)
                                     binding.cvGame.setOnClickListener {
                                         startActivity(
                                             Intent(
@@ -103,9 +103,14 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
     fun fillCommonTextView(){
         appInstance.database.addOnDao().getById(gameId).asLiveData().observe(this, {if(it.size > 0) it?.let{
-            loadImage(it[0].name, binding.ivDetails)
+            loadImage(it[0].name, binding.ivDetails, Type.AddOn.name)
             binding.tvAddOnDetailName.text = it[0].name
-            binding.tvAddOnDetailAge.text = "${it[0].age} et +"
+            it[0].age?.run{
+                binding.tvAddOnDetailAge.text = "${it[0].age} et +"
+            }?:run{
+
+            }
+
             binding.tvAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
             binding.tvAddOnDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
         appInstance.database.addOnDao().getDifficulty(gameId).observe(this, {
