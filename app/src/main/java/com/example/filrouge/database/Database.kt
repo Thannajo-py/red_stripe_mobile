@@ -44,7 +44,7 @@ GameLanguageTableBean::class,
 AddOnLanguageTableBean::class,
 MultiAddOnLanguageTableBean::class,
     DeletedContentTableBean::class,
-                      ImageTableBean::class], version = 8, exportSchema = false)
+    ImageTableBean::class], version = 10, exportSchema = false)
 abstract class FilRougeRoomDatabase : RoomDatabase(){
 
 abstract fun gameDao(): GameDao

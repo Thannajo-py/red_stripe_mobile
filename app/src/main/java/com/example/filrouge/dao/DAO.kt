@@ -454,6 +454,9 @@ interface TagDao: CommonCustomInsert<TagTableBean> {
     
     @Query("INSERT INTO tag(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:TagTableBean)
     
     @Update
     fun update(game: TagTableBean)
@@ -481,6 +484,9 @@ interface TopicDao: CommonCustomInsert<TopicTableBean> {
 
     @Query("INSERT INTO topic(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:TopicTableBean)
     
     @Update
     fun update(game: TopicTableBean)
@@ -508,6 +514,9 @@ interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
 
     @Query("INSERT INTO mechanism(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:MechanismTableBean)
     
     @Update
     fun update(game: MechanismTableBean)
@@ -538,6 +547,9 @@ interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
 
     @Query("INSERT INTO designer(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:DesignerTableBean)
     
     @Update
     fun update(game: DesignerTableBean)
@@ -567,7 +579,10 @@ interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
 
     @Query("INSERT INTO artist(name) VALUES (:newElement)")
     override fun insert(newElement:String)
-    
+
+    @Insert
+    fun insert(newElement:ArtistTableBean)
+
     @Update
     fun update(game: ArtistTableBean)
     
@@ -594,6 +609,9 @@ interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
 
     @Query("INSERT INTO publisher(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:PublisherTableBean)
     
     @Update
     fun update(game: PublisherTableBean)
@@ -621,6 +639,9 @@ interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
 
     @Query("INSERT INTO playingMod(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:PlayingModTableBean)
     
     @Update
     fun update(game: PlayingModTableBean)
@@ -648,6 +669,9 @@ interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
 
     @Query("INSERT INTO language(name) VALUES (:newElement)")
     override fun insert(newElement:String)
+
+    @Insert
+    fun insert(newElement:LanguageTableBean)
     
     @Update
     fun update(game: LanguageTableBean)
@@ -666,6 +690,7 @@ interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
 interface DifficultyDao: CommonComponentDao<DifficultyTableBean> {
     @Query("SELECT * FROM difficulty ORDER BY name ASC")
     fun getAll(): Flow<List<DifficultyTableBean>>
+
 
     @Query("SELECT * FROM difficulty WHERE id=:id")
     fun getbyId(id:Long): List<DifficultyTableBean>
@@ -698,6 +723,9 @@ interface DifficultyDao: CommonComponentDao<DifficultyTableBean> {
 interface UserDao {
     @Query("SELECT * FROM user ORDER BY login ASC")
     fun getAll(): Flow<List<UserTableBean>>
+
+    @Query("SELECT * FROM user ORDER BY login ASC")
+    fun getList():List<UserTableBean>
 
     @Query("SELECT * FROM user ORDER BY login ASC")
     fun checkEmpty(): List<UserTableBean>

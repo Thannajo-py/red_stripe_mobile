@@ -57,7 +57,7 @@ data class DifficultyTableBean(
 
 
 @Entity(tableName = "game", foreignKeys = [ForeignKey(entity = DifficultyTableBean::class,
-    parentColumns = ["id"], childColumns = ["difficultyId"], onDelete = ForeignKey.NO_ACTION
+    parentColumns = ["id"], childColumns = ["difficultyId"], onDelete = ForeignKey.SET_NULL
 )])
 data class GameTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
@@ -79,9 +79,9 @@ data class GameTableBean(
     ): ID, CommonComponent
 
 @Entity(tableName = "addOn", foreignKeys = [ForeignKey(entity = GameTableBean::class,
-    parentColumns = ["id"], childColumns = ["gameId"], onDelete = ForeignKey.NO_ACTION
+    parentColumns = ["id"], childColumns = ["gameId"], onDelete = ForeignKey.SET_NULL
 ),ForeignKey(entity = DifficultyTableBean::class,
-    parentColumns = ["id"], childColumns = ["difficultyId"], onDelete = ForeignKey.NO_ACTION
+    parentColumns = ["id"], childColumns = ["difficultyId"], onDelete = ForeignKey.SET_NULL
 )])
 data class AddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
@@ -107,7 +107,7 @@ data class AddOnTableBean(
     entity = DifficultyTableBean::class,
     parentColumns = ["id"],
     childColumns = ["difficultyId"],
-    onDelete = androidx.room.ForeignKey.NO_ACTION
+    onDelete = androidx.room.ForeignKey.SET_NULL
 )])
 data class MultiAddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
@@ -130,7 +130,9 @@ data class MultiAddOnTableBean(
 @Entity(tableName = "image")
 data class ImageTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
-    override val name:String
+    override val name:String,
+    val gameName:String,
+    val gameType: String
     ): ID
 
 
@@ -210,5 +212,42 @@ data class DeletedContentTableBean(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
     val idContent: Long,
     val type:String
+)
+
+data class SavedDatabase(
+    val game: List<GameTableBean>,
+    val addOn: List<AddOnTableBean>,
+    val multiAddOn: List<MultiAddOnTableBean>,
+    val tag: List<TagTableBean>,
+    val topic: List<TopicTableBean>,
+    val mechanism: List<MechanismTableBean>,
+    val user: List<UserTableBean>,
+    val difficulty: List<DifficultyTableBean>,
+    val designer: List<DesignerTableBean>,
+    val artist: List<ArtistTableBean>,
+    val publisher: List<PublisherTableBean>,
+    val playingMod: List<PlayingModTableBean>,
+    val language: List<LanguageTableBean>,
+    val gameMultiAddOn: List<GameMultiAddOnTableBean>,
+    val gameTag: List<GameTagTableBean>,
+    val gameTopic: List<GameTopicTableBean>,
+    val gameMechanism: List<GameMechanismTableBean>,
+    val gameDesigner: List<GameDesignerTableBean>,
+    val addOnDesigner: List<AddOnDesignerTableBean>,
+    val multiAddOnDesigner: List<MultiAddOnDesignerTableBean>,
+    val gameArtist: List<GameArtistTableBean>,
+    val addOnArtist: List<AddOnArtistTableBean>,
+    val multiAddOnArtist: List<MultiAddOnArtistTableBean>,
+    val gamePublisher: List<GamePublisherTableBean>,
+    val addOnPublisher: List<AddOnPublisherTableBean>,
+    val multiAddOnPublisher: List<MultiAddOnPublisherTableBean>,
+    val gamePlayingMod: List<GamePlayingModTableBean>,
+    val addOnPlayingMod: List<AddOnPlayingModTableBean>,
+    val multiAddOnPlayingMod: List<MultiAddOnPlayingModTableBean>,
+    val gameLanguage: List<GameLanguageTableBean>,
+    val addOnLanguage: List<AddOnLanguageTableBean>,
+    val multiAddOnLanguage: List<MultiAddOnLanguageTableBean>,
+    val deletedContent: List<DeletedContentTableBean>,
+    val image: List<ImageTableBean>
 )
 

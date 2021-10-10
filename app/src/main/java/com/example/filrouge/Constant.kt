@@ -3,19 +3,13 @@ package com.example.filrouge
 
 enum class SerialKey{
     Game,
-    AddOn,
-    ParentGame,
-    MultiAddOn,
     Type,
     Name,
-    APIStorage,
     ToModifyDataId,
     ToModifyDataType,
     ToModifyDataName,
-    AllImagesStorage,
     APIUrl,
     APIStaticUrl,
-    APILastSave,
     IsLocal,
     Timestamp,
     SavedUser,
@@ -23,7 +17,8 @@ enum class SerialKey{
     AddOnId,
     MultiAddOnId,
     GenericId,
-    QueryContent
+    QueryContent,
+    SaveDatabase
 
 }
 
@@ -57,7 +52,9 @@ enum class MenuId{
     ChangePassword,
     LoadImages,
     ResetDB,
-    Disconnect
+    Disconnect,
+    SaveLocalDatabase,
+    LoadLocalDatabase
 }
 
 enum class RegexPattern(val pattern:String){

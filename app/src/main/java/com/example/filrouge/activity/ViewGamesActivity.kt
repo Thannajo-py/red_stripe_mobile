@@ -54,14 +54,13 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (currentUser?.synchronize == true) {
             if (!isLocal){
-                menu?.add(
-                    0,
-                    MenuId.CancelAndSynchronize.ordinal,
-                    0,
-                    "Annuler modification et synchroniser"
-                )
+
                 menu?.add(0, MenuId.Synchronize.ordinal, 0, "Sauvegarder modification et synchroniser")
                 menu?.add(0, MenuId.ResetDB.ordinal, 0, "Réinitialiser le contenu")
+
+            }else{
+                menu?.add(0, MenuId.SaveLocalDatabase.ordinal, 0, "Sauvegarder base de données")
+                menu?.add(0, MenuId.LoadLocalDatabase.ordinal, 0, "Restaurer base de données")
 
             }
             menu?.add(0, MenuId.SynchronizeParameter.ordinal, 0, "Paramètres de synchronisation")
@@ -85,7 +84,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            MenuId.CancelAndSynchronize.ordinal -> synchronizeBox("Voulez vous annuler toutes vos modifications et re-synchroniser?", true)
             MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
             MenuId.DeleteAccount.ordinal -> startActivity(Intent(this, DeleteAccount::class.java))
             MenuId.AddContent.ordinal -> startActivity(Intent(this, AddElement::class.java))
@@ -96,6 +94,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             }
             MenuId.SynchronizeParameter.ordinal -> urlParameterBox()
             MenuId.ChangePassword.ordinal -> changePasswordBox()
+            MenuId.SaveLocalDatabase.ordinal -> saveLocalDatabase()
+            MenuId.LoadLocalDatabase.ordinal -> loadLocalDatabase()
             MenuId.ResetDB.ordinal -> {
                 appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, 0.0F)
                 synchronizeBox("Voulez vous supprimer votre contenu et recharger la base de données?", true)
@@ -111,6 +111,96 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         return super.onOptionsItemSelected(item)
     }
 
+    private fun saveLocalDatabase(){
+        val db = appInstance.database
+        CoroutineScope(SupervisorJob()).launch {
+            db.runInTransaction {
+                appInstance.sharedPreference.save(gson.toJson(SavedDatabase(
+                    db.gameDao().getList(),
+                    db.addOnDao().getList(),
+                    db.multiAddOnDao().getList(),
+                    db.tagDao().getList(),
+                    db.topicDao().getList(),
+                    db.mechanismDao().getList(),
+                    db.userDao().getList(),
+                    db.difficultyDao().getList(),
+                    db.designerDao().getList(),
+                    db.artistDao().getList(),
+                    db.publisherDao().getList(),
+                    db.playingModDao().getList(),
+                    db.languageDao().getList(),
+                    db.gameMultiAddOnDao().getList(),
+                    db.gameTagDao().getList(),
+                    db.gameTopicDao().getList(),
+                    db.gameMechanismDao().getList(),
+                    db.gameDesignerDao().getList(),
+                    db.addOnDesignerDao().getList(),
+                    db.multiAddOnDesignerDao().getList(),
+                    db.gameArtistDao().getList(),
+                    db.addOnArtistDao().getList(),
+                    db.multiAddOnArtistDao().getList(),
+                    db.gamePublisherDao().getList(),
+                    db.addOnPublisherDao().getList(),
+                    db.multiAddOnPublisherDao().getList(),
+                    db.gamePlayingModDao().getList(),
+                    db.addOnPlayingModDao().getList(),
+                    db.multiAddOnPlayingModDao().getList(),
+                    db.gameLanguageDao().getList(),
+                    db.addOnLanguageDao().getList(),
+                    db.multiAddOnLanguageDao().getList(),
+                    db.deletedItemDao().getAll(),
+                    db.ImageDao().getAll()
+                )), SerialKey.SaveDatabase.name)
+            }
+        }
+
+    }
+
+    private fun loadLocalDatabase(){
+        val db = appInstance.database
+
+        CoroutineScope(SupervisorJob()).launch {
+            db.clearAllTables()
+            db.runInTransaction {
+                val dbSave = gson.fromJson(appInstance.sharedPreference.getValueString(SerialKey.SaveDatabase.name), SavedDatabase::class.java)
+                dbSave.difficulty.forEach { db.difficultyDao().insert(it) }
+                dbSave.game.forEach { db.gameDao().insert(it) }
+                dbSave.addOn.forEach { db.addOnDao().insert(it) }
+                dbSave.multiAddOn.forEach { db.multiAddOnDao().insert(it) }
+                dbSave.tag.forEach { db.tagDao().insert(it) }
+                dbSave.topic.forEach { db.topicDao().insert(it) }
+                dbSave.mechanism.forEach { db.mechanismDao().insert(it) }
+                dbSave.user.forEach { db.userDao().insert(it) }
+                dbSave.designer.forEach { db.designerDao().insert(it) }
+                dbSave.artist.forEach { db.artistDao().insert(it) }
+                dbSave.publisher.forEach { db.publisherDao().insert(it) }
+                dbSave.playingMod.forEach { db.playingModDao().insert(it) }
+                dbSave.language.forEach { db.languageDao().insert(it) }
+                dbSave.gameMultiAddOn.forEach { db.gameMultiAddOnDao().insert(it) }
+                dbSave.gameTag.forEach { db.gameTagDao().insert(it) }
+                dbSave.gameTopic.forEach { db.gameTopicDao().insert(it) }
+                dbSave.gameMechanism.forEach { db.gameMechanismDao().insert(it) }
+                dbSave.gameDesigner.forEach { db.gameDesignerDao().insert(it) }
+                dbSave.addOnDesigner.forEach { db.addOnDesignerDao().insert(it) }
+                dbSave.multiAddOnDesigner.forEach { db.multiAddOnDesignerDao().insert(it) }
+                dbSave.gameArtist.forEach { db.gameArtistDao().insert(it) }
+                dbSave.addOnArtist.forEach { db.addOnArtistDao().insert(it) }
+                dbSave.multiAddOnArtist.forEach { db.multiAddOnArtistDao().insert(it) }
+                dbSave.gamePublisher.forEach { db.gamePublisherDao().insert(it) }
+                dbSave.addOnPublisher.forEach { db.addOnPublisherDao().insert(it) }
+                dbSave.multiAddOnPublisher.forEach { db.multiAddOnPublisherDao().insert(it) }
+                dbSave.gamePlayingMod.forEach { db.gamePlayingModDao().insert(it) }
+                dbSave.addOnPlayingMod.forEach { db.addOnPlayingModDao().insert(it) }
+                dbSave.multiAddOnPlayingMod.forEach { db.multiAddOnPlayingModDao().insert(it) }
+                dbSave.gameLanguage.forEach { db.gameLanguageDao().insert(it) }
+                dbSave.addOnLanguage.forEach { db.addOnLanguageDao().insert(it) }
+                dbSave.multiAddOnLanguage.forEach { db.multiAddOnLanguageDao().insert(it) }
+                dbSave.deletedContent.forEach { db.deletedItemDao().insert(it) }
+                dbSave.image.forEach { db.ImageDao().insert(it) }
+
+            }
+        }
+    }
 
     private fun synchronize(login:String, password:String, cancel:Boolean){
         binding.progressBar.visibility = View.VISIBLE
@@ -438,12 +528,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
 
-    private fun <T: CommonBase>fillList(list:ArrayList<T>, fill:ArrayList<T>){
-        list.clear()
-        list.addAll(fill)
-        list.sortBy{it.name}
 
-    }
 
     private fun getSave(){
         isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
@@ -466,13 +551,13 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
                     if (!game.external_img.isNullOrBlank()){
                         launch{
-                            getImage(game.external_img!!, "${game.name}$type")
+                            getImage(game.external_img!!, "${game.name}$type", game.name, type)
                         }
 
                     }
                     else if (!game.picture.isNullOrBlank() && API_STATIC != null){
                         launch{
-                            getImage("$API_STATIC${game.picture}", "${game.name}$type")
+                            getImage("$API_STATIC${game.picture}", "${game.name}$type", game.name, type)
                         }
                     }
                 }
@@ -483,11 +568,11 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun getImage(url:String, name:String){
+    private fun getImage(url:String, name:String, gameName:String, type:String){
         try {
             val img = sendGetOkHttpRequestImage(url)
             img?.run {
-                appInstance.database.ImageDao().insert(ImageTableBean(0, name))
+                appInstance.database.ImageDao().insert(ImageTableBean(0, name, gameName, type))
                 val file = File(this@ViewGamesActivity.filesDir, name)
                 file.writeBytes(this)
 
@@ -529,8 +614,22 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     private fun cleanImageList(){
         CoroutineScope(SupervisorJob()).launch{
-            println("clean")
+            appInstance.database.runInTransaction {
+                appInstance.database.ImageDao().getAll().forEach {
+                    when(it.gameType){
+                        Type.Game.name -> if(appInstance.database.gameDao().getByName(it.gameName).isEmpty())deleteImage(it.name)
+                        Type.AddOn.name -> if(appInstance.database.addOnDao().getByName(it.gameName).isEmpty()) deleteImage(it.name)
+                        Type.MultiAddOn.name -> if(appInstance.database.multiAddOnDao().getByName(it.gameName).isEmpty()) deleteImage(it.name)
+                    }
+                }
+            }
         }
+
+    }
+
+    private fun deleteImage(fileName:String){
+        appInstance.database.ImageDao().deleteByName(fileName)
+        File(this@ViewGamesActivity.filesDir, fileName).delete()
 
     }
 
