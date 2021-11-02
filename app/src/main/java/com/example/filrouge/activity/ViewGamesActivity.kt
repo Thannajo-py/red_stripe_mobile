@@ -217,14 +217,14 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
         if (!cancel){
             modification = SendApiChange(login,password, ApiResponse(
-                appInstance.database.gameDao().getWithoutServerId().map{dbMethod.convertToGameBean(it)}.toCollection(ArrayList()),
-                appInstance.database.addOnDao().getWithoutServerId().map{dbMethod.convertToAddOnBean(it)}.toCollection(ArrayList()),
-                appInstance.database.multiAddOnDao().getWithoutServerId().map{dbMethod.convertToMultiAddOnBean(it)}.toCollection(ArrayList())
+                appInstance.database.gameDao().getWithoutServerId().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
+                appInstance.database.addOnDao().getWithoutServerId().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
+                appInstance.database.multiAddOnDao().getWithoutServerId().map{dbMethod.convertToBean(it)}.toCollection(ArrayList())
             )
                 , ApiResponse(
-                    appInstance.database.gameDao().getChanged().map{dbMethod.convertToGameBean(it)}.toCollection(ArrayList()),
-                    appInstance.database.addOnDao().getChanged().map{dbMethod.convertToAddOnBean(it)}.toCollection(ArrayList()),
-                    appInstance.database.multiAddOnDao().getChanged().map{dbMethod.convertToMultiAddOnBean(it)}.toCollection(ArrayList()),
+                    appInstance.database.gameDao().getChanged().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
+                    appInstance.database.addOnDao().getChanged().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
+                    appInstance.database.multiAddOnDao().getChanged().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
                 ),
                 ApiDelete(
                     appInstance.database.deletedItemDao().getByType(Type.Game.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
@@ -288,7 +288,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                             db.runInTransaction {
                                 val dbGame = db.gameDao()
                                 result.games.forEach {
-                                    dbGame.insert(dbMethod.convertToGameTableBean(it))
+                                    dbGame.insert(dbMethod.convertToTableBean(it))
                                 }
                                 result?.deleted_games?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
@@ -304,50 +304,11 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                     result.add_ons?.run {
 
                             db.runInTransaction {
-                                val dbGame = db.addOnDao()
                                 result.add_ons.forEach {
-                                    val gameInDb = dbGame.getByServerId(it.id?.toLong() ?: 0L)
-                                    var addOnId: Long = 0L
-                                    var gameDifficulty: Long? = null
-                                    it.difficulty?.run {
-                                        val listGameDifficulty = db.difficultyDao().getByName(this)
-                                        if (listGameDifficulty.isNotEmpty()) gameDifficulty =
-                                            listGameDifficulty[0].id
-
-                                    }
-                                    var gameId: Long? = null
-                                    it.game?.run {
-                                        val listGame = appInstance.database.gameDao().getByName(this)
-                                        if (listGame.isNotEmpty()) gameId = listGame[0].id
-
-                                    }
-
-                                    if (gameInDb.isNotEmpty()) addOnId = gameInDb[0].id
-
-                                    dbGame.insert(
-                                        AddOnTableBean(
-                                            addOnId,
-                                            it.id,
-                                            it.name,
-                                            it.player_min,
-                                            it.player_max,
-                                            it.playing_time,
-                                            gameDifficulty,
-                                            it.bgg_link,
-                                            it.age,
-                                            it.buying_price,
-                                            it.stock,
-                                            it.max_time,
-                                            it.external_img,
-                                            it.picture,
-                                            gameId,
-                                            false
-                                        )
-                                    )
-
+                                    db.addOnDao().insert(dbMethod.convertToTableBean(it))
                                 }
                                 result?.deleted_add_ons?.forEach {
-                                    val gameInDb = dbGame.getByServerId(it.toLong())
+                                    val gameInDb = db.addOnDao().getByServerId(it.toLong())
                                     if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
                                     db.addOnDao().deleteOne(it.toLong())
 
@@ -360,37 +321,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                             db.runInTransaction {
                                 val dbGame = db.multiAddOnDao()
                                 result.multi_add_ons.forEach {
-                                    var gameId: Long = 0L
-                                    val gameInDb = dbGame.getByServerId(it.id?.toLong() ?: 0L)
-                                    var gameDifficulty: Long? = null
-                                    it.difficulty?.run {
-                                        val listGameDifficulty = db.difficultyDao().getByName(this)
-
-                                        if (listGameDifficulty.isNotEmpty()) gameDifficulty =
-                                            listGameDifficulty[0].id
-
-                                    }
-                                    if (gameInDb.isNotEmpty()) gameId = gameInDb[0].id
-
-                                    dbGame.insert(
-                                        MultiAddOnTableBean(
-                                            gameId,
-                                            it.id,
-                                            it.name,
-                                            it.player_min,
-                                            it.player_max,
-                                            it.playing_time,
-                                            gameDifficulty,
-                                            it.bgg_link,
-                                            it.age,
-                                            it.buying_price,
-                                            it.stock,
-                                            it.max_time,
-                                            it.external_img,
-                                            it.picture,
-                                            false
-                                        )
-                                    )
+                                    db.multiAddOnDao().insert(dbMethod.convertToTableBean(it))
 
                                 }
                                 result?.deleted_multi_add_ons?.forEach {

@@ -110,7 +110,7 @@ class DbMethod {
     }
 
 
-    fun convertToGameBean(game:GameTableBean):GameBean {
+    fun convertToBean(game:GameTableBean):GameBean {
         val dao = appInstance.database.gameDao()
         var difficulty:String? = null
         game.difficultyId?.run{
@@ -150,7 +150,7 @@ class DbMethod {
 
     }
 
-    fun convertToAddOnBean(game:AddOnTableBean):AddOnBean {
+    fun convertToBean(game:AddOnTableBean):AddOnBean {
         val dao = appInstance.database.addOnDao()
         var difficulty:String? = null
         game.difficultyId?.run{
@@ -186,7 +186,7 @@ class DbMethod {
 
     }
 
-    fun convertToMultiAddOnBean(game:MultiAddOnTableBean):MultiAddOnBean {
+    fun convertToBean(game:MultiAddOnTableBean):MultiAddOnBean {
         val dao = appInstance.database.multiAddOnDao()
         var difficulty:String? = null
         game.difficultyId?.run{
@@ -218,7 +218,7 @@ class DbMethod {
 
     }
 
-    fun convertToGameTableBean(it:GameBean):GameTableBean{
+    fun convertToTableBean(it:GameBean):GameTableBean{
         var gameId: Long = 0L
         val gameInDb = db.gameDao().getByServerId(it.id?.toLong() ?: 0L)
         var gameDifficulty: Long? = null
@@ -255,5 +255,78 @@ class DbMethod {
                 false
             )
 
+    }
+
+    fun convertToTableBean(it:AddOnBean):AddOnTableBean{
+        val gameInDb = db.addOnDao().getByServerId(it.id?.toLong() ?: 0L)
+        var addOnId: Long = 0L
+        var gameDifficulty: Long? = null
+        it.difficulty?.run {
+            val listGameDifficulty = db.difficultyDao().getByName(this)
+            if (listGameDifficulty.isNotEmpty()) gameDifficulty =
+                listGameDifficulty[0].id
+
+        }
+        var gameId: Long? = null
+        it.game?.run {
+            val listGame = appInstance.database.gameDao().getByName(this)
+            if (listGame.isNotEmpty()) gameId = listGame[0].id
+
+        }
+
+        if (gameInDb.isNotEmpty()) addOnId = gameInDb[0].id
+
+
+        return AddOnTableBean(
+                addOnId,
+                it.id,
+                it.name,
+                it.player_min,
+                it.player_max,
+                it.playing_time,
+                gameDifficulty,
+                it.bgg_link,
+                it.age,
+                it.buying_price,
+                it.stock,
+                it.max_time,
+                it.external_img,
+                it.picture,
+                gameId,
+                false
+            )
+
+    }
+
+    fun convertToTableBean(it:MultiAddOnBean):MultiAddOnTableBean{
+        var gameId: Long = 0L
+        val gameInDb = db.multiAddOnDao().getByServerId(it.id?.toLong() ?: 0L)
+        var gameDifficulty: Long? = null
+        it.difficulty?.run {
+            val listGameDifficulty = db.difficultyDao().getByName(this)
+
+            if (listGameDifficulty.isNotEmpty()) gameDifficulty =
+                listGameDifficulty[0].id
+
+        }
+        if (gameInDb.isNotEmpty()) gameId = gameInDb[0].id
+
+        return MultiAddOnTableBean(
+                gameId,
+                it.id,
+                it.name,
+                it.player_min,
+                it.player_max,
+                it.playing_time,
+                gameDifficulty,
+                it.bgg_link,
+                it.age,
+                it.buying_price,
+                it.stock,
+                it.max_time,
+                it.external_img,
+                it.picture,
+                false
+        )
     }
 }
