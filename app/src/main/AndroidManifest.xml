@@ -13,13 +13,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FilRouge">
         <activity
-            android:name=".activity.AddElement"
+            android:name=".activity.APISearchActivity"
             android:exported="true"
             android:parentActivityName=".activity.ViewGamesActivity"/>
         <activity
+            android:name=".activity.AddElement"
+            android:exported="true"
+            android:parentActivityName=".activity.ViewGamesActivity" />
+        <activity
             android:name=".activity.DeleteAccount"
             android:exported="true"
-            android:parentActivityName=".activity.ViewGamesActivity"/>
+            android:parentActivityName=".activity.ViewGamesActivity" />
         <activity
             android:name=".activity.Search"
             android:exported="true"
@@ -28,12 +32,15 @@
             android:name=".activity.CreateNewAccount"
             android:exported="true"
             android:parentActivityName=".activity.MainActivity" />
-        <activity android:name=".activity.GenericTypeDetails"
-            android:parentActivityName=".activity.ViewGamesActivity"/>
-        <activity android:name=".activity.MultiAddOnDetails"
-            android:parentActivityName=".activity.ViewGamesActivity"/>
-        <activity android:name=".activity.AddOnDetails"
-            android:parentActivityName=".activity.ViewGamesActivity"/>
+        <activity
+            android:name=".activity.GenericTypeDetails"
+            android:parentActivityName=".activity.ViewGamesActivity" />
+        <activity
+            android:name=".activity.MultiAddOnDetails"
+            android:parentActivityName=".activity.ViewGamesActivity" />
+        <activity
+            android:name=".activity.AddOnDetails"
+            android:parentActivityName=".activity.ViewGamesActivity" />
         <activity
             android:name=".activity.GameDetails"
             android:parentActivityName=".activity.ViewGamesActivity" />

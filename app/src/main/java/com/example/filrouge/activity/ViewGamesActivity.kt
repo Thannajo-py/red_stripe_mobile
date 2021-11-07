@@ -78,6 +78,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
         menu?.add(0, MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
         menu?.add(0, MenuId.Disconnect.ordinal,0,"Se Déconnecter")
+        menu?.add(0, MenuId.ApiSearch.ordinal,0,"ajouter un jeu par BGA")
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -107,6 +108,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 startActivity(Intent(this, MainActivity::class.java))
                 finishAffinity()
             }
+            MenuId.ApiSearch.ordinal -> startActivity(Intent(this, APISearchActivity::class.java))
         }
         return super.onOptionsItemSelected(item)
     }
@@ -658,8 +660,4 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
 
     }
-
-
-
-
 }

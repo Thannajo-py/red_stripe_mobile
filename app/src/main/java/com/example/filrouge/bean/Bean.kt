@@ -1,5 +1,6 @@
 package com.example.filrouge
 
+import com.example.filrouge.bean.CommonGame
 import java.io.Serializable
 
 fun listEquality( list:ArrayList<String>, otherList:ArrayList<String>) = list.size == otherList.size && list.all{otherList.contains(it)}
@@ -250,11 +251,6 @@ class SendApiChange(val login:String, val password:String, val addedList:ApiResp
 
 class ApiBody(val body:SendApiChange)
 
-class AllImages(val list_of_images: MutableSet<String>)
-
-
-
-
 data class SearchQuery(
         val name:String?,
         val designer:String?,
@@ -273,3 +269,31 @@ data class SearchQuery(
 
 ):Serializable
 
+data class BgaApi( val games: ArrayList<BgaGameBean>? )
+
+data class BgaGameBean(
+     val id: String,
+     val name: String,
+     val url: String,
+     val min_players: Int?,
+     val max_players: Int?,
+     val max_playtime: Int?,
+     val min_age: Int?,
+     val image_url: String?,
+     val mechanics: ArrayList<IdObjectBean>,
+     val categories: ArrayList<IdObjectBean>,
+     val artists: ArrayList<String>,
+     val primary_publisher: NamedObjectBean?,
+     val primary_designer: NamedObjectBean?,
+     val type: String?,
+): Serializable
+
+data class IdObjectBean(val id: String):Serializable
+
+data class NamedObjectBean(val name: String):Serializable
+
+data class NamedResultBean(val id:String, val name:String)
+
+data class MechanicApiResult(val mechanics:ArrayList<NamedResultBean>)
+
+data class CategoriesApiResult(val categories:ArrayList<NamedResultBean>)

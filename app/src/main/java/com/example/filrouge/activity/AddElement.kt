@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.*
+import androidx.core.view.children
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
@@ -22,6 +23,17 @@ class AddElement : CommonType(), View.OnClickListener,
 
     private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(ArrayList(), ArrayList(), ArrayList()
         , ArrayList(), ArrayList(), ArrayList(), ArrayList(), ArrayList())
+
+    private val addedAdapter: ArrayList<AddedElementAdapter> = arrayListOf(
+        AddedElementAdapter(addedStringContent[0]),
+        AddedElementAdapter(addedStringContent[1]),
+        AddedElementAdapter(addedStringContent[2]),
+        AddedElementAdapter(addedStringContent[3]),
+        AddedElementAdapter(addedStringContent[4]),
+        AddedElementAdapter(addedStringContent[5]),
+        AddedElementAdapter(addedStringContent[6]),
+        AddedElementAdapter(addedStringContent[7]),
+    )
 
     private val addedEditText: ArrayList<ArrayList<EditText>> = arrayListOf(ArrayList(), ArrayList(), ArrayList()
         , ArrayList(), ArrayList(), ArrayList(), ArrayList(), ArrayList())
@@ -53,15 +65,13 @@ class AddElement : CommonType(), View.OnClickListener,
     private val gamesAdapter = GenericCommonGameListCbAdapter<DesignerWithGame>(this, addedToListGames)
 
     private var game:DesignerWithGame? = null
-    private val gameAdapter = OneToOneListCbAdapter( this, game)
+    private val gameAdapter = OneToOneListCbAdapter(this, game)
 
     private val changedObjectId: Long by lazy{intent.getLongExtra(SerialKey.ToModifyDataId.name, 0L)}
     private val changedObjectType: String? by lazy{intent.getStringExtra(SerialKey.ToModifyDataType.name)}
     private val changedObjectName: String? by lazy{intent.getStringExtra(SerialKey.ToModifyDataName.name)}
 
-
-
-
+    private val BgaApiGame by lazy{intent.getSerializableExtra(SerialKey.ApiBgaGame.name) as BgaGameBean?}
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,7 +117,6 @@ class AddElement : CommonType(), View.OnClickListener,
         fillCommonRV(commonRvAdapterList)
         fillPageRv()
 
-
         btnAddDeleteModule(binding.btnDesignerAdd, binding.btnDesignerDelete, binding.llDesigner, AddedContent.Designer.ordinal)
         btnAddDeleteModule(binding.btnArtistAdd, binding.btnArtistDelete, binding.llArtist, AddedContent.Artist.ordinal)
         btnAddDeleteModule(binding.btnPublisherAdd, binding.btnPublisherDelete, binding.llPublisher, AddedContent.Publisher.ordinal)
@@ -116,8 +125,9 @@ class AddElement : CommonType(), View.OnClickListener,
         btnAddDeleteModule(binding.btnTopicAdd, binding.btnTopicDelete, binding.llTopic, AddedContent.Topic.ordinal)
         btnAddDeleteModule(binding.btnMechanismAdd, binding.btnMechanismDelete, binding.llMechanism, AddedContent.Mechanism.ordinal)
         btnAddDeleteModule(binding.btnPlayingModeAdd, binding.btnPlayingModeDelete, binding.llPlayingMode, AddedContent.PlayingMod.ordinal)
-
-
+        BgaApiGame?.run{
+            loadBgaGame(this)
+        }
 
     }
 
@@ -134,8 +144,9 @@ class AddElement : CommonType(), View.OnClickListener,
         }
     }
 
-    private fun setOnClickAddButton(ll:LinearLayout, position:Int){
+    private fun setOnClickAddButton(ll:LinearLayout, position:Int, text:String=""){
         val et = EditText(this)
+        et.setText(text)
         ll.addView(et)
         addedEditText[position].add(et)
     }
@@ -719,10 +730,49 @@ class AddElement : CommonType(), View.OnClickListener,
         appInstance.database.mechanismDao().getAll().asLiveData()
             .observe(this, { it?.let { mechanismAdapter.submitList(it) } })
 
+    }
+
+    fun loadBgaGame(datum:BgaGameBean){
+        binding.etExternalImage.setText(datum.image_url?:"")
+        binding.etBggLink.setText(datum.url)
+        binding.etNom.setText(datum.name)
+        binding.etNbPlayerMin.setText(datum.min_players?.toString()?:"")
+        binding.etNbPlayerMax.setText(datum.max_players?.toString()?:"")
+        binding.etMaxTime.setText(datum.max_playtime?.toString()?:"")
+        binding.etAge.setText(datum.min_age?.toString()?:"")
+        if (datum.type == Constant.Extension.value){
+            binding.rbAddOn.isChecked = true
+        }
+        binding.etPublisher.setText(datum.primary_publisher?.name?:"")
+        binding.etDesigner.setText(datum.primary_designer?.name?:"")
+        addEditTextFromStringArray(datum.artists, binding.etArtist, binding.llArtist, AddedContent.Artist.ordinal, binding.btnArtistDelete)
+        addEditTextFromStringArray(convertIdListToNameList(datum.mechanics, ALL_MECHANICS), binding.etMechanism, binding.llMechanism, AddedContent.Mechanism.ordinal, binding.btnMechanismDelete)
+        addEditTextFromStringArray(convertIdListToNameList(datum.categories, ALL_CATEGORIES), binding.etTopic, binding.llTopic, AddedContent.Topic.ordinal, binding.btnTopicDelete)
+
+
 
     }
 
+    fun addEditTextFromStringArray(list:ArrayList<String>, initialEditText:EditText, ll:LinearLayout, position:Int, btnDel: Button){
+        if (list.size > 1){
+            btnDel.visibility = View.VISIBLE
+        }
+        for ((index,name) in list.withIndex()) {
+            if (index == 0) {
+                initialEditText.setText(name)
+            }
+            else{
+                setOnClickAddButton(ll, position, name)
+            }
 
+        }
+    }
 
+    private fun convertIdListToNameList(idList:ArrayList<IdObjectBean>, namedList:ArrayList<NamedResultBean>): ArrayList<String>{
+        val resultList = ArrayList<String>()
+        idList.forEach { for (m in namedList) {if (m.id==it.id){resultList.add(m.name)}} }
+        return resultList
+
+    }
 
 }

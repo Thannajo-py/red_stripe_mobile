@@ -131,14 +131,4 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
         }
         return super.onOptionsItemSelected(item)
     }
-
-
-
-
-
-
-
-
 }
-
-

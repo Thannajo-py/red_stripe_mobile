@@ -39,3 +39,17 @@ fun sendGetOkHttpRequestImage(url: String): ByteArray? {
     }
 
 }
+
+fun sendGetOkHttpRequest(url: String): String? {
+    println("url : $url")
+//Création de la requete
+    val request = Request.Builder().url(url).build() //Execution de la requête
+    val response = client.newCall(request).execute() //Analyse du code retour
+    return if (response.code !in 200..299) {
+        throw Exception("Réponse du serveur incorrect : ${response.code}")
+    } else {
+        println(response.code)
+        response.body?.string()
+    }
+
+}

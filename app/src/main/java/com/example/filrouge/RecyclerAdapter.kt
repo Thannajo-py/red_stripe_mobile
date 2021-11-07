@@ -1,15 +1,24 @@
 package com.example.filrouge
 
 import android.graphics.BitmapFactory
+import android.text.Editable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
+import androidx.core.widget.doAfterTextChanged
+import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filrouge.activity.APISearchActivity
+import com.example.filrouge.activity.AddElement
 import com.example.filrouge.bean.*
 import com.example.filrouge.databinding.*
+import com.squareup.picasso.Picasso
+import org.intellij.lang.annotations.Language
 import java.io.File
 
 
@@ -89,11 +98,6 @@ open class GenericListAdapter<T:CommonGame> (val client: OnGenericListAdapterLis
         }
         holder.bind.cvGameList.setOnClickListener { client.onElementClick(datum) }
     }
-
-
-
-
-
 }
 
 interface OnGenericListAdapterListener{
@@ -224,5 +228,65 @@ class OneToOneListCbAdapter<T:OneToOne> (val client: GenericOneToOneListener,
 
 interface GenericOneToOneListener{
     fun onGenericClick(datum:OneToOne)
+
+}
+
+open class BgaListAdapter (val client: APISearchActivity) : ListAdapter<BgaGameBean, BgaListAdapter.ViewHolder>(GameComparator()) {
+
+
+    class ViewHolder(val bind: GameListBinding) : RecyclerView.ViewHolder(bind.root)
+
+    class GameComparator : DiffUtil.ItemCallback<BgaGameBean>() {
+        override fun areItemsTheSame(oldItem: BgaGameBean, newItem: BgaGameBean) =
+            oldItem.id == newItem.id
+
+        override fun areContentsTheSame(oldItem: BgaGameBean, newItem: BgaGameBean) =
+            oldItem.id == newItem.id
+    }
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
+
+    override fun onBindViewHolder(holder: BgaListAdapter.ViewHolder, position: Int) {
+        val datum = getItem(position)
+        holder.bind.tvName.text = datum.name
+        holder.bind.tvDesigner.text = datum?.primary_designer?.name ?: ""
+        datum.image_url?.run {
+            Picasso.get().load(datum.image_url).into(holder.bind.ivPicture)
+        } ?: run {
+            holder.bind.ivPicture.setImageBitmap(null)
+        }
+        holder.bind.cvGameList.setOnClickListener { client.onElementClick(datum) }
+    }
+
+
+}
+
+class AddedElementAdapter(
+    val addedElement: ArrayList<String>,
+) : RecyclerView.Adapter<AddedElementAdapter.ViewHolder>() {
+
+
+    class ViewHolder(val binding: EditableListBinding) : RecyclerView.ViewHolder(binding.root)
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(EditableListBinding.inflate(LayoutInflater.from(parent.context)))
+
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.binding.etName.setText(addedElement[position])
+        holder.binding.etName.doAfterTextChanged {
+            addedElement[position] = it.toString()
+            this.notifyItemChanged(position)
+        }
+        holder.binding.fba.setOnClickListener {
+            addedElement.removeAt(position)
+            this.notifyItemRemoved(position)
+        }
+    }
+
+    // return the size of languageList
+    override fun getItemCount() = addedElement.size
 
 }

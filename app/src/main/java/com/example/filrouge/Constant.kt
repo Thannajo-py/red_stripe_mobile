@@ -1,6 +1,7 @@
 package com.example.filrouge
 
-
+val ALL_MECHANICS = ArrayList<NamedResultBean>()
+val ALL_CATEGORIES = ArrayList<NamedResultBean>()
 enum class SerialKey{
     Game,
     Type,
@@ -18,7 +19,8 @@ enum class SerialKey{
     MultiAddOnId,
     GenericId,
     QueryContent,
-    SaveDatabase
+    SaveDatabase,
+    ApiBgaGame
 
 }
 
@@ -40,7 +42,7 @@ enum class Type{
 }
 
 enum class MenuId{
-    CancelAndSynchronize,
+    ApiSearch,
     Synchronize,
     Search,
     DeleteAccount,
@@ -82,3 +84,9 @@ enum class AddedContent{
     PlayingMod
 }
 
+enum class Constant(val value:String){
+    ApiBgaKey("WgrVtRvHeo"),
+    Extension("expansion"),
+    UrlMechanics("https://api.boardgameatlas.com/api/game/mechanics?client_id=WgrVtRvHeo"),
+    UrlCategories("https://api.boardgameatlas.com/api/game/categories?client_id=WgrVtRvHeo")
+}

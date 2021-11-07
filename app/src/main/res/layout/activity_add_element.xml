@@ -127,6 +127,10 @@
                 android:textStyle="bold" />
 
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <EditText
                 android:id="@+id/et_designer"
                 android:layout_width="match_parent"
