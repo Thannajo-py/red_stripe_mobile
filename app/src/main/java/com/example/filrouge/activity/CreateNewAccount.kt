@@ -74,7 +74,7 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
                 }
             }
             else{
-                binding.tvError.text = CommonString.PassWordRequirement.string
+                binding.tvError.text = getString(R.string.password_rules)
                 binding.tvError.visibility = View.VISIBLE
             }
         }else{

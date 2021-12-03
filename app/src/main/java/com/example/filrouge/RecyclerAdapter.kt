@@ -16,29 +16,26 @@ import java.io.File
 
 
 var currentUser: UserTableBean? = null
-
 var API_URL:String? = null
 var API_STATIC:String? = null
-
 var addOnGame:GameBean? = null
-
 var isLocal:Boolean = true
 
 
+class UserBeanAdapter (val client: UserListener, val addedUserList: ArrayList<UserTableBean>)
+    : ListAdapter<UserTableBean, UserBeanAdapter.ViewHolder>(UserTableBeanComparator()){
 
-
-class UserBeanAdapter (val client: UserListener, val addedUserList: ArrayList<UserTableBean>) : ListAdapter<UserTableBean, UserBeanAdapter.ViewHolder>(UserTableBeanComparator()){
     class ViewHolder(val bind: AccountListBinding) : RecyclerView.ViewHolder(bind.root)
 
     class UserTableBeanComparator: DiffUtil.ItemCallback<UserTableBean>() {
-        override fun areItemsTheSame(oldItem: UserTableBean, newItem: UserTableBean) = oldItem === newItem
-        override fun areContentsTheSame(oldItem: UserTableBean, newItem: UserTableBean) = oldItem == newItem
+        override fun areItemsTheSame(oldItem: UserTableBean, newItem: UserTableBean) =
+            oldItem === newItem
+        override fun areContentsTheSame(oldItem: UserTableBean, newItem: UserTableBean) =
+            oldItem == newItem
     }
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(AccountListBinding.inflate(
-        LayoutInflater.from(parent.context)))
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(AccountListBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
@@ -47,10 +44,8 @@ class UserBeanAdapter (val client: UserListener, val addedUserList: ArrayList<Us
         holder.bind.cbSelect.setOnClickListener { client.onUserClick(datum, position)
            }
     }
-
-
-
 }
+
 
 interface UserListener{
     fun onUserClick(datum:UserTableBean, position:Int)
@@ -58,11 +53,8 @@ interface UserListener{
 }
 
 
-
-
-
-open class GenericListAdapter (val client: OnGenericListAdapterListener) : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
-
+open class GenericListAdapter(val client: OnGenericListAdapterListener)
+    : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
 
     class ViewHolder(val bind:GameListBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -71,8 +63,8 @@ open class GenericListAdapter (val client: OnGenericListAdapterListener) : ListA
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
     }
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
@@ -81,7 +73,10 @@ open class GenericListAdapter (val client: OnGenericListAdapterListener) : ListA
         datum.image?.run{
 
             val file = File(holder.bind.tvDesigner.context.filesDir, this)
-            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
+            val compressedBitMap = BitmapFactory.decodeByteArray(
+                file.readBytes(),
+                0,
+                file.readBytes().size)
             holder.bind.ivPicture.setImageBitmap(compressedBitMap)
         }?:run{
             holder.bind.ivPicture.setImageBitmap(null)
@@ -90,16 +85,19 @@ open class GenericListAdapter (val client: OnGenericListAdapterListener) : ListA
     }
 }
 
+
 interface OnGenericListAdapterListener{
     fun onElementClick(datum:CommonGame)
 }
+
 
 interface OnGenericStringListAdapterListener{
     fun onElementClick(datum:ID, type:String)
 }
 
-open class GenericStringListAdapter (val client: OnGenericStringListAdapterListener, val type:String) : ListAdapter<ID, GenericStringListAdapter.ViewHolder>(GameComparator()) {
 
+open class GenericStringListAdapter(val client: OnGenericStringListAdapterListener, val type:String)
+    : ListAdapter<ID, GenericStringListAdapter.ViewHolder>(GameComparator()) {
 
     class ViewHolder(val bind:NameListBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -108,20 +106,22 @@ open class GenericStringListAdapter (val client: OnGenericStringListAdapterListe
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
         holder.bind.cvNameList.setOnClickListener { client.onElementClick(datum, type) }
     }
-
 }
 
 
-class GenericIDListCbAdapter (val client: GenericIDCbListener, val type:String,
-                            val addedGeneric:ArrayList<String>) : ListAdapter<ID, GenericIDListCbAdapter.ViewHolder>(ItemComparator()){
+class GenericIDListCbAdapter (
+    val client: GenericIDCbListener,
+    val type:String,
+    val addedGeneric:ArrayList<String>)
+    : ListAdapter<ID, GenericIDListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: NameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
     class ItemComparator<T:ID>: DiffUtil.ItemCallback<T>() {
@@ -129,7 +129,8 @@ class GenericIDListCbAdapter (val client: GenericIDCbListener, val type:String,
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(NameListCbBinding.inflate(
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+    = ViewHolder(NameListCbBinding.inflate(
         LayoutInflater.from(parent.context)))
 
 
@@ -137,22 +138,26 @@ class GenericIDListCbAdapter (val client: GenericIDCbListener, val type:String,
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
         holder.bind.cbName.isChecked = addedGeneric.contains(datum.name)
-        holder.bind.llNameList.setOnClickListener { client.onGenericClick(datum.name, type, holder.bind.cbName) }
-        holder.bind.cbName.setOnClickListener { client.onGenericClick(datum.name, type, holder.bind.cbName) }
+        holder.bind.llNameList.setOnClickListener {
+            client.onGenericClick(datum.name, type, holder.bind.cbName)
+        }
+        holder.bind.cbName.setOnClickListener {
+            client.onGenericClick(datum.name, type, holder.bind.cbName)
+        }
 
     }
-
-
-
 }
+
 
 interface GenericIDCbListener{
     fun onGenericClick(name:String, type: String, cb:CheckBox)
-
 }
 
-class GenericCommonGameListCbAdapter<T:CommonGame> (val client: GenericCommonGameCbListener,
-                                    val addedGeneric:ArrayList<T>) : ListAdapter<CommonGame, GenericCommonGameListCbAdapter.ViewHolder>(ItemComparator()){
+
+class GenericCommonGameListCbAdapter<T:CommonGame> (
+    val client: GenericCommonGameCbListener,
+    val addedGeneric:ArrayList<T>
+    ) : ListAdapter<CommonGame, GenericCommonGameListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: GameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
     class ItemComparator<T:CommonGame>: DiffUtil.ItemCallback<T>() {
@@ -160,9 +165,8 @@ class GenericCommonGameListCbAdapter<T:CommonGame> (val client: GenericCommonGam
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListCbBinding.inflate(
-        LayoutInflater.from(parent.context)))
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+    = ViewHolder(GameListCbBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
@@ -172,26 +176,32 @@ class GenericCommonGameListCbAdapter<T:CommonGame> (val client: GenericCommonGam
         datum.image?.run{
 
             val file = File(holder.bind.tvDesigner.context.filesDir, this)
-            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
+            val compressedBitMap = BitmapFactory.decodeByteArray(
+                file.readBytes(),
+                0,
+                file.readBytes().size
+            )
             holder.bind.ivPicture.setImageBitmap(compressedBitMap)
         }?:run{
             holder.bind.ivPicture.setImageBitmap(null)
         }
-        holder.bind.rootGames.setOnClickListener { client.onGenericClick(datum, holder.bind.cbObject) }
-        holder.bind.cbObject.setOnClickListener { client.onGenericClick(datum, holder.bind.cbObject) }
+        holder.bind.rootGames.setOnClickListener {
+            client.onGenericClick(datum, holder.bind.cbObject)
+        }
+        holder.bind.cbObject.setOnClickListener {
+            client.onGenericClick(datum, holder.bind.cbObject)
+        }
     }
-
-
-
 }
+
 
 interface GenericCommonGameCbListener{
     fun onGenericClick(datum:CommonGame, view: CheckBox)
-
 }
 
-class OneToOneListCbAdapter<T:OneToOne> (val client: GenericOneToOneListener,
-                             var addedGame:T?) : ListAdapter<T, OneToOneListCbAdapter.ViewHolder>(ItemComparator()){
+
+class OneToOneListCbAdapter<T:OneToOne> (val client: GenericOneToOneListener)
+    : ListAdapter<T, OneToOneListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: NameListBinding) : RecyclerView.ViewHolder(bind.root)
 
     class ItemComparator<T:OneToOne>: DiffUtil.ItemCallback<T>() {
@@ -199,30 +209,25 @@ class OneToOneListCbAdapter<T:OneToOne> (val client: GenericOneToOneListener,
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(NameListBinding.inflate(
-        LayoutInflater.from(parent.context)))
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+    = ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
-
-
         holder.bind.rootGames.setOnClickListener { client.onGenericClick(datum) }
-
     }
-
-
-
 }
+
 
 interface GenericOneToOneListener{
     fun onGenericClick(datum:OneToOne)
 
 }
 
-open class BgaListAdapter (val client: APISearchActivity) : ListAdapter<BgaGameBean, BgaListAdapter.ViewHolder>(GameComparator()) {
 
+open class BgaListAdapter (val client: APISearchActivity)
+    : ListAdapter<BgaGameBean, BgaListAdapter.ViewHolder>(GameComparator()) {
 
     class ViewHolder(val bind: GameListBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -233,7 +238,6 @@ open class BgaListAdapter (val client: APISearchActivity) : ListAdapter<BgaGameB
         override fun areContentsTheSame(oldItem: BgaGameBean, newItem: BgaGameBean) =
             oldItem.id == newItem.id
     }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
@@ -255,20 +259,17 @@ open class BgaListAdapter (val client: APISearchActivity) : ListAdapter<BgaGameB
             }
         }
     }
-
-
 }
+
 
 class AddedElementAdapter(
     val addedElement: ArrayList<String>,
 ) : RecyclerView.Adapter<AddedElementAdapter.ViewHolder>() {
 
-
     class ViewHolder(val binding: EditableListBinding) : RecyclerView.ViewHolder(binding.root)
 
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(EditableListBinding.inflate(LayoutInflater.from(parent.context)))
-
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+        ViewHolder(EditableListBinding.inflate(LayoutInflater.from(parent.context)))
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.etName.setText(addedElement[position])
@@ -280,5 +281,4 @@ class AddedElementAdapter(
     }
 
     override fun getItemCount() = addedElement.size
-
 }

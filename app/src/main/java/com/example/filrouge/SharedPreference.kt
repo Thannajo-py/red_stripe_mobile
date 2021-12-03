@@ -6,7 +6,10 @@ import android.content.SharedPreferences
 
 class SharedPreference(val context: Context) {
     private val PREFS_NAME = "kotlincodes"
-    private val sharedPref: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+    private val sharedPref: SharedPreferences = context.getSharedPreferences(
+        PREFS_NAME,
+        Context.MODE_PRIVATE
+    )
 
     fun save(body:String, serialKey: String){
         val editor = sharedPref.edit()
@@ -42,6 +45,4 @@ class SharedPreference(val context: Context) {
         editor.remove(KEY_NAME)
         editor.apply()
     }
-
 }
-

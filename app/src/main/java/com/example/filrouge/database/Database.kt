@@ -9,8 +9,8 @@ import com.example.filrouge.dao.*
 import com.example.filrouge.dao.MechanismDao
 
 
-@Database (entities = [
-
+@Database (
+    entities = [
 GameTableBean::class,
 AddOnTableBean::class,
 MultiAddOnTableBean::class,
@@ -44,7 +44,11 @@ GameLanguageTableBean::class,
 AddOnLanguageTableBean::class,
 MultiAddOnLanguageTableBean::class,
     DeletedContentTableBean::class,
-    ImageTableBean::class], version = 10, exportSchema = false)
+    ImageTableBean::class
+                      ],
+    version = 10,
+    exportSchema = false
+)
 abstract class FilRougeRoomDatabase : RoomDatabase(){
 
 abstract fun gameDao(): GameDao
@@ -81,10 +85,15 @@ abstract fun addOnLanguageDao(): AddOnLanguageDao
 abstract fun multiAddOnLanguageDao(): MultiAddOnLanguageDao
 abstract fun deletedItemDao(): DeletedItemDao
 abstract fun ImageDao(): ImageDao
+
 companion object{
         private var INSTANCE: FilRougeRoomDatabase? = null
 
-        fun getDatabase(context:Context) = INSTANCE ?: Room.databaseBuilder(context, FilRougeRoomDatabase::class.java, "room_fil_rouge_database")
+        fun getDatabase(context:Context) = INSTANCE ?: Room.databaseBuilder(
+            context,
+            FilRougeRoomDatabase::class.java,
+            "room_fil_rouge_database"
+        )
             .fallbackToDestructiveMigration().build().also { INSTANCE = it }
     }
 }

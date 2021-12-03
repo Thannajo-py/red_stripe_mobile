@@ -13,5 +13,4 @@ class FilRougeApp: Application() {
         super.onCreate()
         appInstance = this
     }
-
 }

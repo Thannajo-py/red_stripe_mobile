@@ -19,7 +19,7 @@ class Search : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         startActivity(Intent(this, GenericTypeDetails::class.java)
-            .putExtra(SerialKey.Name.name, "Résultat de la recherche")
+            .putExtra(SerialKey.Name.name, getString(R.string.search_result))
             .putExtra(SerialKey.Type.name, Type.Search.name)
             .putExtra(SerialKey.GenericId.name,0L)
             .putExtra(SerialKey.QueryContent.name, SearchQuery(
@@ -44,6 +44,8 @@ class Search : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun checkEmpty(arg:String) = if (arg.isNullOrBlank()) null else arg
-    private fun checkEmptyInt (arg:String) =  if (arg.isNullOrBlank() || !Regex("^[0-9]+$").matches(arg)) null else arg.toInt()
+    private fun checkEmptyInt (arg:String) =  if (
+        arg.isNullOrBlank() || !Regex("^[0-9]+$"
+        ).matches(arg)) null else arg.toInt()
 
 }

@@ -1,20 +1,39 @@
 package com.example.filrouge
 
-import com.example.filrouge.bean.CommonGame
 import java.io.Serializable
 
-fun listEquality( list:ArrayList<String>, otherList:ArrayList<String>) = list.size == otherList.size && list.all{otherList.contains(it)}
+
+fun listEquality(list:ArrayList<String>, otherList:ArrayList<String>) =
+        list.size == otherList.size && list.all{otherList.contains(it)}
 
 
-data class ApiResponse( val games:ArrayList<GameBean>, val add_ons: ArrayList<AddOnBean>, val multi_add_ons: ArrayList<MultiAddOnBean>):Serializable
+data class ApiResponse(
+        val games:ArrayList<GameBean>,
+        val add_ons: ArrayList<AddOnBean>,
+        val multi_add_ons: ArrayList<MultiAddOnBean>
+        ):Serializable
 
-data class ApiDelete( val games:ArrayList<DeletedObject>, val add_ons: ArrayList<DeletedObject>, val multi_add_ons: ArrayList<DeletedObject>):Serializable
 
-data class ApiReceive( val games:ArrayList<GameBean>?, val add_ons: ArrayList<AddOnBean>?, val multi_add_ons: ArrayList<MultiAddOnBean>?,
-                       val deleted_games: ArrayList<Int>?, val deleted_add_ons:ArrayList<Int>?, val deleted_multi_add_ons:ArrayList<Int>?
-                       ,val timestamp: Float)
+data class ApiDelete(
+        val games:ArrayList<DeletedObject>,
+        val add_ons: ArrayList<DeletedObject>,
+        val multi_add_ons: ArrayList<DeletedObject>
+        ):Serializable
+
+
+data class ApiReceive(
+        val games:ArrayList<GameBean>?,
+        val add_ons: ArrayList<AddOnBean>?,
+        val multi_add_ons: ArrayList<MultiAddOnBean>?,
+        val deleted_games: ArrayList<Int>?,
+        val deleted_add_ons:ArrayList<Int>?,
+        val deleted_multi_add_ons:ArrayList<Int>?,
+        val timestamp: Float
+        )
+
 
 data class DeletedObject(val id:Int)
+
 
 class GameBean(
         id: Int?,
@@ -58,13 +77,13 @@ class GameBean(
         stock,
         max_time,
         external_img,
-        picture),Serializable{
+        picture
+),Serializable{
         override fun equals(other: Any?): Boolean {
                 if(other !is GameBean){
                         return false
                 }
                 else{
-
                         return this.id == other.id && this.name == other.name &&
                                 this.player_min == other.player_min &&
                                 this.player_max == other.player_max &&
@@ -85,7 +104,8 @@ class GameBean(
                                 listEquality(this.multi_add_on, other.multi_add_on)
                 }
         }
-        }
+}
+
 
 class AddOnBean(
         id: Int?,
@@ -107,25 +127,26 @@ class AddOnBean(
         var game: String?,
         external_img: String?,
         picture: String?
-): CommonBase(id,
+): CommonBase(
+        id,
         name,
-player_min,
-player_max,
-playing_time,
-difficulty,
-designers,
-artists,
-publishers,
-bgg_link,
-playing_mode,
-language,
-age,
-buying_price,
-stock,
-max_time,
-external_img,
-picture),Serializable
-{
+        player_min,
+        player_max,
+        playing_time,
+        difficulty,
+        designers,
+        artists,
+        publishers,
+        bgg_link,
+        playing_mode,
+        language,
+        age,
+        buying_price,
+        stock,
+        max_time,
+        external_img,
+        picture
+),Serializable {
         override fun equals(other: Any?): Boolean {
                 if(other !is AddOnBean){
                         return false
@@ -148,10 +169,6 @@ picture),Serializable
                                 listEquality(this.publishers, other.publishers) &&
                                 listEquality(this.playing_mode, other.playing_mode) &&
                                 listEquality(this.language, other.language)
-
-
-
-
                 }
         }
 }
@@ -218,13 +235,10 @@ class MultiAddOnBean(
                                 listEquality(this.playing_mode, other.playing_mode) &&
                                 listEquality(this.language, other.language) &&
                                 listEquality(this.games, other.games)
-
-
                 }
         }
-
-
 }
+
 
 open class CommonBase(
         val id: Int?,
@@ -247,9 +261,19 @@ open class CommonBase(
         val picture:String?,
 ):Serializable
 
-class SendApiChange(val login:String, val password:String, val addedList:ApiResponse, val modifiedList:ApiResponse, val deletedList:ApiDelete, val timestamp:Float)
+
+class SendApiChange(
+        val login:String,
+         val password:String,
+        val addedList:ApiResponse,
+        val modifiedList:ApiResponse,
+        val deletedList:ApiDelete,
+        val timestamp:Float
+        )
+
 
 class ApiBody(val body:SendApiChange)
+
 
 data class SearchQuery(
         val name:String?,
@@ -266,10 +290,11 @@ data class SearchQuery(
         val tag:String?,
         val topic:String?,
         val mechanism:String?,
-
 ):Serializable
 
+
 data class BgaApi( val games: ArrayList<BgaGameBean>? )
+
 
 data class BgaGameBean(
      val id: String,
@@ -288,12 +313,17 @@ data class BgaGameBean(
      val type: String?,
 ): Serializable
 
+
 data class IdObjectBean(val id: String):Serializable
+
 
 data class NamedObjectBean(val name: String):Serializable
 
+
 data class NamedResultBean(val id:String, val name:String)
 
+
 data class MechanicApiResult(val mechanics:ArrayList<NamedResultBean>)
+
 
 data class CategoriesApiResult(val categories:ArrayList<NamedResultBean>)

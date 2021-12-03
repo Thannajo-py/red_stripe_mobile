@@ -19,11 +19,11 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
     private val binding: ActivityAddOnDetailsBinding by lazy{ ActivityAddOnDetailsBinding.inflate(layoutInflater) }
     private val gameId by lazy{ intent.extras!!.getSerializable(SerialKey.AddOnId.name) as Long }
 
-    private val designerListAdapter = GenericStringListAdapter<DesignerTableBean>(this, Type.Designer.name)
-    private val artistListAdapter = GenericStringListAdapter<ArtistTableBean>(this, Type.Artist.name)
-    private val publisherListAdapter = GenericStringListAdapter<PublisherTableBean>(this, Type.Publisher.name)
-    private val languageListAdapter = GenericStringListAdapter<LanguageTableBean>(this, Type.Language.name)
-    private val playingModListAdapter = GenericStringListAdapter<PlayingModTableBean>(this, Type.PlayingMode.name)
+    private val designerListAdapter = GenericStringListAdapter(this, Type.Designer.name)
+    private val artistListAdapter = GenericStringListAdapter(this, Type.Artist.name)
+    private val publisherListAdapter = GenericStringListAdapter(this, Type.Publisher.name)
+    private val languageListAdapter = GenericStringListAdapter(this, Type.Language.name)
+    private val playingModListAdapter = GenericStringListAdapter(this, Type.PlayingMode.name)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,7 +31,7 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         setContentView(binding.root)
 
         fillCommonTextView()
-        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericStringListAdapter<out ID>>> =
+        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericStringListAdapter>> =
             arrayListOf(Pair(binding.rvDesigner,designerListAdapter), Pair(binding.rvArtist, artistListAdapter),
                 Pair(binding.rvPublisher,publisherListAdapter),Pair(binding.rvPlayingMode, playingModListAdapter),
                 Pair(binding.rvLanguage, languageListAdapter))
@@ -124,7 +124,7 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         })
     }
 
-    fun fillCommonRV(listPairRecyclerViewAdapter:ArrayList<Pair<RecyclerView, GenericStringListAdapter<out ID>>>){
+    fun fillCommonRV(listPairRecyclerViewAdapter:ArrayList<Pair<RecyclerView, GenericStringListAdapter>>){
         listPairRecyclerViewAdapter.forEach {
             it.first.adapter = it.second
             layout(it.first)

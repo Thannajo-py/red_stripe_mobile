@@ -22,12 +22,13 @@ interface CommonDao<T>: CommonComponentDao<T>{
     fun getLanguageObject(idGame:Long): List<LanguageTableBean>
     fun getList(): List<T>
     fun getImage(name:String): List<ImageTableBean>
-
 }
+
 
 interface CommonComponentDao<T>{
     fun getByName(searchedName:String): List<T>
 }
+
 
 interface CommonCustomInsert<T>: CommonComponentDao<T>{
     fun insert(newElement:String)
@@ -57,12 +58,8 @@ interface GameDao: CommonDao<GameTableBean> {
     @Query("SELECT * FROM game WHERE name=:searchedName")
     override fun getByName(searchedName:String): List<GameTableBean>
 
-
-
-
     @Query("SELECT difficulty.id as id, difficulty.name as name FROM difficulty LEFT JOIN game ON difficultyId = difficulty.id WHERE game.id = :idGame")
     override fun getDifficulty(idGame:Long): LiveData<List<DifficultyTableBean>>
-
 
     @Query("SELECT tag.id AS id, tag.name AS name FROM tag INNER JOIN gameTag ON tagId = tag.id INNER JOIN game ON gameId = :idGame GROUP BY tag.name")
     fun getTagsOfGame(idGame:Long): LiveData<List<TagTableBean>>
@@ -70,14 +67,11 @@ interface GameDao: CommonDao<GameTableBean> {
     @Query("SELECT tag.id AS id, tag.name AS name FROM tag INNER JOIN gameTag ON tagId = tag.id INNER JOIN game ON gameId = :idGame GROUP BY tag.name")
     fun getTagObject(idGame:Long): List<TagTableBean>
 
-
-
     @Query("SELECT topic.id AS id, topic.name AS name FROM topic INNER JOIN gameTopic ON topicId = topic.id INNER JOIN game ON gameId = :idGame GROUP BY topic.name")
     fun getTopicsOfGame(idGame:Long): LiveData<List<TopicTableBean>>
 
     @Query("SELECT topic.id AS id, topic.name AS name FROM topic INNER JOIN gameTopic ON topicId = topic.id INNER JOIN game ON gameId = :idGame GROUP BY topic.name")
     fun getTopicObject(idGame:Long): List<TopicTableBean>
-
 
     @Query("SELECT mechanism.id AS id, mechanism.name AS name FROM mechanism INNER JOIN gameMechanism ON mechanismId = mechanism.id INNER JOIN game ON gameId = :idGame GROUP BY mechanism.name")
     fun getMechanismsOfGame(idGame:Long): LiveData<List<MechanismTableBean>>
@@ -85,13 +79,11 @@ interface GameDao: CommonDao<GameTableBean> {
     @Query("SELECT mechanism.id AS id, mechanism.name AS name FROM mechanism INNER JOIN gameMechanism ON mechanismId = mechanism.id INNER JOIN game ON gameId = :idGame GROUP BY mechanism.name")
     fun getMechanismObject(idGame:Long): List<MechanismTableBean>
 
-
     @Query("SELECT designer.id AS id, designer.name AS name FROM designer INNER JOIN gameDesigner ON designerId = designer.id INNER JOIN game ON gameId = :idGame GROUP BY designer.name")
     override fun getDesigners(idGame:Long): LiveData<List<DesignerTableBean>>
 
     @Query("SELECT designer.id AS id, designer.name AS name FROM designer INNER JOIN gameDesigner ON designerId = designer.id INNER JOIN game ON gameId = :idGame GROUP BY designer.name")
     override fun getDesignerObject(idGame:Long): List<DesignerTableBean>
-
 
     @Query("SELECT artist.id AS id, artist.name AS name FROM artist INNER JOIN gameArtist ON artistId = artist.id INNER JOIN game ON gameId = :idGame GROUP BY artist.name")
     override fun getArtists(idGame:Long): LiveData<List<ArtistTableBean>>
@@ -99,13 +91,11 @@ interface GameDao: CommonDao<GameTableBean> {
     @Query("SELECT artist.id AS id, artist.name AS name FROM artist INNER JOIN gameArtist ON artistId = artist.id INNER JOIN game ON gameId = :idGame GROUP BY artist.name")
     override fun getArtistObject(idGame:Long): List<ArtistTableBean>
 
-
     @Query("SELECT publisher.id AS id, publisher.name AS name FROM publisher INNER JOIN gamePublisher ON publisherId = publisher.id INNER JOIN game ON gameId = :idGame GROUP BY publisher.name")
     override fun getPublishers(idGame:Long): LiveData<List<PublisherTableBean>>
 
     @Query("SELECT publisher.id AS id, publisher.name AS name FROM publisher INNER JOIN gamePublisher ON publisherId = publisher.id INNER JOIN game ON gameId = :idGame GROUP BY publisher.name")
     override fun getPublisherObject(idGame:Long): List<PublisherTableBean>
-
 
     @Query("SELECT playingMod.id AS id, playingMod.name AS name FROM playingMod INNER JOIN gamePlayingMod ON playingModId = playingMod.id INNER JOIN game ON gameId = :idGame GROUP BY playingMod.name")
     override fun getPlayingMods(idGame:Long): LiveData<List<PlayingModTableBean>>
@@ -113,13 +103,11 @@ interface GameDao: CommonDao<GameTableBean> {
     @Query("SELECT playingMod.id AS id, playingMod.name AS name FROM playingMod INNER JOIN gamePlayingMod ON playingModId = playingMod.id INNER JOIN game ON gameId = :idGame GROUP BY playingMod.name")
     override fun getPlayingModObject(idGame:Long): List<PlayingModTableBean>
 
-
     @Query("SELECT language.id AS id, language.name AS name FROM language INNER JOIN gameLanguage ON languageId = language.id INNER JOIN game ON gameId = :idGame GROUP BY language.name")
     override fun getLanguages(idGame:Long): LiveData<List<LanguageTableBean>>
 
     @Query("SELECT language.id AS id, language.name AS name FROM language INNER JOIN gameLanguage ON languageId = language.id INNER JOIN game ON gameId = :idGame GROUP BY language.name")
     override fun getLanguageObject(idGame:Long): List<LanguageTableBean>
-
 
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gameArtist ON gameArtist.gameId = game.id LEFT JOIN artist ON gameArtist.artistId = artist.id LEFT JOIN gamePublisher ON gamePublisher.gameId = game.id LEFT JOIN publisher ON gamePublisher.publisherId = publisher.id LEFT JOIN gamePlayingMod ON gamePlayingMod.gameId = game.id LEFT JOIN playingMod ON gamePlayingMod.playingModId = playingMod.id LEFT JOIN gameLanguage ON gameLanguage.gameId = game.id LEFT JOIN language ON gameLanguage.languageId = language.id LEFT JOIN gameTag ON gameTag.gameId = game.id LEFT JOIN tag ON gameTag.tagId = tag.id LEFT JOIN gameTopic ON gameTopic.gameId = game.id LEFT JOIN topic ON gameTopic.topicId = topic.id LEFT JOIN gameMechanism ON gameMechanism.gameId = game.id LEFT JOIN mechanism ON gameMechanism.mechanismId = mechanism.id LEFT JOIN difficulty ON difficulty.id = game.difficultyId LEFT JOIN image ON image.name = game.name || 'Game' WHERE (game.name like '%' || :name || '%' OR :name IS NULL) AND (difficulty.name like '%' || :difficulty || '%' OR :difficulty IS NULL) AND (designer.name like '%' || :designer || '%' OR :designer IS NULL) AND (artist.name like '%' || :artist || '%' OR :artist IS NULL) AND (publisher.name like '%' || :publisher || '%' OR :publisher IS NULL) AND (playingMod.name like '%' || :playingMod || '%' OR :playingMod IS NULL) AND (language.name like '%' || :language || '%' OR :language IS NULL) AND (tag.name like '%' || :tag || '%' OR :tag IS NULL) AND (topic.name like '%' || :topic || '%' OR :topic IS NULL) AND (mechanism.name like '%' || :mechanism || '%' OR :mechanism IS NULL) AND (:playerMin BETWEEN game.player_min AND game.player_max OR :playerMin IS NULL) AND (:playerMax BETWEEN game.player_min AND game.player_max OR :playerMax IS NULL) AND (game.max_time >= :maxTime OR :maxTime IS NULL) AND (game.age >= :age OR :age IS NULL) GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromSearchQuery(name:String?, designer:String?, artist:String?, publisher:String?, playerMin:Int?, playerMax:Int?, maxTime:Int?, difficulty:String?, age:Int?, playingMod:String?, language:String?, tag:String?, topic:String?, mechanism:String?):LiveData<List<DesignerWithGame>>
@@ -127,38 +115,29 @@ interface GameDao: CommonDao<GameTableBean> {
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gameTag ON gameTag.gameId = game.id LEFT JOIN tag ON gameTag.tagId = tag.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE tag.id = :idTag GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromTagId(idTag:Long):LiveData<List<DesignerWithGame>>
 
-
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gameTopic ON gameTopic.gameId = game.id LEFT JOIN topic ON gameTopic.topicId = topic.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE topic.id = :idTopic GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromTopicId(idTopic:Long):LiveData<List<DesignerWithGame>>
-
 
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gameMechanism ON gameMechanism.gameId = game.id LEFT JOIN mechanism ON gameMechanism.mechanismId = mechanism.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE mechanism.id = :idMechanism GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromMechanismId(idMechanism:Long):LiveData<List<DesignerWithGame>>
 
-
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game INNER JOIN gameDesigner ON gameDesigner.gameId = game.id INNER JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN image ON image.name = game.name || 'Game' WHERE designer.id = :idDesigner GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromDesignerId(idDesigner:Long):LiveData<List<DesignerWithGame>>
-
 
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gameArtist ON gameArtist.gameId = game.id LEFT JOIN artist ON gameArtist.artistId = artist.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE artist.id = :idArtist GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromArtistId(idArtist:Long):LiveData<List<DesignerWithGame>>
 
-
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gamePublisher ON gamePublisher.gameId = game.id LEFT JOIN publisher ON gamePublisher.publisherId = publisher.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE publisher.id = :idPublisher GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromPublisherId(idPublisher:Long):LiveData<List<DesignerWithGame>>
-
 
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gamePlayingMod ON gamePlayingMod.gameId = game.id LEFT JOIN playingMod ON gamePlayingMod.playingModId = playingMod.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE playingMod.id = :idPlayingMod GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromPlayingModId(idPlayingMod:Long):LiveData<List<DesignerWithGame>>
 
-
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN gameLanguage ON gameLanguage.gameId = game.id LEFT JOIN language ON gameLanguage.languageId = language.id  LEFT JOIN image ON image.name = game.name || 'Game'  WHERE language.id = :idLanguage GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromLanguageId(idLanguage:Long):LiveData<List<DesignerWithGame>>
 
-
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game INNER JOIN gameDesigner ON gameDesigner.gameId = game.id INNER JOIN designer ON gameDesigner.designerId = designer.id  LEFT JOIN image ON image.name = game.name || 'Game' WHERE game.difficultyId = :idDifficulty GROUP BY game.name ORDER BY game.name ASC")
     fun getWithDesignerFromDifficultyId(idDifficulty:Long):LiveData<List<DesignerWithGame>>
-
 
     @Query("SELECT * FROM game WHERE serverId=:id")
     override fun getByServerId(id:Long):List<GameTableBean>
@@ -180,11 +159,7 @@ interface GameDao: CommonDao<GameTableBean> {
     
     @Query("DELETE FROM game WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-      
-
-            
 }
-    
     
     
 @Dao
@@ -213,13 +188,11 @@ interface AddOnDao: CommonDao<AddOnTableBean> {
     @Query("SELECT difficulty.id as id, difficulty.name as name FROM difficulty LEFT JOIN addOn ON difficultyId = difficulty.id WHERE addOn.id = :idGame")
     override fun getDifficulty(idGame:Long): LiveData<List<DifficultyTableBean>>
 
-
     @Query("SELECT designer.id as id, designer.name as name FROM designer INNER JOIN addOnDesigner ON designerId = designer.id INNER JOIN addOn ON addOnId = :idGame")
     override fun getDesigners(idGame:Long): LiveData<List<DesignerTableBean>>
 
     @Query("SELECT designer.id as id, designer.name as name FROM designer INNER JOIN addOnDesigner ON designerId = designer.id INNER JOIN addOn ON addOnId = :idGame")
     override fun getDesignerObject(idGame:Long): List<DesignerTableBean>
-
 
     @Query("SELECT artist.id AS id, artist.name AS name FROM artist INNER JOIN addOnArtist ON artistId = artist.id INNER JOIN addOn ON addOnId = :idGame GROUP BY artist.name")
     override fun getArtists(idGame:Long): LiveData<List<ArtistTableBean>>
@@ -233,13 +206,11 @@ interface AddOnDao: CommonDao<AddOnTableBean> {
     @Query("SELECT publisher.id AS id, publisher.name AS name FROM publisher INNER JOIN addOnPublisher ON publisherId = publisher.id INNER JOIN addOn ON addOnId = :idGame GROUP BY publisher.name")
     override fun getPublisherObject(idGame: Long): List<PublisherTableBean>
 
-
     @Query("SELECT playingMod.id AS id, playingMod.name AS name FROM playingMod INNER JOIN addOnPlayingMod ON playingModId = playingMod.id INNER JOIN addOn ON addOnId = :idGame GROUP BY playingMod.name")
     override fun getPlayingMods(idGame:Long): LiveData<List<PlayingModTableBean>>
 
     @Query("SELECT playingMod.id AS id, playingMod.name AS name FROM playingMod INNER JOIN addOnPlayingMod ON playingModId = playingMod.id INNER JOIN addOn ON addOnId = :idGame GROUP BY playingMod.name")
     override fun getPlayingModObject(idGame: Long): List<PlayingModTableBean>
-
 
     @Query("SELECT language.id AS id, language.name AS name FROM language INNER JOIN addOnLanguage ON languageId = language.id INNER JOIN addOn ON addOnId = :idGame GROUP BY language.name")
     override fun getLanguages(idGame:Long): LiveData<List<LanguageTableBean>>
@@ -253,26 +224,20 @@ interface AddOnDao: CommonDao<AddOnTableBean> {
     @Query("SELECT game.id as id, game.name as name, designer.name as designer, image.name as image FROM addOn LEFT JOIN game ON addOn.gameId = game.id LEFT JOIN gameDesigner ON  gameDesigner.gameId = game.id LEFT JOIN designer ON designer.id = gameDesigner.designerId LEFT JOIN image on image.name = game.name || 'Game' WHERE addOn.gameId=:gameId GROUP BY game.name")
     fun getGameFromAddOns(gameId:Long): List<DesignerWithGame>
 
-
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn INNER JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id INNER JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn' WHERE designer.id = :idDesigner GROUP BY addOn.name ORDER BY addOn.name ASC")
     fun getWithDesignerFromDesignerId(idDesigner:Long):LiveData<List<DesignerWithAddOn>>
-
 
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN addOnArtist ON addOnArtist.addOnId = addOn.id LEFT JOIN artist ON addOnArtist.artistId = artist.id  LEFT JOIN image ON image.name = addOn.name || 'AddOn'  WHERE artist.id = :idArtist GROUP BY addOn.name ORDER BY addOn.name ASC")
     fun getWithDesignerFromArtistId(idArtist:Long):LiveData<List<DesignerWithAddOn>>
 
-
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN addOnPublisher ON addOnPublisher.addOnId = addOn.id LEFT JOIN publisher ON addOnPublisher.publisherId = publisher.id  LEFT JOIN image ON image.name = addOn.name || 'AddOn'  WHERE publisher.id = :idPublisher GROUP BY addOn.name ORDER BY addOn.name ASC")
     fun getWithDesignerFromPublisherId(idPublisher:Long):LiveData<List<DesignerWithAddOn>>
-
 
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN addOnPlayingMod ON addOnPlayingMod.addOnId = addOn.id LEFT JOIN playingMod ON addOnPlayingMod.playingModId = playingMod.id  LEFT JOIN image ON image.name = addOn.name || 'AddOn'  WHERE playingMod.id = :idPlayingMod GROUP BY addOn.name ORDER BY addOn.name ASC")
     fun getWithDesignerFromPlayingModId(idPlayingMod:Long):LiveData<List<DesignerWithAddOn>>
 
-
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN addOnLanguage ON addOnLanguage.addOnId = addOn.id LEFT JOIN language ON addOnLanguage.languageId = language.id  LEFT JOIN image ON image.name = addOn.name || 'AddOn'  WHERE language.id = :idLanguage GROUP BY addOn.name ORDER BY addOn.name ASC")
     fun getWithDesignerFromLanguageId(idLanguage:Long):LiveData<List<DesignerWithAddOn>>
-
 
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn INNER JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id INNER JOIN designer ON addOnDesigner.designerId = designer.id  LEFT JOIN image ON image.name = addOn.name || 'AddOn' WHERE addOn.difficultyId = :idDifficulty GROUP BY addOn.name ORDER BY addOn.name ASC")
     fun getWithDesignerFromDifficultyId(idDifficulty:Long):LiveData<List<DesignerWithAddOn>>
@@ -306,11 +271,7 @@ interface AddOnDao: CommonDao<AddOnTableBean> {
     
     @Query("DELETE FROM addOn WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-      
-
-            
 }
-    
     
     
 @Dao
@@ -319,126 +280,128 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean> {
     fun getAll(): Flow<List<MultiAddOnTableBean>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn INNER JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id INNER JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getAllWithDesigner():LiveData<List<DesignerWithMultiAddOn>>
-    
+    fun getAllWithDesigner(): LiveData<List<DesignerWithMultiAddOn>>
+
     @Query("SELECT * FROM multiAddOn")
     override fun getList(): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM image WHERE image.name = :name || 'MultiAddOn'")
     override fun getImage(name: String): List<ImageTableBean>
-    
+
     @Query("SELECT * FROM multiAddOn WHERE name=:searchedName")
-    override fun getByName(searchedName:String): List<MultiAddOnTableBean>
+    override fun getByName(searchedName: String): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM game WHERE id=:gameId")
-    fun getObjectById(gameId:Long): List<MultiAddOnTableBean>
+    fun getObjectById(gameId: Long): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM multiAddOn WHERE id=:gameId")
-    override fun getById(gameId:Long): Flow<List<MultiAddOnTableBean>>
+    override fun getById(gameId: Long): Flow<List<MultiAddOnTableBean>>
 
     @Query("SELECT multiAddOn.id as id, multiAddOn.name as name, designer.name as designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnId = multiAddOn.id LEFT JOIN  designer on designerId = designer.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' GROUP BY multiAddOn.name")
     fun getDesignerWithGame(): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT game.id as id, game.name as name, designer.name as designer, image.name as image FROM game  LEFT JOIN gameDesigner ON  gameDesigner.gameId = game.id LEFT JOIN designer ON designer.id = gameDesigner.designerId LEFT JOIN gameMultiAddOn ON gameMultiAddOn.gameId = game.id LEFT JOIN multiAddOn ON gameMultiAddOn.multiAddOnId = multiAddOn.id LEFT JOIN image ON image.name = game.name || 'Game' WHERE multiAddOn.id=:gameId GROUP BY game.name")
-    fun getGameFromMultiAddOn(gameId:Long): LiveData<List<DesignerWithGame>>
+    fun getGameFromMultiAddOn(gameId: Long): LiveData<List<DesignerWithGame>>
 
     @Query("SELECT game.id as id, game.name as name, designer.name as designer, image.name as image FROM game  LEFT JOIN gameDesigner ON  gameDesigner.gameId = game.id LEFT JOIN designer ON designer.id = gameDesigner.designerId LEFT JOIN gameMultiAddOn ON gameMultiAddOn.gameId = game.id LEFT JOIN multiAddOn ON gameMultiAddOn.multiAddOnId = multiAddOn.id LEFT JOIN image ON image.name = game.name || 'Game' WHERE multiAddOn.id=:gameId GROUP BY game.name")
-    fun getGameObjectFromMultiAddOn(gameId:Long): List<DesignerWithGame>
+    fun getGameObjectFromMultiAddOn(gameId: Long): List<DesignerWithGame>
 
     @Query("SELECT multiAddOn.id as id, multiAddOn.name as name, designer.name as designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN  designer on designerId = designer.id LEFT JOIN gameMultiAddOn ON gameMultiAddOn.multiAddOnId = multiAddOn.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' WHERE gameMultiAddOn.gameId=:gameId GROUP BY multiAddOn.name")
-    fun getDesignerWithMultiAddOnOfGame(gameId:Long): LiveData<List<DesignerWithMultiAddOn>>
+    fun getDesignerWithMultiAddOnOfGame(gameId: Long): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT multiAddOn.id as id, multiAddOn.name as name, designer.name as designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN  designer on designerId = designer.id LEFT JOIN gameMultiAddOn ON gameMultiAddOn.multiAddOnId = multiAddOn.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' WHERE gameMultiAddOn.gameId=:gameId GROUP BY multiAddOn.name")
-    fun getDesignerWithMultiAddOnObjectOfGame(gameId:Long): List<DesignerWithMultiAddOn>
+    fun getDesignerWithMultiAddOnObjectOfGame(gameId: Long): List<DesignerWithMultiAddOn>
 
     @Query("SELECT difficulty.id as id, difficulty.name as name FROM difficulty LEFT JOIN multiAddOn ON difficultyId = difficulty.id WHERE multiAddOn.id = :idGame")
-    override fun getDifficulty(idGame:Long): LiveData<List<DifficultyTableBean>>
-
+    override fun getDifficulty(idGame: Long): LiveData<List<DifficultyTableBean>>
 
     @Query("SELECT designer.id AS id, designer.name AS name FROM designer INNER JOIN multiAddOnDesigner ON designerId = designer.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY designer.name")
-    override fun getDesigners(idGame:Long): LiveData<List<DesignerTableBean>>
+    override fun getDesigners(idGame: Long): LiveData<List<DesignerTableBean>>
 
     @Query("SELECT designer.id AS id, designer.name AS name FROM designer INNER JOIN multiAddOnDesigner ON designerId = designer.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY designer.name")
     override fun getDesignerObject(idGame: Long): List<DesignerTableBean>
 
 
     @Query("SELECT artist.id AS id, artist.name AS name FROM artist INNER JOIN multiAddOnArtist ON artistId = artist.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY artist.name")
-    override fun getArtists(idGame:Long): LiveData<List<ArtistTableBean>>
+    override fun getArtists(idGame: Long): LiveData<List<ArtistTableBean>>
 
     @Query("SELECT artist.id AS id, artist.name AS name FROM artist INNER JOIN multiAddOnArtist ON artistId = artist.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY artist.name")
     override fun getArtistObject(idGame: Long): List<ArtistTableBean>
 
-
-
     @Query("SELECT publisher.id AS id, publisher.name AS name FROM publisher INNER JOIN multiAddOnPublisher ON publisherId = publisher.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY publisher.name")
-    override fun getPublishers(idGame:Long): LiveData<List<PublisherTableBean>>
+    override fun getPublishers(idGame: Long): LiveData<List<PublisherTableBean>>
 
     @Query("SELECT publisher.id AS id, publisher.name AS name FROM publisher INNER JOIN multiAddOnPublisher ON publisherId = publisher.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY publisher.name")
     override fun getPublisherObject(idGame: Long): List<PublisherTableBean>
 
     @Query("SELECT playingMod.id AS id, playingMod.name AS name FROM playingMod INNER JOIN multiAddOnPlayingMod ON playingModId = playingMod.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY playingMod.name")
-    override fun getPlayingMods(idGame:Long): LiveData<List<PlayingModTableBean>>
-
+    override fun getPlayingMods(idGame: Long): LiveData<List<PlayingModTableBean>>
 
     @Query("SELECT playingMod.id AS id, playingMod.name AS name FROM playingMod INNER JOIN multiAddOnPlayingMod ON playingModId = playingMod.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY playingMod.name")
     override fun getPlayingModObject(idGame: Long): List<PlayingModTableBean>
 
     @Query("SELECT language.id AS id, language.name AS name FROM language INNER JOIN multiAddOnLanguage ON languageId = language.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY language.name")
-    override fun getLanguages(idGame:Long): LiveData<List<LanguageTableBean>>
+    override fun getLanguages(idGame: Long): LiveData<List<LanguageTableBean>>
 
     @Query("SELECT language.id AS id, language.name AS name FROM language INNER JOIN multiAddOnLanguage ON languageId = language.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY language.name")
     override fun getLanguageObject(idGame: Long): List<LanguageTableBean>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn INNER JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id INNER JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' WHERE designer.id = :idDesigner GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getWithDesignerFromDesignerId(idDesigner:Long):LiveData<List<DesignerWithMultiAddOn>>
-
+    fun getWithDesignerFromDesignerId(idDesigner: Long): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN multiAddOnArtist ON multiAddOnArtist.multiAddOnId = multiAddOn.id LEFT JOIN artist ON multiAddOnArtist.artistId = artist.id  LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  WHERE artist.id = :idArtist GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getWithDesignerFromArtistId(idArtist:Long):LiveData<List<DesignerWithMultiAddOn>>
-
+    fun getWithDesignerFromArtistId(idArtist: Long): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN multiAddOnPublisher ON multiAddOnPublisher.multiAddOnId = multiAddOn.id LEFT JOIN publisher ON multiAddOnPublisher.publisherId = publisher.id  LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  WHERE publisher.id = :idPublisher GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getWithDesignerFromPublisherId(idPublisher:Long):LiveData<List<DesignerWithMultiAddOn>>
-
+    fun getWithDesignerFromPublisherId(idPublisher: Long): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.multiAddOnId = multiAddOn.id LEFT JOIN playingMod ON multiAddOnPlayingMod.playingModId = playingMod.id  LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  WHERE playingMod.id = :idPlayingMod GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getWithDesignerFromPlayingModId(idPlayingMod:Long):LiveData<List<DesignerWithMultiAddOn>>
-
+    fun getWithDesignerFromPlayingModId(idPlayingMod: Long): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN multiAddOnLanguage ON multiAddOnLanguage.multiAddOnId = multiAddOn.id LEFT JOIN language ON multiAddOnLanguage.languageId = language.id  LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  WHERE language.id = :idLanguage GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getWithDesignerFromLanguageId(idLanguage:Long):LiveData<List<DesignerWithMultiAddOn>>
-
+    fun getWithDesignerFromLanguageId(idLanguage: Long): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn INNER JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id INNER JOIN designer ON multiAddOnDesigner.designerId = designer.id  LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' WHERE multiAddOn.difficultyId = :idDifficulty GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getWithDesignerFromDifficultyId(idDifficulty:Long):LiveData<List<DesignerWithMultiAddOn>>
+    fun getWithDesignerFromDifficultyId(idDifficulty: Long): LiveData<List<DesignerWithMultiAddOn>>
 
-    @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN multiAddOnArtist ON multiAddOnArtist.multiAddOnId = multiAddOn.id LEFT JOIN artist ON multiAddOnArtist.artistId = artist.id LEFT JOIN multiAddOnPublisher ON multiAddOnPublisher.multiAddOnId = multiAddOn.id LEFT JOIN publisher ON multiAddOnPublisher.publisherId = publisher.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.multiAddOnId = multiAddOn.id LEFT JOIN playingMod ON multiAddOnPlayingMod.playingModId = playingMod.id LEFT JOIN multiAddOnLanguage ON multiAddOnLanguage.multiAddOnId = multiAddOn.id LEFT JOIN language ON multiAddOnLanguage.languageId = language.id LEFT JOIN difficulty ON difficulty.id = multiAddOn.difficultyId LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' WHERE (multiAddOn.name like '%' || :name || '%' OR :name IS NULL) AND (difficulty.name like '%' || :difficulty || '%' OR :difficulty IS NULL) AND (designer.name like '%' || :designer || '%' OR :designer IS NULL) AND (artist.name like '%' || :artist || '%' OR :artist IS NULL) AND (publisher.name like '%' || :publisher || '%' OR :publisher IS NULL) AND (playingMod.name like '%' || :playingMod || '%' OR :playingMod IS NULL) AND (language.name like '%' || :language || '%' OR :language IS NULL) AND (:playerMin BETWEEN multiAddOn.player_min AND multiAddOn.player_max OR :playerMin IS NULL) AND (:playerMax BETWEEN multiAddOn.player_min AND multiAddOn.player_max OR :playerMax IS NULL) AND (multiAddOn.max_time >= :maxTime OR :maxTime IS NULL) AND (multiAddOn.age >= :age OR :age IS NULL) GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC\n")
-    fun getWithDesignerFromSearchQuery(name:String?, designer:String?, artist:String?, publisher:String?, playerMin:Int?, playerMax:Int?, maxTime:Int?, difficulty:String?, age:Int?, playingMod:String?, language:String?):LiveData<List<DesignerWithMultiAddOn>>
+    @Query(
+        "SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN multiAddOnArtist ON multiAddOnArtist.multiAddOnId = multiAddOn.id LEFT JOIN artist ON multiAddOnArtist.artistId = artist.id LEFT JOIN multiAddOnPublisher ON multiAddOnPublisher.multiAddOnId = multiAddOn.id LEFT JOIN publisher ON multiAddOnPublisher.publisherId = publisher.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.multiAddOnId = multiAddOn.id LEFT JOIN playingMod ON multiAddOnPlayingMod.playingModId = playingMod.id LEFT JOIN multiAddOnLanguage ON multiAddOnLanguage.multiAddOnId = multiAddOn.id LEFT JOIN language ON multiAddOnLanguage.languageId = language.id LEFT JOIN difficulty ON difficulty.id = multiAddOn.difficultyId LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn' WHERE (multiAddOn.name like '%' || :name || '%' OR :name IS NULL) AND (difficulty.name like '%' || :difficulty || '%' OR :difficulty IS NULL) AND (designer.name like '%' || :designer || '%' OR :designer IS NULL) AND (artist.name like '%' || :artist || '%' OR :artist IS NULL) AND (publisher.name like '%' || :publisher || '%' OR :publisher IS NULL) AND (playingMod.name like '%' || :playingMod || '%' OR :playingMod IS NULL) AND (language.name like '%' || :language || '%' OR :language IS NULL) AND (:playerMin BETWEEN multiAddOn.player_min AND multiAddOn.player_max OR :playerMin IS NULL) AND (:playerMax BETWEEN multiAddOn.player_min AND multiAddOn.player_max OR :playerMax IS NULL) AND (multiAddOn.max_time >= :maxTime OR :maxTime IS NULL) AND (multiAddOn.age >= :age OR :age IS NULL) GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC\n"
+    )
+    fun getWithDesignerFromSearchQuery(
+        name: String?,
+        designer: String?,
+        artist: String?,
+        publisher: String?,
+        playerMin: Int?,
+        playerMax: Int?,
+        maxTime: Int?,
+        difficulty: String?,
+        age: Int?,
+        playingMod: String?,
+        language: String?
+    ): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT * FROM multiAddOn WHERE serverId=:id")
-    override fun getByServerId(id:Long):List<MultiAddOnTableBean>
+    override fun getByServerId(id: Long): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM multiAddOn WHERE serverId IS NULL")
-    fun getWithoutServerId():List<MultiAddOnTableBean>
-
+    fun getWithoutServerId(): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM multiAddOn WHERE hasChanged=1")
-    fun getChanged():List<MultiAddOnTableBean>
+    fun getChanged(): List<MultiAddOnTableBean>
 
-    @Insert(onConflict =  OnConflictStrategy.REPLACE)
-    fun insert(game: MultiAddOnTableBean) : Long
-    
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    fun insert(game: MultiAddOnTableBean): Long
+
     @Update
     fun update(game: MultiAddOnTableBean)
-    
+
     @Query("DELETE FROM multiAddOn")
     fun deleteAll()
-    
-    @Query("DELETE FROM multiAddOn WHERE id=:objectId")
-    fun deleteOne(objectId:Long)
 
+    @Query("DELETE FROM multiAddOn WHERE id=:objectId")
+    fun deleteOne(objectId: Long)
 }
-    
     
     
 @Dao
@@ -469,8 +432,7 @@ interface TagDao: CommonCustomInsert<TagTableBean> {
     
 }
     
-    
-    
+
 @Dao
 interface TopicDao: CommonCustomInsert<TopicTableBean> {
     @Query("SELECT * FROM topic ORDER BY name ASC")
@@ -496,10 +458,8 @@ interface TopicDao: CommonCustomInsert<TopicTableBean> {
     
     @Query("DELETE FROM topic WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
-    
-    
+
     
 @Dao
 interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
@@ -526,10 +486,8 @@ interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
     
     @Query("DELETE FROM mechanism WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
-    
-    
+
     
 @Dao
 interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
@@ -559,11 +517,7 @@ interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
     
     @Query("DELETE FROM designer WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-
-
-    
 }
-    
     
     
 @Dao
@@ -591,10 +545,8 @@ interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
     
     @Query("DELETE FROM artist WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
-    
-    
+
     
 @Dao
 interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
@@ -621,11 +573,9 @@ interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
     
     @Query("DELETE FROM publisher WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
     
-    
-    
+
 @Dao
 interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     @Query("SELECT * FROM playingMod ORDER BY name ASC")
@@ -651,10 +601,8 @@ interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     
     @Query("DELETE FROM playingMod WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
-    
-    
+
     
 @Dao
 interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
@@ -681,11 +629,9 @@ interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
     
     @Query("DELETE FROM language WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
     
-    
-    
+
 @Dao
 interface DifficultyDao: CommonComponentDao<DifficultyTableBean> {
     @Query("SELECT * FROM difficulty ORDER BY name ASC")
@@ -713,11 +659,8 @@ interface DifficultyDao: CommonComponentDao<DifficultyTableBean> {
     
     @Query("DELETE FROM difficulty WHERE id=:objectId")
     fun deleteOne(objectId:Long)
-    
 }
-    
-    
-    
+
 
 @Dao
 interface UserDao {
@@ -740,6 +683,7 @@ interface UserDao {
     fun deleteUser(userId:Long)
 }
 
+
 @Dao
 interface DeletedItemDao {
     @Query("SELECT * FROM deletedItems")
@@ -756,6 +700,7 @@ interface DeletedItemDao {
     @Query("DELETE FROM deletedItems")
     fun deleteAll()
 }
+
 
 @Dao
 interface ImageDao {

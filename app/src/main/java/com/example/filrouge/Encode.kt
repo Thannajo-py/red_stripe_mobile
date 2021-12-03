@@ -5,8 +5,8 @@ import java.math.BigInteger
 import java.security.MessageDigest
 
 
-
 object SHA256 {
+
     fun encryptThisString(input: String): String {
         return try {
             val md = MessageDigest.getInstance("SHA-256")
@@ -21,9 +21,4 @@ object SHA256 {
             throw RuntimeException(e)
         }
     }
-
-
 }
-
-
-

@@ -3,11 +3,11 @@ package com.example.filrouge.bean
 import androidx.room.*
 
 
-
 interface ID{
     val id:Long
     val name:String
 }
+
 
 interface CommonComponent{
     val name: String
@@ -24,10 +24,12 @@ interface CommonComponent{
     val picture:String?
 }
 
+
 interface OneToOne {
     val id:Long
     val name:String
 }
+
 
 interface CommonGame {
     val id: Long
@@ -35,6 +37,7 @@ interface CommonGame {
     val designer: String?
     val image:String?
 }
+
 
 @Entity(tableName = "User")
 data class UserTableBean(
@@ -48,6 +51,7 @@ data class UserTableBean(
     val addAccount:Boolean,
     val deleteAccount: Boolean
 )
+
 
 @Entity(tableName = "difficulty")
 data class DifficultyTableBean(
@@ -78,6 +82,7 @@ data class GameTableBean(
     val hasChanged: Boolean
     ): ID, CommonComponent
 
+
 @Entity(tableName = "addOn", foreignKeys = [ForeignKey(entity = GameTableBean::class,
     parentColumns = ["id"], childColumns = ["gameId"], onDelete = ForeignKey.SET_NULL
 ),ForeignKey(entity = DifficultyTableBean::class,
@@ -103,6 +108,7 @@ data class AddOnTableBean(
 
 ): ID, CommonComponent
 
+
 @Entity(tableName = "multiAddOn", foreignKeys = [androidx.room.ForeignKey(
     entity = DifficultyTableBean::class,
     parentColumns = ["id"],
@@ -127,6 +133,7 @@ data class MultiAddOnTableBean(
     val hasChanged: Boolean
 ): ID, CommonComponent
 
+
 @Entity(tableName = "image")
 data class ImageTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
@@ -142,11 +149,13 @@ data class DesignerTableBean(
     override val name:String
 ): ID
 
+
 @Entity(tableName = "artist")
 data class ArtistTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     override val name:String
 ): ID
+
 
 @Entity(tableName = "publisher")
 data class PublisherTableBean(
@@ -154,11 +163,13 @@ data class PublisherTableBean(
     override val name:String
 ): ID
 
+
 @Entity(tableName = "playingMod")
 data class PlayingModTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     override val name:String
 ): ID
+
 
 @Entity(tableName = "language")
 data class LanguageTableBean(
@@ -166,11 +177,13 @@ data class LanguageTableBean(
     override val name:String
 ): ID
 
+
 @Entity(tableName = "tag")
 data class TagTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     override val name:String
 ): ID
+
 
 @Entity(tableName = "topic")
 data class TopicTableBean(
@@ -178,11 +191,13 @@ data class TopicTableBean(
     override val name:String
 ): ID
 
+
 @Entity(tableName = "mechanism")
 data class MechanismTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     override val name:String
 ): ID
+
 
 data class DesignerWithGame(
     override val id:Long,
@@ -191,12 +206,14 @@ data class DesignerWithGame(
     override val image:String?
     ):CommonGame, OneToOne
 
+
 data class DesignerWithAddOn(
     override val id:Long,
     override val name:String,
     override val designer: String?,
     override val image:String?
 ):CommonGame
+
 
 data class DesignerWithMultiAddOn(
     override val id:Long,
@@ -213,6 +230,7 @@ data class DeletedContentTableBean(
     val idContent: Long,
     val type:String
 )
+
 
 data class SavedDatabase(
     val game: List<GameTableBean>,
@@ -250,4 +268,3 @@ data class SavedDatabase(
     val deletedContent: List<DeletedContentTableBean>,
     val image: List<ImageTableBean>
 )
-

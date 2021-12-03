@@ -6,10 +6,12 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
+
 val client = OkHttpClient()
 val gson = Gson()
-
 val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
+
+
 fun sendPostOkHttpRequest(url: String, paramJson:String): String {
     println("url : $url")
 //Création de la requete
@@ -26,6 +28,7 @@ fun sendPostOkHttpRequest(url: String, paramJson:String): String {
     }
 }
 
+
 fun sendGetOkHttpRequestImage(url: String): ByteArray? {
     println("url : $url")
 //Création de la requete
@@ -37,8 +40,8 @@ fun sendGetOkHttpRequestImage(url: String): ByteArray? {
         println(response.code)
         response.body?.bytes()
     }
-
 }
+
 
 fun sendGetOkHttpRequest(url: String): String? {
     println("url : $url")
@@ -51,5 +54,4 @@ fun sendGetOkHttpRequest(url: String): String? {
         println(response.code)
         response.body?.string()
     }
-
 }

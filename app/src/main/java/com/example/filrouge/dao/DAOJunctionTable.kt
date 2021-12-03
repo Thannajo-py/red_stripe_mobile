@@ -1,20 +1,19 @@
 package com.example.filrouge.dao
-        
-import androidx.lifecycle.LiveData
+
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.example.filrouge.bean.*
-import kotlinx.coroutines.flow.Flow
-        
+
+
 interface CommonJunctionDAo<T>{
     fun deleteWithMember1Id(objectId:Long)
     fun insert(id1:Long, id2:Long)
 
 }
      
-        @Dao
+@Dao
 interface GameMultiAddOnDao: CommonJunctionDAo<GameMultiAddOnTableBean> {
 
     @Query("SELECT * FROM gameMultiAddOn")
@@ -37,10 +36,10 @@ interface GameMultiAddOnDao: CommonJunctionDAo<GameMultiAddOnTableBean> {
     
     @Query("DELETE FROM gameMultiAddOn WHERE multiAddOnId=:objectId")
     fun deleteWithMultiAddOnId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GameTagDao: CommonJunctionDAo<GameTagTableBean> {
 
     @Query("SELECT * FROM gameTag")
@@ -63,10 +62,10 @@ interface GameTagDao: CommonJunctionDAo<GameTagTableBean> {
     
     @Query("DELETE FROM gameTag WHERE tagId=:objectId")
     fun deleteWithTagId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GameTopicDao: CommonJunctionDAo<GameTopicTableBean> {
 
     @Query("SELECT * FROM gameTopic")
@@ -89,10 +88,10 @@ interface GameTopicDao: CommonJunctionDAo<GameTopicTableBean> {
     
     @Query("DELETE FROM gameTopic WHERE topicId=:objectId")
     fun deleteWithTopicId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GameMechanismDao: CommonJunctionDAo<GameMechanismTableBean> {
 
     @Query("SELECT * FROM gameMechanism")
@@ -115,10 +114,10 @@ interface GameMechanismDao: CommonJunctionDAo<GameMechanismTableBean> {
     
     @Query("DELETE FROM gameMechanism WHERE mechanismId=:objectId")
     fun deleteWithMechanismId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GameDesignerDao: CommonJunctionDAo<GameDesignerTableBean> {
 
     @Query("SELECT * FROM gameDesigner")
@@ -141,10 +140,10 @@ interface GameDesignerDao: CommonJunctionDAo<GameDesignerTableBean> {
     
     @Query("DELETE FROM gameDesigner WHERE designerId=:objectId")
     fun deleteWithDesignerId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface AddOnDesignerDao: CommonJunctionDAo<AddOnDesignerTableBean> {
 
     @Query("SELECT * FROM addOnDesigner")
@@ -167,10 +166,10 @@ interface AddOnDesignerDao: CommonJunctionDAo<AddOnDesignerTableBean> {
     
     @Query("DELETE FROM addOnDesigner WHERE designerId=:objectId")
     fun deleteWithDesignerId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface MultiAddOnDesignerDao: CommonJunctionDAo<MultiAddOnDesignerTableBean> {
 
     @Query("SELECT * FROM multiAddOnDesigner")
@@ -193,10 +192,10 @@ interface MultiAddOnDesignerDao: CommonJunctionDAo<MultiAddOnDesignerTableBean> 
     
     @Query("DELETE FROM multiAddOnDesigner WHERE designerId=:objectId")
     fun deleteWithDesignerId(objectId:Long)
+}
 
-}  
 
-    @Dao
+@Dao
 interface GameArtistDao: CommonJunctionDAo<GameArtistTableBean> {
 
     @Query("SELECT * FROM gameArtist")
@@ -219,10 +218,10 @@ interface GameArtistDao: CommonJunctionDAo<GameArtistTableBean> {
     
     @Query("DELETE FROM gameArtist WHERE artistId=:objectId")
     fun deleteWithArtistId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface AddOnArtistDao: CommonJunctionDAo<AddOnArtistTableBean> {
 
     @Query("SELECT * FROM addOnArtist")
@@ -245,10 +244,10 @@ interface AddOnArtistDao: CommonJunctionDAo<AddOnArtistTableBean> {
     
     @Query("DELETE FROM addOnArtist WHERE artistId=:objectId")
     fun deleteWithArtistId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface MultiAddOnArtistDao: CommonJunctionDAo<MultiAddOnArtistTableBean> {
 
     @Query("SELECT * FROM multiAddOnArtist")
@@ -271,10 +270,10 @@ interface MultiAddOnArtistDao: CommonJunctionDAo<MultiAddOnArtistTableBean> {
     
     @Query("DELETE FROM multiAddOnArtist WHERE artistId=:objectId")
     fun deleteWithArtistId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GamePublisherDao: CommonJunctionDAo<GamePublisherTableBean> {
 
     @Query("SELECT * FROM gamePublisher")
@@ -297,10 +296,10 @@ interface GamePublisherDao: CommonJunctionDAo<GamePublisherTableBean> {
     
     @Query("DELETE FROM gamePublisher WHERE publisherId=:objectId")
     fun deleteWithPublisherId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface AddOnPublisherDao: CommonJunctionDAo<AddOnPublisherTableBean> {
 
     @Query("SELECT * FROM addOnPublisher")
@@ -323,10 +322,10 @@ interface AddOnPublisherDao: CommonJunctionDAo<AddOnPublisherTableBean> {
     
     @Query("DELETE FROM addOnPublisher WHERE publisherId=:objectId")
     fun deleteWithPublisherId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface MultiAddOnPublisherDao: CommonJunctionDAo<MultiAddOnPublisherTableBean> {
 
     @Query("SELECT * FROM multiAddOnPublisher")
@@ -349,10 +348,10 @@ interface MultiAddOnPublisherDao: CommonJunctionDAo<MultiAddOnPublisherTableBean
     
     @Query("DELETE FROM multiAddOnPublisher WHERE publisherId=:objectId")
     fun deleteWithPublisherId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GamePlayingModDao: CommonJunctionDAo<GamePlayingModTableBean> {
 
     @Query("SELECT * FROM gamePlayingMod")
@@ -375,10 +374,10 @@ interface GamePlayingModDao: CommonJunctionDAo<GamePlayingModTableBean> {
     
     @Query("DELETE FROM gamePlayingMod WHERE playingModId=:objectId")
     fun deleteWithPlayingModId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface AddOnPlayingModDao: CommonJunctionDAo<AddOnPlayingModTableBean> {
 
     @Query("SELECT * FROM addOnPlayingMod")
@@ -401,10 +400,10 @@ interface AddOnPlayingModDao: CommonJunctionDAo<AddOnPlayingModTableBean> {
     
     @Query("DELETE FROM addOnPlayingMod WHERE playingModId=:objectId")
     fun deleteWithPlayingModId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface MultiAddOnPlayingModDao: CommonJunctionDAo<MultiAddOnPlayingModTableBean> {
 
     @Query("SELECT * FROM multiAddOnPlayingMod")
@@ -427,10 +426,10 @@ interface MultiAddOnPlayingModDao: CommonJunctionDAo<MultiAddOnPlayingModTableBe
     
     @Query("DELETE FROM multiAddOnPlayingMod WHERE playingModId=:objectId")
     fun deleteWithPlayingModId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface GameLanguageDao: CommonJunctionDAo<GameLanguageTableBean> {
 
     @Query("SELECT * FROM gameLanguage")
@@ -453,10 +452,10 @@ interface GameLanguageDao: CommonJunctionDAo<GameLanguageTableBean> {
     
     @Query("DELETE FROM gameLanguage WHERE languageId=:objectId")
     fun deleteWithLanguageId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface AddOnLanguageDao: CommonJunctionDAo<AddOnLanguageTableBean> {
 
     @Query("SELECT * FROM addOnLanguage")
@@ -479,10 +478,10 @@ interface AddOnLanguageDao: CommonJunctionDAo<AddOnLanguageTableBean> {
     
     @Query("DELETE FROM addOnLanguage WHERE languageId=:objectId")
     fun deleteWithLanguageId(objectId:Long)
-
 }  
 
-    @Dao
+
+@Dao
 interface MultiAddOnLanguageDao: CommonJunctionDAo<MultiAddOnLanguageTableBean> {
 
     @Query("SELECT * FROM multiAddOnLanguage")
@@ -505,7 +504,4 @@ interface MultiAddOnLanguageDao: CommonJunctionDAo<MultiAddOnLanguageTableBean> 
     
     @Query("DELETE FROM multiAddOnLanguage WHERE languageId=:objectId")
     fun deleteWithLanguageId(objectId:Long)
-
 }  
-
-    

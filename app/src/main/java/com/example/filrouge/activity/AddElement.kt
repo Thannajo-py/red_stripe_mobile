@@ -58,20 +58,19 @@ class AddElement : CommonType(), View.OnClickListener,
     private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(arrayListOf(), arrayListOf(), arrayListOf()
         , arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
 
-    private val designerAdapter = GenericIDListCbAdapter<DesignerTableBean>(this, Type.Designer.name, addedStringContent[AddedContent.Designer.ordinal])
-    private val artistAdapter = GenericIDListCbAdapter<ArtistTableBean>(this, Type.Artist.name, addedStringContent[AddedContent.Artist.ordinal])
-    private val publisherAdapter = GenericIDListCbAdapter<PublisherTableBean>(this, Type.Publisher.name, addedStringContent[AddedContent.Publisher.ordinal])
-    private val languageAdapter = GenericIDListCbAdapter<LanguageTableBean>(this, Type.Language.name, addedStringContent[AddedContent.Language.ordinal])
-    private val playingModeAdapter = GenericIDListCbAdapter<PlayingModTableBean>(this, Type.PlayingMode.name, addedStringContent[AddedContent.PlayingMod.ordinal])
+    private val designerAdapter = GenericIDListCbAdapter(this, Type.Designer.name, addedStringContent[AddedContent.Designer.ordinal])
+    private val artistAdapter = GenericIDListCbAdapter(this, Type.Artist.name, addedStringContent[AddedContent.Artist.ordinal])
+    private val publisherAdapter = GenericIDListCbAdapter(this, Type.Publisher.name, addedStringContent[AddedContent.Publisher.ordinal])
+    private val languageAdapter = GenericIDListCbAdapter(this, Type.Language.name, addedStringContent[AddedContent.Language.ordinal])
+    private val playingModeAdapter = GenericIDListCbAdapter(this, Type.PlayingMode.name, addedStringContent[AddedContent.PlayingMod.ordinal])
 
-    private val difficulty:DifficultyTableBean? = null
-    private val difficultyAdapter = OneToOneListCbAdapter(this, difficulty)
+    private val difficultyAdapter = OneToOneListCbAdapter<DifficultyTableBean>(this)
 
-    private val tagAdapter = GenericIDListCbAdapter<TagTableBean>(this, Type.Tag.name, addedStringContent[AddedContent.Tag.ordinal])
+    private val tagAdapter = GenericIDListCbAdapter(this, Type.Tag.name, addedStringContent[AddedContent.Tag.ordinal])
 
-    private val topicAdapter = GenericIDListCbAdapter<TopicTableBean>(this, Type.Topic.name, addedStringContent[AddedContent.Topic.ordinal])
+    private val topicAdapter = GenericIDListCbAdapter(this, Type.Topic.name, addedStringContent[AddedContent.Topic.ordinal])
 
-    private val mechanismAdapter = GenericIDListCbAdapter<MechanismTableBean>(this, Type.Mechanism.name, addedStringContent[AddedContent.Mechanism.ordinal])
+    private val mechanismAdapter = GenericIDListCbAdapter(this, Type.Mechanism.name, addedStringContent[AddedContent.Mechanism.ordinal])
 
 
 
@@ -85,7 +84,7 @@ class AddElement : CommonType(), View.OnClickListener,
     private val gamesAdapter = GenericCommonGameListCbAdapter<DesignerWithGame>(this, addedToListGames)
 
     private var game:DesignerWithGame? = null
-    private val gameAdapter = OneToOneListCbAdapter(this, game)
+    private val gameAdapter = OneToOneListCbAdapter<DesignerWithGame>(this)
 
     private val changedObjectId: Long by lazy{intent.getLongExtra(SerialKey.ToModifyDataId.name, 0L)}
     private val changedObjectType: String? by lazy{intent.getStringExtra(SerialKey.ToModifyDataType.name)}
@@ -134,7 +133,7 @@ class AddElement : CommonType(), View.OnClickListener,
 
         if(changedObjectId != 0L) loadChangedObjectData()
 
-        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter<out ID>>> =
+        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter>> =
             arrayListOf(Pair(binding.rvDesigner,designerAdapter), Pair(binding.rvArtist, artistAdapter),
                 Pair(binding.rvPublisher,publisherAdapter),Pair(binding.rvPlayingMode, playingModeAdapter),
                 Pair(binding.rvLanguage, languageAdapter), Pair(binding.rvMechanism, mechanismAdapter),
@@ -346,25 +345,6 @@ class AddElement : CommonType(), View.OnClickListener,
         if (dbImgList.isEmpty()){
             appInstance.database.ImageDao().insert(ImageTableBean(0L, name, gameName, gameType))
         }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 1 && resultCode == RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
-            val stream = ByteArrayOutputStream()
-            imageBitmap.compress(Bitmap.CompressFormat.JPEG,80,stream)
-            val byteArray = stream.toByteArray()
-            val file = File(this.filesDir,"test")
-            file.writeBytes(byteArray)
-            binding.ivPictureChoice.setImageBitmap(BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size))
-            loadImage = true
-        }
-        if (resultCode == RESULT_OK && requestCode == 100) {
-            val imageUri = data?.data
-            binding.ivPictureChoice.setImageURI(imageUri)
-            loadImage = true
-        }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
     private fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
@@ -860,7 +840,17 @@ class AddElement : CommonType(), View.OnClickListener,
 
     override fun onGenericClick(datum: OneToOne) {
         when(datum){
-            is DesignerWithGame -> if (game == datum) game = null else game = datum
+            is DesignerWithGame -> {
+                if (game == datum) {
+                    game = null
+                    binding.tvGame.text = "aucun"
+                }
+
+                else {
+                    game = datum
+                    binding.tvGame.text = datum.name
+                }
+            }
             is DifficultyTableBean -> binding.etDifficulty.setText(datum.name)
         }
     }
@@ -880,7 +870,10 @@ class AddElement : CommonType(), View.OnClickListener,
                 CoroutineScope(SupervisorJob()).launch{
                     genericFill(appInstance.database.addOnDao(), addedStringContent, id)
                     val gameL = appInstance.database.addOnDao().getGameFromAddOns(id)
-                    if (gameL.isNotEmpty())game = gameL[0]
+                    if (gameL.isNotEmpty()) {
+                        game = gameL[0]
+                        binding.tvGame.text = gameL[0].name
+                    }
                 }
             }
             Type.MultiAddOn.name -> {
@@ -941,7 +934,7 @@ class AddElement : CommonType(), View.OnClickListener,
         })
     }
 
-    fun fillCommonRV(listPairRecyclerViewAdapter: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter<out ID>>>) {
+    fun fillCommonRV(listPairRecyclerViewAdapter: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter>>) {
         listPairRecyclerViewAdapter.forEach {
             it.first.adapter = it.second
             layout(it.first)

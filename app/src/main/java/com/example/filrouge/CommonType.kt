@@ -14,16 +14,13 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 
-abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterListener, OnGenericListAdapterListener {
-
-
-
+abstract class CommonType
+    : AppCompatActivity(),  OnGenericStringListAdapterListener, OnGenericListAdapterListener {
 
     fun layout(list: RecyclerView){
         list.layoutManager = GridLayoutManager(this,1)
         list.addItemDecoration(MarginItemDecoration(5))
     }
-
 
     fun loadImage(element:String, image: ImageView, type:String){
         CoroutineScope(SupervisorJob()).launch {
@@ -39,13 +36,16 @@ abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterList
                 ) getFile("$element$type", image) else image.setImageBitmap(null)
             }
         }
-
     }
 
     private fun getFile(name:String, image:ImageView){
         runOnUiThread {
             val file = File(image.context.filesDir, name)
-            val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
+            val compressedBitMap = BitmapFactory.decodeByteArray(
+                file.readBytes(),
+                0,
+                file.readBytes().size
+            )
             image.setImageBitmap(compressedBitMap)
         }
     }
@@ -66,13 +66,23 @@ abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterList
 
     override fun onElementClick(datum: CommonGame) {
         when (datum){
-            is DesignerWithAddOn -> startActivity(Intent(this, AddOnDetails::class.java).
-            putExtra(SerialKey.AddOnId.name, datum.id))
-            is DesignerWithMultiAddOn -> startActivity(Intent(this, MultiAddOnDetails::class.java).
-            putExtra(SerialKey.MultiAddOnId.name, datum.id))
-            is DesignerWithGame -> startActivity(Intent(this, GameDetails::class.java).
-            putExtra(SerialKey.GameId.name, datum.id))
+            is DesignerWithAddOn -> startActivity(
+                Intent(
+                    this,
+                    AddOnDetails::class.java
+                ).putExtra(SerialKey.AddOnId.name, datum.id)
+            )
+            is DesignerWithMultiAddOn -> startActivity(
+                Intent(
+                    this,
+                    MultiAddOnDetails::class.java
+                ).putExtra(SerialKey.MultiAddOnId.name, datum.id)
+            )
+            is DesignerWithGame -> startActivity(
+                Intent(
+                    this,
+                    GameDetails::class.java
+                ).putExtra(SerialKey.GameId.name, datum.id))
         }
     }
-
 }

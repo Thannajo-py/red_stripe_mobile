@@ -29,9 +29,11 @@ import java.lang.Exception
 class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
-    private val binding: ActivityViewGamesBinding by lazy{ ActivityViewGamesBinding.inflate(layoutInflater) }
+    private val binding: ActivityViewGamesBinding by lazy{
+        ActivityViewGamesBinding.inflate(layoutInflater)
+    }
     private val gson = Gson()
-    private val newAdapter = GenericListAdapter<DesignerWithGame>(this)
+    private val newAdapter = GenericListAdapter(this)
     private val db = appInstance.database
     private val dbMethod = DbMethod()
 
@@ -56,30 +58,39 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         if (currentUser?.synchronize == true) {
             if (!isLocal){
 
-                menu?.add(0, MenuId.Synchronize.ordinal, 0, "Sauvegarder modification et synchroniser")
-                menu?.add(0, MenuId.ResetDB.ordinal, 0, "Réinitialiser le contenu")
+                menu?.add(0,
+                    MenuId.Synchronize.ordinal,
+                    0,
+                    getString(R.string.save_and_synchronize)
+                )
+                menu?.add(0, MenuId.ResetDB.ordinal, 0, getString(R.string.reset_content))
 
             }else{
-                menu?.add(0, MenuId.SaveLocalDatabase.ordinal, 0, "Sauvegarder base de données")
-                menu?.add(0, MenuId.LoadLocalDatabase.ordinal, 0, "Restaurer base de données")
+                menu?.add(0, MenuId.SaveLocalDatabase.ordinal, 0, getString(R.string.save_local))
+                menu?.add(0, MenuId.LoadLocalDatabase.ordinal, 0, getString(R.string.reset_local))
 
             }
-            menu?.add(0, MenuId.SynchronizeParameter.ordinal, 0, "Paramètres de synchronisation")
+            menu?.add(
+                0,
+                MenuId.SynchronizeParameter.ordinal,
+                0,
+                getString(R.string.synchronize_parameters)
+            )
         }
-        menu?.add(0, MenuId.Search.ordinal,0,"Rechercher")
-        menu?.add(0, MenuId.LoadImages.ordinal,0,"Recharger les images")
+        menu?.add(0, MenuId.Search.ordinal, 0, getString(R.string.search))
+        menu?.add(0, MenuId.LoadImages.ordinal,0,getString(R.string.download_images))
         if (currentUser?.addAccount == true){
-            menu?.add(0, MenuId.CreateAccount.ordinal,0,"Ajouter un Compte")
+            menu?.add(0, MenuId.CreateAccount.ordinal, 0, getString(R.string.add_account))
         }
         if (currentUser?.deleteAccount == true){
-            menu?.add(0, MenuId.DeleteAccount.ordinal,0,"Supprimer compte")
+            menu?.add(0, MenuId.DeleteAccount.ordinal, 0, getString(R.string.delete_account))
         }
         if(currentUser?.add == true){
-            menu?.add(0, MenuId.AddContent.ordinal,0,"Ajouter un élément")
+            menu?.add(0, MenuId.AddContent.ordinal, 0, getString(R.string.add_element))
         }
-        menu?.add(0, MenuId.ApiSearch.ordinal,0,"ajouter un jeu par BGA")
-        menu?.add(0, MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
-        menu?.add(0, MenuId.Disconnect.ordinal,0,"Se Déconnecter")
+        menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
+        menu?.add(0, MenuId.ChangePassword.ordinal, 0, getString(R.string.change_password))
+        menu?.add(0, MenuId.Disconnect.ordinal, 0, getString(R.string.disconnect))
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -87,10 +98,19 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
-            MenuId.DeleteAccount.ordinal -> startActivity(Intent(this, DeleteAccount::class.java))
-            MenuId.AddContent.ordinal -> startActivity(Intent(this, AddElement::class.java))
-            MenuId.CreateAccount.ordinal -> startActivity(Intent(this, CreateNewAccount::class.java))
-            MenuId.Synchronize.ordinal -> synchronizeBox("Voulez vous sauvegarder toutes vos modifications et re-synchroniser?", false)
+            MenuId.DeleteAccount.ordinal -> startActivity(
+                Intent(this, DeleteAccount::class.java)
+            )
+            MenuId.AddContent.ordinal -> startActivity(
+                Intent(this, AddElement::class.java)
+            )
+            MenuId.CreateAccount.ordinal -> startActivity(
+                Intent(this, CreateNewAccount::class.java)
+            )
+            MenuId.Synchronize.ordinal -> synchronizeBox(
+                getString(R.string.save_synchronize_message),
+                false
+            )
             MenuId.LoadImages.ordinal -> {
                 refreshAll()
             }
@@ -100,7 +120,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             MenuId.LoadLocalDatabase.ordinal -> loadLocalDatabase()
             MenuId.ResetDB.ordinal -> {
                 appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, 0.0F)
-                synchronizeBox("Voulez vous supprimer votre contenu et recharger la base de données?", true)
+                synchronizeBox(getString(R.string.reset_content_message), true)
 
             }
             MenuId.Disconnect.ordinal -> {
@@ -109,7 +129,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 startActivity(Intent(this, MainActivity::class.java))
                 finishAffinity()
             }
-            MenuId.ApiSearch.ordinal -> startActivity(Intent(this, APISearchActivity::class.java))
+            MenuId.ApiSearch.ordinal -> startActivity(
+                Intent(this, APISearchActivity::class.java)
+            )
         }
         return super.onOptionsItemSelected(item)
     }
@@ -165,7 +187,10 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         CoroutineScope(SupervisorJob()).launch {
             db.clearAllTables()
             db.runInTransaction {
-                val dbSave = gson.fromJson(appInstance.sharedPreference.getValueString(SerialKey.SaveDatabase.name), SavedDatabase::class.java)
+                val dbSave = gson.fromJson(
+                    appInstance.sharedPreference.getValueString(SerialKey.SaveDatabase.name),
+                    SavedDatabase::class.java
+                )
                 dbSave.difficulty.forEach { db.difficultyDao().insert(it) }
                 dbSave.game.forEach { db.gameDao().insert(it) }
                 dbSave.addOn.forEach { db.addOnDao().insert(it) }
@@ -220,19 +245,37 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
         if (!cancel){
             modification = SendApiChange(login,password, ApiResponse(
-                appInstance.database.gameDao().getWithoutServerId().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
-                appInstance.database.addOnDao().getWithoutServerId().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
-                appInstance.database.multiAddOnDao().getWithoutServerId().map{dbMethod.convertToBean(it)}.toCollection(ArrayList())
+                appInstance.database.gameDao().getWithoutServerId().map{
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+                appInstance.database.addOnDao().getWithoutServerId().map{
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+                appInstance.database.multiAddOnDao().getWithoutServerId().map{
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList())
             )
                 , ApiResponse(
-                    appInstance.database.gameDao().getChanged().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
-                    appInstance.database.addOnDao().getChanged().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
-                    appInstance.database.multiAddOnDao().getChanged().map{dbMethod.convertToBean(it)}.toCollection(ArrayList()),
+                    appInstance.database.gameDao().getChanged().map{
+                        dbMethod.convertToBean(it)
+                    }.toCollection(ArrayList()),
+                    appInstance.database.addOnDao().getChanged().map{
+                        dbMethod.convertToBean(it)
+                    }.toCollection(ArrayList()),
+                    appInstance.database.multiAddOnDao().getChanged().map{
+                        dbMethod.convertToBean(it)
+                    }.toCollection(ArrayList()),
                 ),
                 ApiDelete(
-                    appInstance.database.deletedItemDao().getByType(Type.Game.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
-                    appInstance.database.deletedItemDao().getByType(Type.AddOn.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
-                    appInstance.database.deletedItemDao().getByType(Type.MultiAddOn.name).map{DeletedObject(it.idContent.toInt())}.toCollection(ArrayList()),
+                    appInstance.database.deletedItemDao().getByType(Type.Game.name).map{
+                        DeletedObject(it.idContent.toInt())
+                    }.toCollection(ArrayList()),
+                    appInstance.database.deletedItemDao().getByType(Type.AddOn.name).map{
+                        DeletedObject(it.idContent.toInt())
+                    }.toCollection(ArrayList()),
+                    appInstance.database.deletedItemDao().getByType(Type.MultiAddOn.name).map{
+                        DeletedObject(it.idContent.toInt())
+                    }.toCollection(ArrayList()),
                     ), timestamp)
         }
         val content = gson.toJson(ApiBody(modification))
@@ -267,7 +310,11 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 }
                 appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, result.timestamp)
             }
-            if(!result.games.isNullOrEmpty() || !result.add_ons.isNullOrEmpty() || !result.add_ons.isNullOrEmpty()) {
+            if(
+                !result.games.isNullOrEmpty()
+                || !result.add_ons.isNullOrEmpty()
+                || !result.add_ons.isNullOrEmpty()
+            ) {
                 CoroutineScope(SupervisorJob()).launch {
                     db.runInTransaction {
                         db.deletedItemDao().deleteAll()
@@ -375,7 +422,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     private fun <T:CommonBase, U:ID, V, W:ID>associativeTableFill(game: T,
                                                                   searched_array_list:ArrayList<String>,
-                                                                  gameDao:CommonDao<U>, otherDao: CommonCustomInsert<W>,
+                                                                  gameDao:CommonDao<U>,
+                                                                  otherDao: CommonCustomInsert<W>,
                                                                   junctionDao:CommonJunctionDAo<V> ){
     val gameL = gameDao.getByServerId(game.id?.toLong() ?: 0)
         if (gameL.isNotEmpty()) {
@@ -402,7 +450,14 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun <T:CommonBase,U:ID, V, W:ID> commonAssociativeFill(game:T,gameDao:CommonDao<U>,  otherDao: ArrayList<Triple<ArrayList<String>, CommonCustomInsert<out W>,CommonJunctionDAo<out V>>>)
+    private fun <T:CommonBase,U:ID, V, W:ID> commonAssociativeFill(
+        game:T,gameDao:CommonDao<U>,
+        otherDao: ArrayList<Triple<
+                ArrayList<String>,
+                CommonCustomInsert<out W>,
+                CommonJunctionDAo<out V>
+                >>
+    )
     {
         otherDao.forEach {
             associativeTableFill(
@@ -445,7 +500,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
         e.printStackTrace()
         runOnUiThread {
-            binding.tvGameError.text = "error: ${e.message}"
+            binding.tvGameError.text = getString(R.string.error_content, e.message)
             binding.tvGameError.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
 
@@ -485,13 +540,13 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
                     if (!game.external_img.isNullOrBlank()){
                         launch{
-                            getImage(game.external_img!!, "${game.name}$type", game.name, type)
+                            getImage(game.external_img!!, game.name, type)
                         }
 
                     }
                     else if (!game.picture.isNullOrBlank() && API_STATIC != null){
                         launch{
-                            getImage("$API_STATIC${game.picture}", "${game.name}$type", game.name, type)
+                            getImage("$API_STATIC${game.picture}", game.name, type)
                         }
                     }
                 }
@@ -502,12 +557,22 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun getImage(url:String, name:String, gameName:String, type:String){
+    private fun getImage(url:String, gameName:String, type:String){
         try {
             val img = sendGetOkHttpRequestImage(url)
             img?.run {
-                appInstance.database.ImageDao().insert(ImageTableBean(0, name, gameName, type))
-                val file = File(this@ViewGamesActivity.filesDir, name)
+                appInstance.database.ImageDao().insert(
+                    ImageTableBean(
+                        0,
+                        "$gameName$type",
+                        gameName,
+                        type
+                    )
+                )
+                val file = File(
+                    this@ViewGamesActivity.filesDir,
+                    "$gameName$type"
+                )
                 file.writeBytes(this)
 
             }
@@ -551,9 +616,12 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             appInstance.database.runInTransaction {
                 appInstance.database.ImageDao().getAll().forEach {
                     when(it.gameType){
-                        Type.Game.name -> if(appInstance.database.gameDao().getByName(it.gameName).isEmpty())deleteImage(it.name)
-                        Type.AddOn.name -> if(appInstance.database.addOnDao().getByName(it.gameName).isEmpty()) deleteImage(it.name)
-                        Type.MultiAddOn.name -> if(appInstance.database.multiAddOnDao().getByName(it.gameName).isEmpty()) deleteImage(it.name)
+                        Type.Game.name -> if(appInstance.database.gameDao()
+                                .getByName(it.gameName).isEmpty())deleteImage(it.name)
+                        Type.AddOn.name -> if(appInstance.database.addOnDao()
+                                .getByName(it.gameName).isEmpty()) deleteImage(it.name)
+                        Type.MultiAddOn.name -> if(appInstance.database.multiAddOnDao()
+                                .getByName(it.gameName).isEmpty()) deleteImage(it.name)
                     }
                 }
             }
@@ -570,17 +638,22 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     private fun synchronizeBox(message:String, cancel:Boolean){
         val login = EditText(this)
         val pwd = addEditTextPassword()
-        val view = arrayListOf<View>(addTextView("Login"),login,addTextView("Mot de passe"), pwd)
+        val view = arrayListOf<View>(
+            addTextView(getString(R.string.login)),
+            login,
+            addTextView(getString(R.string.password)),
+            pwd
+        )
         val ll = addLinearLayout(view)
         AlertDialog.Builder(this)
             .setMessage(message)
-            .setTitle("Attention")
-            .setPositiveButton("ok") { dialog, which ->
+            .setTitle(getString(R.string.warning))
+            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
                 run {
                     synchronize(login.text.toString(),pwd.text.toString(), cancel)
                 }
-            }.setNegativeButton("cancel") { dialog, which ->
-                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+            }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
             }.setView(ll)
             .show()
     }
@@ -589,27 +662,36 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         val url = EditText(this)
         val staticUrl = EditText(this)
         val cbIsLocal = CheckBox(this)
-        cbIsLocal.setText("pas de serveur")
+        cbIsLocal.setText(getString(R.string.server_less))
         cbIsLocal.isChecked = isLocal
-        val view = arrayListOf<View>(addTextView("API url"),url,addTextView("API static url"), staticUrl, cbIsLocal)
+        val view = arrayListOf<View>(
+            addTextView(getString(R.string.url_api)),
+            url,
+            addTextView(getString(R.string.url_static_file)),
+            staticUrl,
+            cbIsLocal
+        )
         val ll = addLinearLayout(view)
         url.setText(API_URL)
         staticUrl.setText(API_STATIC)
         AlertDialog.Builder(this)
-            .setMessage("Entrez votre adresse d'api et de fichiers statiques")
-            .setTitle("Paramètres")
-            .setPositiveButton("ok") { dialog, which ->
+            .setMessage(getString(R.string.url_web_message))
+            .setTitle(getString(R.string.parameters))
+            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
                 API_URL = url.text.toString()
                 API_STATIC = staticUrl.text.toString()
                 isLocal = cbIsLocal.isChecked
                 appInstance.sharedPreference.saveBoolean(SerialKey.IsLocal.name, isLocal)
                 appInstance.sharedPreference.save(url.text.toString(), SerialKey.APIUrl.name)
-                appInstance.sharedPreference.save(staticUrl.text.toString(), SerialKey.APIStaticUrl.name)
+                appInstance.sharedPreference.save(
+                    staticUrl.text.toString(),
+                    SerialKey.APIStaticUrl.name
+                )
                 startActivity(Intent(this, ViewGamesActivity::class.java))
                 finish()
 
-            }.setNegativeButton("cancel") { dialog, which ->
-                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+            }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
             }.setView(ll)
             .show()
     }
@@ -618,46 +700,76 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         val exPwd = addEditTextPassword()
         val pwd = addEditTextPassword()
         val pwdConfirm = addEditTextPassword()
-        val view = arrayListOf<View>(addTextView("Ancien mot de passe"),exPwd,addTextView("nouveau mot de passe"), pwd, addTextView("Confirmer nouveau mot de passe"), pwdConfirm)
+        val view = arrayListOf<View>(
+            addTextView(getString(R.string.old_password)),
+            exPwd,
+            addTextView(getString(R.string.new_password)),
+            pwd,
+            addTextView(getString(R.string.confirm_password)),
+            pwdConfirm
+        )
         val ll = addLinearLayout(view)
         AlertDialog.Builder(this)
-            .setTitle("Changer mot de passe")
-            .setPositiveButton("ok") { dialog, which ->
+            .setTitle(getString(R.string.change_password))
+            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
                 run {
                     passwordChange(exPwd, pwd, pwdConfirm)
 
                 }
-            }.setNegativeButton("cancel") { dialog, which ->
-                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+            }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+                Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
             }.setView(ll)
             .show()
     }
 
     private fun passwordChange(exPwd:EditText, pwd:EditText, pwdConfirm:EditText){
-        if(SHA256.encryptThisString(exPwd.text.toString()) == currentUser?.password && currentUser != null){
+        if(SHA256.encryptThisString(exPwd.text.toString()) == currentUser?.password
+            && currentUser != null){
             val cUser = currentUser
             if(pwd.text.toString() == pwdConfirm.text.toString() && cUser != null){
                 if(Regex(RegexPattern.PassWord.pattern).matches(pwd.text.toString())){
                     CoroutineScope(SupervisorJob()).launch{
-                        val newPasswordUser = UserTableBean(cUser.id, cUser.login,
+                        val newPasswordUser = UserTableBean(
+                            cUser.id,
+                            cUser.login,
                             SHA256.encryptThisString(pwd.text.toString()),
-                            cUser.add, cUser.change, cUser.delete, cUser.synchronize, cUser.addAccount,
+                            cUser.add,
+                            cUser.change,
+                            cUser.delete,
+                            cUser.synchronize,
+                            cUser.addAccount,
                         cUser.deleteAccount)
                         appInstance.database.userDao().insert(newPasswordUser)
                         currentUser = newPasswordUser
-                        Toast.makeText(this@ViewGamesActivity, "changement de mot de passe effectué", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@ViewGamesActivity,
+                            getString(R.string.password_changed),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
                 else{
-                    Toast.makeText(this, CommonString.PassWordRequirement.string, Toast.LENGTH_LONG).show()
+                    Toast.makeText(
+                        this,
+                        getString(R.string.password_rules),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
             else{
-                Toast.makeText(this, "les nouveaux mots de passe ne sont pas identiques", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.password_do_not_match),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
         }
         else{
-            Toast.makeText(this, "mauvais mot de passe", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this,
+                getString(R.string.wrong_password),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
     }

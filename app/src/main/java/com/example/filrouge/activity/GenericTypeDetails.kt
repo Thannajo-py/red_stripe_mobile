@@ -13,9 +13,9 @@ import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
 class GenericTypeDetails : CommonType() {
 
     private val binding: ActivityGenericTypeDetailsBinding by lazy{ ActivityGenericTypeDetailsBinding.inflate(layoutInflater) }
-    private val genericAddOnAdapter = GenericListAdapter<DesignerWithAddOn>(this)
-    private val genericMultiAddOnAdapter = GenericListAdapter<DesignerWithMultiAddOn>(this)
-    private val genericGameAdapter = GenericListAdapter<DesignerWithGame>(this)
+    private val genericAddOnAdapter = GenericListAdapter(this)
+    private val genericMultiAddOnAdapter = GenericListAdapter(this)
+    private val genericGameAdapter = GenericListAdapter(this)
     private val type:String by lazy{intent.extras!!.getString(SerialKey.Type.name, "")}
     private val id:Long by lazy{intent.extras!!.getLong(SerialKey.GenericId.name, 0L)}
     private val name:String by lazy{intent.extras!!.getString(SerialKey.Name.name, "")}
