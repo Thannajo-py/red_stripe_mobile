@@ -24,32 +24,6 @@ abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterList
         list.addItemDecoration(MarginItemDecoration(5))
     }
 
-    fun <T, U:RecyclerView.ViewHolder>loadRv(rv:RecyclerView, list:ArrayList<T>, adapter:RecyclerView.Adapter<U>, content:Collection<T>){
-        rv.adapter = adapter
-        layout(rv)
-        list.clear()
-        list.addAll(content)
-        adapter.notifyDataSetChanged()
-    }
-
-    fun fillCommonTextView(tvDifficulty:TextView, tvName:TextView, tvPlayer:TextView,
-                           tvAge:TextView, element:CommonBase){
-        tvDifficulty.text = "${element.difficulty?:"unknown"}"
-        tvDifficulty.setOnClickListener {
-            intent = Intent(this, GenericTypeDetails::class.java)
-            intent.putExtra(SerialKey.Type.name, Type.Difficulty.name)
-            intent.putExtra(SerialKey.Name.name, element.difficulty)
-            startActivity(intent)
-            finish()
-        }
-        tvName.text = "${element.name}"
-        tvPlayer.text = "de ${element.player_min} à ${element.player_max} joueurs"
-        tvAge.text = "${element.age} et +"
-
-    }
-
-
-
 
     fun loadImage(element:String, image: ImageView, type:String){
         CoroutineScope(SupervisorJob()).launch {
@@ -68,7 +42,7 @@ abstract class CommonType : AppCompatActivity(),  OnGenericStringListAdapterList
 
     }
 
-    fun getFile(name:String, image:ImageView){
+    private fun getFile(name:String, image:ImageView){
         runOnUiThread {
             val file = File(image.context.filesDir, name)
             val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)

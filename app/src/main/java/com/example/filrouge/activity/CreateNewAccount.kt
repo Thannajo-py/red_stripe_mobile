@@ -34,10 +34,6 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
                 }
             }
         }
-
-        CoroutineScope(SupervisorJob()).launch{
-        }
-
     }
 
     override fun onClick(v: View?) {
@@ -67,7 +63,6 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
                         )
                         if (isUserDbEmpty) {
                             currentUser = user
-                            Log.w("AZERT", "this")
                         }
                         db.insert(user)
                         runOnUiThread {
@@ -75,10 +70,8 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
                             startActivity(Intent(this@CreateNewAccount, ViewGamesActivity::class.java))
                             finish()
                         }
-
                     }
                 }
-
             }
             else{
                 binding.tvError.text = CommonString.PassWordRequirement.string

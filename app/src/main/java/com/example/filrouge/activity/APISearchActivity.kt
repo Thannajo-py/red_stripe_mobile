@@ -1,9 +1,11 @@
 package com.example.filrouge.activity
 
 import android.content.Intent
+import android.graphics.drawable.Drawable
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
@@ -32,52 +34,71 @@ class APISearchActivity : AppCompatActivity() {
     }
 
     private fun apiSearch(){
+        binding.etError.visibility = View.GONE
         val name = binding.etGameName.text.toString()
         val url = "https://api.boardgameatlas.com/api/search?name=${name}&fuzzy_match=true&client_id=${Constant.ApiBgaKey.value}"
         val gson = Gson()
         binding.progressBar2.visibility = View.VISIBLE
 
         CoroutineScope(SupervisorJob()).launch {
-            val answer = gson.fromJson(sendGetOkHttpRequest(url), BgaApi::class.java)
-            if (answer.games == null || answer.games.isEmpty()){
-                runOnUiThread {
-                    binding.btnSearch.visibility = View.VISIBLE
-                    binding.progressBar2.visibility = View.GONE
-                    answer.games?.run{
-                        Toast.makeText(this@APISearchActivity, "aucun jeu correspondant trouvé", Toast.LENGTH_SHORT).show()
-                    }?:run{
-                        Toast.makeText(this@APISearchActivity, "une erreur est survenue, veuillez réessayer", Toast.LENGTH_SHORT).show()
+            try {
+                val answer = gson.fromJson(sendGetOkHttpRequest(url), BgaApi::class.java)
+                if (answer.games == null || answer.games.isEmpty()) {
+                    runOnUiThread {
+                        binding.btnSearch.visibility = View.VISIBLE
+                        binding.progressBar2.visibility = View.GONE
+                        answer.games?.run {
+                            binding.etError.text = getString(R.string.no_matching_games)
+                            binding.etError.visibility = View.VISIBLE
+                        } ?: run {
+                            binding.etError.text = getString(R.string.common_error)
+                            binding.etError.visibility = View.VISIBLE
+                        }
                     }
+                } else {
+                    runOnUiThread {
+                        binding.rvAPI.visibility = View.VISIBLE
+                        adapter.submitList(answer.games)
+                        binding.btnSearch.visibility = View.VISIBLE
+                        binding.progressBar2.visibility = View.GONE
+                    }
+                    if (ALL_MECHANICS.isEmpty()) {
+                        ALL_MECHANICS.addAll(
+                            gson.fromJson(
+                                sendGetOkHttpRequest(Constant.UrlMechanics.value),
+                                MechanicApiResult::class.java
+                            ).mechanics
+                        )
+                    }
+                    if (ALL_CATEGORIES.isEmpty()) {
+                        ALL_CATEGORIES.addAll(
+                            gson.fromJson(
+                                sendGetOkHttpRequest(Constant.UrlCategories.value),
+                                CategoriesApiResult::class.java
+                            ).categories
+                        )
+                    }
+
+
                 }
             }
-            else{
+            catch(e:Exception){
+                e.printStackTrace()
                 runOnUiThread {
-                    binding.rvAPI.visibility = View.VISIBLE
-                    adapter.submitList(answer.games)
                     binding.btnSearch.visibility = View.VISIBLE
-                    binding.progressBar2.visibility = View.GONE
+                    binding.etError.text = getString(R.string.connection_error)
+                    binding.etError.visibility = View.VISIBLE
                 }
-                if (ALL_MECHANICS.isEmpty()){
-                    ALL_MECHANICS.addAll(gson.fromJson(sendGetOkHttpRequest(Constant.UrlMechanics.value), MechanicApiResult::class.java).mechanics)
-                }
-                if (ALL_CATEGORIES.isEmpty()) {
-                    ALL_CATEGORIES.addAll(
-                        gson.fromJson(
-                            sendGetOkHttpRequest(Constant.UrlCategories.value),
-                            CategoriesApiResult::class.java
-                        ).categories
-                    )
-                }
-
 
             }
         }
     }
 
-    fun onElementClick(datum:BgaGameBean){
+    fun onElementClick(datum:BgaGameBean, img:String?){
         startActivity(
             Intent(this, AddElement::class.java)
             .putExtra(SerialKey.ApiBgaGame.name, datum)
+                .putExtra(SerialKey.ApiBgaImage.name, img)
         )
         finish()
     }

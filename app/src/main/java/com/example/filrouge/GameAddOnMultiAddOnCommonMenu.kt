@@ -5,10 +5,10 @@ import android.view.Menu
 open class GameAddOnMultiAddOnCommonMenu :CommonType(){
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if(currentUser?.delete == true){
-            menu?.add(0,MenuId.DeleteThis.ordinal,0,"Supprimer")
+            menu?.add(0,MenuId.DeleteThis.ordinal,0,getString(R.string.delete))
         }
         if (currentUser?.change == true){
-            menu?.add(0,MenuId.ModifyThis.ordinal,0,"Modifier")
+            menu?.add(0,MenuId.ModifyThis.ordinal,0,getString(R.string.modify))
         }
         return super.onCreateOptionsMenu(menu)
     }

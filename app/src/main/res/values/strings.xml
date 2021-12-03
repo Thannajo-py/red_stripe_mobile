@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">FilRouge</string>
+    <string name="add_a_game">Ajouter/Modifier un jeu</string>
+    <string name="connection_error">Erreur de connexion internet, veuillez réessayer</string>
+    <string name="no_matching_games">aucun jeu correspondant trouvé</string>
+    <string name="common_error">Une erreur est survenue veuillez réessayer</string>
+    <string name="delete">Supprimer</string>
+    <string name="modify">Modifier</string>
+    <string name="player_number">de %1$s à %2$s joueurs</string>
+    <string name="age">%1$s et plus</string>
+    <string name="unknown">inconnu</string>
 </resources>

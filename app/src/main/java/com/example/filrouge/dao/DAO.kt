@@ -759,6 +759,10 @@ interface DeletedItemDao {
 
 @Dao
 interface ImageDao {
+
+    @Query("SELECT * FROM image WHERE name=:name")
+    fun getByName(name:String):List<ImageTableBean>
+
     @Query("SELECT * FROM image")
     fun getAll(): List<ImageTableBean>
 

@@ -1,5 +1,7 @@
 package com.example.filrouge
 
+import java.util.jar.Manifest
+
 val ALL_MECHANICS = ArrayList<NamedResultBean>()
 val ALL_CATEGORIES = ArrayList<NamedResultBean>()
 enum class SerialKey{
@@ -20,7 +22,9 @@ enum class SerialKey{
     GenericId,
     QueryContent,
     SaveDatabase,
-    ApiBgaGame
+    ApiBgaGame,
+    ApiBgaImage,
+    TempImage
 
 }
 
@@ -56,7 +60,12 @@ enum class MenuId{
     ResetDB,
     Disconnect,
     SaveLocalDatabase,
-    LoadLocalDatabase
+    LoadLocalDatabase,
+    TakePhoto,
+    AddExternalLink,
+    GetInternalFile,
+    ResetImage,
+    DeleteImage
 }
 
 enum class RegexPattern(val pattern:String){
@@ -89,4 +98,9 @@ enum class Constant(val value:String){
     Extension("expansion"),
     UrlMechanics("https://api.boardgameatlas.com/api/game/mechanics?client_id=WgrVtRvHeo"),
     UrlCategories("https://api.boardgameatlas.com/api/game/categories?client_id=WgrVtRvHeo")
+}
+
+enum class PermissionRequest(val perm:String){
+    Camera(android.Manifest.permission.CAMERA),
+    ExternalStorage(android.Manifest.permission.READ_EXTERNAL_STORAGE)
 }

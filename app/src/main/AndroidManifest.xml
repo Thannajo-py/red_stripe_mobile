@@ -3,6 +3,10 @@
     package="com.example.filrouge">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-feature android:name="android.hardware.camera"
+        android:required="false" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
         android:name=".FilRougeApp"
@@ -45,8 +49,7 @@
             android:name=".activity.GameDetails"
             android:parentActivityName=".activity.ViewGamesActivity" />
         <activity
-            android:name=".activity.ViewGamesActivity"
-            android:parentActivityName=".activity.MainActivity" />
+            android:name=".activity.ViewGamesActivity" />
         <activity android:name=".activity.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

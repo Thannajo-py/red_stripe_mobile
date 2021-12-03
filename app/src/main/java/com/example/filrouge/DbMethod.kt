@@ -71,6 +71,7 @@ class DbMethod {
         name.forEach {
             val list = dao.getByName(it)
             if(list.isNotEmpty()) joinDao.insert(id, list[0].id)
+
         }
 
     }

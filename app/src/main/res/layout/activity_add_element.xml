@@ -4,9 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.AddElement"
     android:gravity="center"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:visibility="visible"
+    tools:context=".activity.AddElement">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -24,10 +25,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:text="Ajouter/Modifier un jeu"
+                android:text="@string/add_a_game"
                 android:textColor="#673AB7"
                 android:textSize="30sp"
                 android:textStyle="bold" />
+
+            <ImageView
+                android:id="@+id/iv_picture_choice"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                app:srcCompat="@android:drawable/ic_menu_gallery" />
 
             <CheckBox
                 android:id="@+id/cb_del_img"
@@ -36,28 +43,6 @@
                 android:text="Supprimer l'image actuelle"
                 android:visibility="gone"
                 tools:visibility="visible" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp"
-                android:text="lien image externe:"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="bold" />
-
-            <EditText
-                android:id="@+id/et_external_image"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="http://www.image.com"
-                android:inputType="textPersonName" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -128,44 +113,16 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddDesigner"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent" />
+                android:layout_height="wrap_content" />
 
-            <EditText
-                android:id="@+id/et_designer"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="Klaus"
-                android:inputType="textPersonName" />
-
-            <LinearLayout
-                android:id="@+id/llDesigner"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_designer_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <Button
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_designer_add"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+" />
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvDesigner"
@@ -184,41 +141,17 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_artist"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddArtist"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="Dutrait"
-                android:inputType="textPersonName" />
+                android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/llArtist"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_artist_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <Button
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_artist_add"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+" />
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvArtist"
@@ -236,41 +169,17 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_publisher"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddPublisher"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="Asmodée"
-                android:inputType="textPersonName" />
+                android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/llPublisher"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_publisher_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <Button
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_publisher_add"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+" />
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPublisher"
@@ -403,41 +312,17 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_playing_mode"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddPlayingMod"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="coopératif"
-                android:inputType="textPersonName" />
+                android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/llPlayingMode"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_playing_mode_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <Button
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_playing_mode_add"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+" />
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvPlayingMode"
@@ -456,41 +341,17 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_language"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvAddLanguage"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:ems="10"
-                android:hint="français"
-                android:inputType="textPersonName" />
+                android:layout_height="wrap_content" />
 
-            <LinearLayout
-                android:id="@+id/llLanguage"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:gravity="center"
-                android:orientation="vertical"
-                android:padding="10dp">
-
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_language_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="-"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <Button
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_language_add"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="+" />
+                android:clickable="true"
+                app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvLanguage"
@@ -584,41 +445,17 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/et_tag"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddTag"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="classique"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:id="@+id/llTag"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_tag_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <Button
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btn_tag_add"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="+" />
+                    android:clickable="true"
+                    app:srcCompat="@android:drawable/ic_input_add" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTag"
@@ -636,41 +473,17 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/et_topic"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddTopic"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="pathfinder"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:id="@+id/llTopic"
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:id="@+id/btn_topic_mode_add"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_topic_delete"
-                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <Button
-                    android:id="@+id/btn_topic_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="+" />
+                    android:clickable="true"
+                    app:srcCompat="@android:drawable/ic_input_add" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvTopic"
@@ -687,41 +500,17 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/et_mechanism"
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rvAddMechanism"
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginRight="10dp"
-                    android:ems="10"
-                    android:hint="parcours"
-                    android:inputType="textPersonName" />
+                    android:layout_height="wrap_content" />
 
-                <LinearLayout
-                    android:id="@+id/llMechanism"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center"
-                    android:orientation="vertical"
-                    android:padding="10dp">
-
-                </LinearLayout>
-
-                <Button
-                    android:id="@+id/btn_mechanism_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="-"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <Button
+                <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btn_mechanism_add"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="+" />
+                    android:clickable="true"
+                    app:srcCompat="@android:drawable/ic_input_add" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/rvMechanism"
@@ -846,6 +635,17 @@
                     android:layout_height="150dp" />
             </LinearLayout>
 
+
+            <TextView
+                android:id="@+id/et_error"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="error"
+                android:textColor="#FB0000"
+                android:textSize="20sp"
+                android:visibility="gone"
+                tools:visibility="visible" />
 
             <Button
                 android:id="@+id/btn_add"

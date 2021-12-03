@@ -1,7 +1,6 @@
 package com.example.filrouge
 
 import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
 
 

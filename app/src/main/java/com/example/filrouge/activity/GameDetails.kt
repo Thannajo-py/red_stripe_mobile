@@ -53,16 +53,6 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
         binding.rvGameDetailMultiAddOn.adapter = multiAddOnAdapter
         layout(binding.rvGameDetailMultiAddOn)
         appInstance.database.multiAddOnDao().getDesignerWithMultiAddOnOfGame(gameId).observe(this, {it?.let{multiAddOnAdapter.submitList(it)}})
-
-        // TEST
-        /*CoroutineScope(SupervisorJob()).launch{
-            println(appInstance.database.gameDao().getDesignerWithGameAndImage())
-        }*/
-
-
-
-
-
     }
 
     fun fillCommonTextView(){

@@ -1,28 +1,18 @@
 package com.example.filrouge
 
 import android.graphics.BitmapFactory
-import android.text.Editable
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.core.widget.doAfterTextChanged
-import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.activity.APISearchActivity
-import com.example.filrouge.activity.AddElement
 import com.example.filrouge.bean.*
 import com.example.filrouge.databinding.*
 import com.squareup.picasso.Picasso
-import org.intellij.lang.annotations.Language
 import java.io.File
-
-
-
 
 
 var currentUser: UserTableBean? = null
@@ -71,7 +61,7 @@ interface UserListener{
 
 
 
-open class GenericListAdapter<T:CommonGame> (val client: OnGenericListAdapterListener) : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
+open class GenericListAdapter (val client: OnGenericListAdapterListener) : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
 
 
     class ViewHolder(val bind:GameListBinding) : RecyclerView.ViewHolder(bind.root)
@@ -84,7 +74,7 @@ open class GenericListAdapter<T:CommonGame> (val client: OnGenericListAdapterLis
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
 
-    override fun onBindViewHolder(holder: GenericListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
         holder.bind.tvDesigner.text = datum?.designer?:""
@@ -108,7 +98,7 @@ interface OnGenericStringListAdapterListener{
     fun onElementClick(datum:ID, type:String)
 }
 
-open class GenericStringListAdapter<T: ID> (val client: OnGenericStringListAdapterListener, val type:String) : ListAdapter<ID, GenericStringListAdapter.ViewHolder>(GameComparator()) {
+open class GenericStringListAdapter (val client: OnGenericStringListAdapterListener, val type:String) : ListAdapter<ID, GenericStringListAdapter.ViewHolder>(GameComparator()) {
 
 
     class ViewHolder(val bind:NameListBinding) : RecyclerView.ViewHolder(bind.root)
@@ -121,7 +111,7 @@ open class GenericStringListAdapter<T: ID> (val client: OnGenericStringListAdapt
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
 
-    override fun onBindViewHolder(holder: GenericStringListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
         holder.bind.cvNameList.setOnClickListener { client.onElementClick(datum, type) }
@@ -130,7 +120,7 @@ open class GenericStringListAdapter<T: ID> (val client: OnGenericStringListAdapt
 }
 
 
-class GenericIDListCbAdapter<T:ID> (val client: GenericIDCbListener, val type:String,
+class GenericIDListCbAdapter (val client: GenericIDCbListener, val type:String,
                             val addedGeneric:ArrayList<String>) : ListAdapter<ID, GenericIDListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: NameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -248,7 +238,7 @@ open class BgaListAdapter (val client: APISearchActivity) : ListAdapter<BgaGameB
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
 
-    override fun onBindViewHolder(holder: BgaListAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
         holder.bind.tvDesigner.text = datum?.primary_designer?.name ?: ""
@@ -257,7 +247,13 @@ open class BgaListAdapter (val client: APISearchActivity) : ListAdapter<BgaGameB
         } ?: run {
             holder.bind.ivPicture.setImageBitmap(null)
         }
-        holder.bind.cvGameList.setOnClickListener { client.onElementClick(datum) }
+        holder.bind.cvGameList.setOnClickListener {
+            datum.image_url?.run{
+                client.onElementClick(datum, datum.image_url)
+            }?:run{
+                client.onElementClick(datum, null)
+            }
+        }
     }
 
 
@@ -276,17 +272,13 @@ class AddedElementAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.binding.etName.setText(addedElement[position])
-        holder.binding.etName.doAfterTextChanged {
-            addedElement[position] = it.toString()
-            this.notifyItemChanged(position)
-        }
+        holder.binding.etName.doAfterTextChanged {  addedElement[position] = it.toString() }
         holder.binding.fba.setOnClickListener {
             addedElement.removeAt(position)
-            this.notifyItemRemoved(position)
+            this.notifyDataSetChanged()
         }
     }
 
-    // return the size of languageList
     override fun getItemCount() = addedElement.size
 
 }

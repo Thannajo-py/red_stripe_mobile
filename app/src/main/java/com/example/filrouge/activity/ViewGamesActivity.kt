@@ -24,6 +24,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
+
+
 class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
@@ -42,7 +44,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         binding.rvGames.layoutManager = GridLayoutManager(this, 1)
         binding.rvGames.addItemDecoration(MarginItemDecoration(5))
         getSave()
-
     }
 
     override fun onResume() {
@@ -76,9 +77,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         if(currentUser?.add == true){
             menu?.add(0, MenuId.AddContent.ordinal,0,"Ajouter un élément")
         }
+        menu?.add(0, MenuId.ApiSearch.ordinal,0,"ajouter un jeu par BGA")
         menu?.add(0, MenuId.ChangePassword.ordinal,0,"Changer de Mot de passe")
         menu?.add(0, MenuId.Disconnect.ordinal,0,"Se Déconnecter")
-        menu?.add(0, MenuId.ApiSearch.ordinal,0,"ajouter un jeu par BGA")
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -528,7 +529,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         return textView
     }
 
-    private fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
+    fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
         val ll = LinearLayout(this)
         ll.orientation = LinearLayout.VERTICAL
         ll.gravity = Gravity.CENTER
