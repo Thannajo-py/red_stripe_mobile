@@ -150,6 +150,16 @@ data class DesignerTableBean(
 ): ID
 
 
+data class DesignerTableBean2(
+    override var id: Long = 0,
+    override val name:String,
+    val idGame:Long,
+    val idAddOn:Long,
+    val idMultiAddOn:Long,
+
+): ID
+
+
 @Entity(tableName = "artist")
 data class ArtistTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,

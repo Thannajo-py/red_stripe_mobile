@@ -43,7 +43,6 @@ enum class Type{
     Game,
     AddOn,
     MultiAddOn
-
 }
 
 
@@ -67,7 +66,8 @@ enum class MenuId{
     AddExternalLink,
     GetInternalFile,
     ResetImage,
-    DeleteImage
+    DeleteImage,
+    DeleteObject,
 }
 
 
@@ -84,7 +84,8 @@ enum class AddedContent{
     Topic,
     Language,
     Mechanism,
-    PlayingMod
+    PlayingMod,
+    Difficulty,
 }
 
 

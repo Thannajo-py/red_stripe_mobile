@@ -84,7 +84,7 @@ abstract fun gameLanguageDao(): GameLanguageDao
 abstract fun addOnLanguageDao(): AddOnLanguageDao
 abstract fun multiAddOnLanguageDao(): MultiAddOnLanguageDao
 abstract fun deletedItemDao(): DeletedItemDao
-abstract fun ImageDao(): ImageDao
+abstract fun imageDao(): ImageDao
 
 companion object{
         private var INSTANCE: FilRougeRoomDatabase? = null

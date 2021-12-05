@@ -1,25 +1,23 @@
 package com.example.filrouge.activity
 
-import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
-import android.app.Instrumentation
-import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
 import android.view.*
 import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
-import androidx.core.net.toUri
+import androidx.core.view.forEach
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
@@ -28,35 +26,23 @@ import com.example.filrouge.dao.CommonCustomInsert
 import com.example.filrouge.dao.CommonDao
 import com.example.filrouge.dao.GameDao
 import com.example.filrouge.databinding.ActivityAddElementBinding
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
-import java.nio.ByteBuffer
 
 class AddElement : CommonType(), View.OnClickListener,
     GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener {
 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
 
-    private val addedExStringContent: ArrayList<ArrayList<String>> = arrayListOf(arrayListOf(""), arrayListOf(""), arrayListOf("")
-        , arrayListOf(""), arrayListOf(""), arrayListOf(""), arrayListOf(""), arrayListOf(""))
-
-    private val addedAdapter: ArrayList<AddedElementAdapter> = arrayListOf(
-        AddedElementAdapter(addedExStringContent[0]),
-        AddedElementAdapter(addedExStringContent[1]),
-        AddedElementAdapter(addedExStringContent[2]),
-        AddedElementAdapter(addedExStringContent[3]),
-        AddedElementAdapter(addedExStringContent[4]),
-        AddedElementAdapter(addedExStringContent[5]),
-        AddedElementAdapter(addedExStringContent[6]),
-        AddedElementAdapter(addedExStringContent[7]),
-    )
-
     private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(arrayListOf(), arrayListOf(), arrayListOf()
         , arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
+
+    private val listMethod = ListCommonMethod()
 
     private val designerAdapter = GenericIDListCbAdapter(this, Type.Designer.name, addedStringContent[AddedContent.Designer.ordinal])
     private val artistAdapter = GenericIDListCbAdapter(this, Type.Artist.name, addedStringContent[AddedContent.Artist.ordinal])
@@ -134,24 +120,25 @@ class AddElement : CommonType(), View.OnClickListener,
         if(changedObjectId != 0L) loadChangedObjectData()
 
         val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter>> =
-            arrayListOf(Pair(binding.rvDesigner,designerAdapter), Pair(binding.rvArtist, artistAdapter),
-                Pair(binding.rvPublisher,publisherAdapter),Pair(binding.rvPlayingMode, playingModeAdapter),
-                Pair(binding.rvLanguage, languageAdapter), Pair(binding.rvMechanism, mechanismAdapter),
-                Pair(binding.rvTag, tagAdapter), Pair(binding.rvTopic, topicAdapter),
+            arrayListOf(
+                Pair(binding.rvDesigner,designerAdapter),
+                Pair(binding.rvArtist, artistAdapter),
+                Pair(binding.rvPublisher,publisherAdapter),
+                Pair(binding.rvPlayingMode, playingModeAdapter),
+                Pair(binding.rvLanguage, languageAdapter),
+                Pair(binding.rvMechanism, mechanismAdapter),
+                Pair(binding.rvTag, tagAdapter),
+                Pair(binding.rvTopic, topicAdapter),
             )
         fillCommonRV(commonRvAdapterList)
-        val AddedRvAdapterList: ArrayList<RecyclerView> =
-            arrayListOf(binding.rvAddDesigner, binding.rvAddArtist, binding.rvAddPublisher,
-                binding.rvAddTag, binding.rvAddTopic,
-                binding.rvAddLanguage, binding.rvAddMechanism, binding.rvAddPlayingMod,
-            )
-        fillAddedRV(AddedRvAdapterList)
         fillPageRv()
         setAddButtonEvent()
 
         bgaApiGame?.run{
             loadBgaGame(this)
         }
+
+
 
     }
 
@@ -170,6 +157,7 @@ class AddElement : CommonType(), View.OnClickListener,
 
 
         }
+
         fillView(changedObjectType, changedObjectId)
     }
 
@@ -247,9 +235,9 @@ class AddElement : CommonType(), View.OnClickListener,
         externalImageUrl = null
         if (changedObjectName != null && changedObjectType != null){
             CoroutineScope(SupervisorJob()).launch{
-                val img = appInstance.database.ImageDao().getByName("$changedObjectName$changedObjectType")
+                val img = appInstance.database.imageDao().getByName("$changedObjectName$changedObjectType")
                 if (img.isNotEmpty()){
-                    appInstance.database.ImageDao().deleteByName("$changedObjectName$changedObjectType")
+                    appInstance.database.imageDao().deleteByName("$changedObjectName$changedObjectType")
                 }
 
             }
@@ -321,7 +309,9 @@ class AddElement : CommonType(), View.OnClickListener,
     private fun setImage(imageName:String){
         val file = File(this@AddElement.filesDir, imageName)
         val compressedBitMap = BitmapFactory.decodeByteArray(file.readBytes(),0,file.readBytes().size)
-        binding.ivPictureChoice.setImageBitmap(compressedBitMap)
+        runOnUiThread {
+            binding.ivPictureChoice.setImageBitmap(compressedBitMap)
+        }
     }
 
     private fun setImage() {
@@ -341,9 +331,9 @@ class AddElement : CommonType(), View.OnClickListener,
         val byteArray = stream.toByteArray()
         val file = File(this.filesDir,name)
         file.writeBytes(byteArray)
-        val dbImgList = appInstance.database.ImageDao().getByName(name)
+        val dbImgList = appInstance.database.imageDao().getByName(name)
         if (dbImgList.isEmpty()){
-            appInstance.database.ImageDao().insert(ImageTableBean(0L, name, gameName, gameType))
+            appInstance.database.imageDao().insert(ImageTableBean(0L, name, gameName, gameType))
         }
     }
 
@@ -376,17 +366,36 @@ class AddElement : CommonType(), View.OnClickListener,
 
 
     private fun setAddButtonEvent(){
-        val btn_list = arrayListOf(binding.btnDesignerAdd,binding.btnArtistAdd, binding.btnPublisherAdd,
-        binding.btnTagAdd, binding.btnTopicModeAdd, binding.btnLanguageAdd, binding.btnMechanismAdd,
-        binding.btnPlayingModeAdd)
-        btn_list.forEachIndexed { index, floatingActionButton ->
-            floatingActionButton.setOnClickListener { setOnClickAddButton(index) }
+        val btn_list = arrayListOf(
+            Pair(binding.btnDesignerAdd, binding.llAddDesigner),
+            Pair(binding.btnArtistAdd, binding.llAddArtist),
+            Pair(binding.btnPublisherAdd, binding.llAddPublisher),
+            Pair(binding.btnTagAdd, binding.llAddTag),
+            Pair(binding.btnTopicModeAdd, binding.llAddTopic),
+            Pair(binding.btnLanguageAdd, binding.llAddLanguage),
+            Pair(binding.btnMechanismAdd, binding.llAddMechanism),
+            Pair(binding.btnPlayingModeAdd, binding.llAddPlayingMod)
+        )
+        btn_list.forEach {pair ->
+            pair.first.setOnClickListener { setOnClickAddButton(pair.second) }
         }
     }
 
-    private fun setOnClickAddButton( position:Int, text:String=""){
-        addedExStringContent[position].add("")
-        addedAdapter[position].notifyItemInserted(addedExStringContent.size - 1)
+    private fun setOnClickAddButton( linearLayout:LinearLayout, text: String=""){
+        val ll = LinearLayout(this)
+        ll.orientation = LinearLayout.HORIZONTAL
+        val newEditText = EditText(this)
+        newEditText.layoutParams = LinearLayout.LayoutParams(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            1.0F)
+        newEditText.setText(text)
+        val floatButton = FloatingActionButton(this)
+        floatButton.setImageDrawable(AppCompatResources.getDrawable(this,R.drawable.ic_del))
+        ll.addView(newEditText)
+        ll.addView(floatButton)
+        floatButton.setOnClickListener { linearLayout.removeView(ll) }
+        linearLayout.addView(ll)
     }
 
 
@@ -425,20 +434,20 @@ class AddElement : CommonType(), View.OnClickListener,
                     val player_min = testNull(binding.etNbPlayerMin.text.toString())?.toInt()
                     val player_max = testNull(binding.etNbPlayerMax.text.toString())?.toInt()
                     val playing_time = testNull(binding.etMaxTime.text.toString())
-                    val designers = addList(AddedContent.Designer.ordinal, appInstance.database.designerDao())
-                    val artists = addList(AddedContent.Artist.ordinal, appInstance.database.artistDao())
-                    val publishers = addList(AddedContent.Publisher.ordinal, appInstance.database.publisherDao())
+                    val designers = addList(AddedContent.Designer.ordinal, appInstance.database.designerDao(), binding.llAddDesigner)
+                    val artists = addList(AddedContent.Artist.ordinal, appInstance.database.artistDao(), binding.llAddArtist)
+                    val publishers = addList(AddedContent.Publisher.ordinal, appInstance.database.publisherDao(), binding.llAddPublisher)
                     val bgg_link = testNull(binding.etBggLink.text.toString())
-                    val playing_mode = addList(AddedContent.PlayingMod.ordinal, appInstance.database.playingModDao())
-                    val language = addList(AddedContent.Language.ordinal, appInstance.database.languageDao())
+                    val playing_mode = addList(AddedContent.PlayingMod.ordinal, appInstance.database.playingModDao(), binding.llAddPlayingMod)
+                    val language = addList(AddedContent.Language.ordinal, appInstance.database.languageDao(), binding.llAddLanguage)
                     val age = testNull(binding.etAge.text.toString())?.toInt()
                     val buying_price = testNull(binding.etBuyingPrice.text.toString())?.toInt() ?: 0
                     val stock = testNull(binding.etStock.text.toString())?.toInt()
                     val max_time = testNull(binding.etStock.text.toString())?.toInt()
                     val by_player = binding.rbByPlayerTrue.isChecked
-                    val tags = addList(AddedContent.Tag.ordinal, appInstance.database.tagDao())
-                    val topics = addList(AddedContent.Topic.ordinal, appInstance.database.topicDao())
-                    val mechanism = addList(AddedContent.Mechanism.ordinal, appInstance.database.mechanismDao())
+                    val tags = addList(AddedContent.Tag.ordinal, appInstance.database.tagDao(), binding.llAddTag)
+                    val topics = addList(AddedContent.Topic.ordinal, appInstance.database.topicDao(), binding.llAddTopic)
+                    val mechanism = addList(AddedContent.Mechanism.ordinal, appInstance.database.mechanismDao(), binding.llAddMechanism)
                     val games = addedToListGames
                     val external_image = externalImageUrl
 
@@ -492,10 +501,7 @@ class AddElement : CommonType(), View.OnClickListener,
                         )
 
                     }
-                    if (binding.cbDelImg.isChecked) {
 
-
-                    }
                     startActivity(Intent(this@AddElement, ViewGamesActivity::class.java))
                     finish()
                 }
@@ -504,13 +510,25 @@ class AddElement : CommonType(), View.OnClickListener,
         }
     }
 
-    private fun <T>addList(position:Int, dao:CommonCustomInsert<T>):ArrayList<String>{
+    private fun <T>addList(position: Int, dao:CommonCustomInsert<T>, ll: LinearLayout):ArrayList<String>{
         val finalList = mutableSetOf<String>()
         finalList.addAll(addedStringContent[position].filter { it.isNotBlank() })
-        addedExStringContent[position].forEach {
+        val etList = ArrayList<String>()
+        ll.forEach {
+            if (it is LinearLayout){
+                it.forEach {
+                    if(it is EditText && it.text.toString().isNotEmpty()){
+                        etList.add(it.text.toString())
+                    }
+                }
+            }
+        }
+        finalList.addAll(etList)
+        etList.forEach {
             if (it.isNotBlank() && dao.getByName(it).isEmpty()) dao.insert(it)
         }
-        finalList.addAll(addedExStringContent[position].filter { it.isNotBlank() })
+
+
         return finalList.toCollection(ArrayList())
     }
 
@@ -803,36 +821,24 @@ class AddElement : CommonType(), View.OnClickListener,
 
     override fun onGenericClick(name: String, type: String, cb:CheckBox) {
         when(type){
-            Type.Designer.name -> listContentManager(addedStringContent[AddedContent.Designer.ordinal], name, cb)
-            Type.Artist.name -> listContentManager(addedStringContent[AddedContent.Artist.ordinal], name, cb)
-            Type.Publisher.name -> listContentManager(addedStringContent[AddedContent.Publisher.ordinal], name, cb)
-            Type.Language.name -> listContentManager(addedStringContent[AddedContent.Language.ordinal], name, cb)
-            Type.PlayingMode.name -> listContentManager(addedStringContent[AddedContent.PlayingMod.ordinal], name, cb)
-            Type.Tag.name -> listContentManager(addedStringContent[AddedContent.Tag.ordinal], name, cb)
-            Type.Topic.name -> listContentManager(addedStringContent[AddedContent.Topic.ordinal], name, cb)
-            Type.Mechanism.name -> listContentManager(addedStringContent[AddedContent.Mechanism.ordinal], name, cb)
+            Type.Designer.name -> listMethod.listContentManager(addedStringContent[AddedContent.Designer.ordinal], name, cb)
+            Type.Artist.name -> listMethod.listContentManager(addedStringContent[AddedContent.Artist.ordinal], name, cb)
+            Type.Publisher.name -> listMethod.listContentManager(addedStringContent[AddedContent.Publisher.ordinal], name, cb)
+            Type.Language.name -> listMethod.listContentManager(addedStringContent[AddedContent.Language.ordinal], name, cb)
+            Type.PlayingMode.name -> listMethod.listContentManager(addedStringContent[AddedContent.PlayingMod.ordinal], name, cb)
+            Type.Tag.name -> listMethod.listContentManager(addedStringContent[AddedContent.Tag.ordinal], name, cb)
+            Type.Topic.name -> listMethod.listContentManager(addedStringContent[AddedContent.Topic.ordinal], name, cb)
+            Type.Mechanism.name -> listMethod.listContentManager(addedStringContent[AddedContent.Mechanism.ordinal], name, cb)
         }
 
     }
-
-    fun <T>listContentManager(list:ArrayList<T>, content:T, cb:CheckBox){
-        if (list.contains(content)) {
-            list.remove(content)
-            cb.isChecked = false
-        }
-        else {
-            list.add(content)
-            cb.isChecked = true
-        }
-    }
-
 
 
     override fun onGenericClick(datum: CommonGame, view:CheckBox) {
         when (datum){
-            is DesignerWithGame -> listContentManager(addedToListGames, datum, view)
-            is DesignerWithMultiAddOn -> listContentManager(addedToListMultiAddOns, datum, view)
-            is DesignerWithAddOn -> listContentManager(addedToListAddons, datum, view)
+            is DesignerWithGame -> listMethod.listContentManager(addedToListGames, datum, view)
+            is DesignerWithMultiAddOn -> listMethod.listContentManager(addedToListMultiAddOns, datum, view)
+            is DesignerWithAddOn -> listMethod.listContentManager(addedToListAddons, datum, view)
         }
     }
 
@@ -858,14 +864,14 @@ class AddElement : CommonType(), View.OnClickListener,
     fun fillView(type: String?, id:Long){
         when(type){
             Type.Game.name-> {
-                binding.rbGame.isChecked = true
+                check(binding.rbGame)
                 fillCommonView(appInstance.database.gameDao(),id)
                 CoroutineScope(SupervisorJob()).launch{
                     gameFill(appInstance.database.gameDao(), addedStringContent, id)
                 }
             }
             Type.AddOn.name -> {
-                binding.rbAddOn.isChecked = true
+                check(binding.rbAddOn)
                 fillCommonView(appInstance.database.addOnDao(),id)
                 CoroutineScope(SupervisorJob()).launch{
                     genericFill(appInstance.database.addOnDao(), addedStringContent, id)
@@ -877,7 +883,7 @@ class AddElement : CommonType(), View.OnClickListener,
                 }
             }
             Type.MultiAddOn.name -> {
-                binding.rbMultiAddOn.isChecked = true
+                check(binding.rbMultiAddOn)
                 fillCommonView(appInstance.database.multiAddOnDao(),id)
                 CoroutineScope(SupervisorJob()).launch{
                     genericFill(appInstance.database.multiAddOnDao(), addedStringContent, id)
@@ -887,6 +893,15 @@ class AddElement : CommonType(), View.OnClickListener,
 
         }
 
+    }
+
+    fun check(rb:RadioButton){
+        rb.isChecked = true
+        when(rb){
+            binding.rbGame -> setView(binding.llGame)
+            binding.rbAddOn -> setView(binding.llAddOn)
+            binding.rbMultiAddOn -> setView(binding.llMultiAddOn)
+        }
     }
 
     fun <T:ID>genericFill(dao: CommonDao<T>, list: ArrayList<ArrayList<String>>, id:Long){
@@ -968,44 +983,41 @@ class AddElement : CommonType(), View.OnClickListener,
         binding.etMaxTime.setText(datum.max_playtime?.toString()?:"")
         binding.etAge.setText(datum.min_age?.toString()?:"")
         if (datum.type == Constant.Extension.value){
-            binding.rbAddOn.isChecked = true
+            check(binding.rbAddOn)
         }
-        addElementName(datum.primary_designer?.name, appInstance.database.designerDao(), AddedContent.Designer.ordinal)
-        addElementName(datum.primary_publisher?.name, appInstance.database.publisherDao(), AddedContent.Publisher.ordinal)
+        addElementName(datum.primary_designer?.name, appInstance.database.designerDao(), AddedContent.Designer.ordinal, binding.llAddDesigner)
+        addElementName(datum.primary_publisher?.name, appInstance.database.publisherDao(), AddedContent.Publisher.ordinal, binding.llAddPublisher)
 
-        addToAddedList(datum.artists, AddedContent.Artist.ordinal, appInstance.database.artistDao())
-        addToAddedList(convertIdListToNameList(datum.mechanics, ALL_MECHANICS), AddedContent.Mechanism.ordinal, appInstance.database.mechanismDao())
-        addToAddedList(convertIdListToNameList(datum.categories, ALL_CATEGORIES), AddedContent.Topic.ordinal, appInstance.database.topicDao())
+        addToAddedList(datum.artists, AddedContent.Artist.ordinal, appInstance.database.artistDao(), binding.llAddArtist)
+        addToAddedList(convertIdListToNameList(datum.mechanics, ALL_MECHANICS), AddedContent.Mechanism.ordinal, appInstance.database.mechanismDao(), binding.llAddMechanism)
+        addToAddedList(convertIdListToNameList(datum.categories, ALL_CATEGORIES), AddedContent.Topic.ordinal, appInstance.database.topicDao(), binding.llAddTopic)
         bgaApiGame?.image_url?.run{
             setImage()
         }
 
     }
 
-    fun <T>addElementName(name:String?, dao:CommonCustomInsert<T>, position:Int){
+    fun <T>addElementName(name:String?, dao:CommonCustomInsert<T>, position:Int, ll: LinearLayout){
         CoroutineScope(SupervisorJob()).launch{
             name?.run{
                 val answer = dao.getByName(this)
                 if (answer.isEmpty()) {
-                    addedExStringContent[position][0] = this
-                    addedAdapter[position].notifyItemChanged(0)
+                    setOnClickAddButton(ll, this)
                 }
                 else addedStringContent[position].add(this)
             }
         }
     }
 
-    fun <T>addToAddedList(list:ArrayList<String>, position:Int, dao:CommonCustomInsert<T>){
+    fun <T>addToAddedList(list:ArrayList<String>, position:Int, dao:CommonCustomInsert<T>, ll:LinearLayout){
         if (list.isNotEmpty()){
             list.forEach {
                 CoroutineScope(SupervisorJob()).launch{
                     val answer = dao.getByName(it)
-                    if (answer.isEmpty() && addedExStringContent[position][0].isNotBlank())addedExStringContent[position].add(it)
-                    else if (answer.isEmpty()) addedExStringContent[position][0] = it
+                    if (answer.isEmpty())setOnClickAddButton(ll, it)
                     else addedStringContent[position].add(it)
                 }
             }
-            addedAdapter[position].notifyDataSetChanged()
         }
     }
 
@@ -1015,13 +1027,4 @@ class AddElement : CommonType(), View.OnClickListener,
         return resultList
 
     }
-
-    fun fillAddedRV(listRecyclerViewAdapter: ArrayList<RecyclerView>) {
-        for ((index, recycler) in listRecyclerViewAdapter.withIndex()) {
-            recycler.adapter = addedAdapter[index]
-            layout(recycler)
-        }
-
-    }
-
 }

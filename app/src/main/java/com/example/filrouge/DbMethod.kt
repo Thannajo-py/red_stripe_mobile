@@ -35,19 +35,19 @@ class DbMethod {
     )
 
     fun getAddOnTripleListField(it:ArrayList<ArrayList<String>>) = arrayListOf(
-        Triple(it[0], db.designerDao(), db.gameDesignerDao()),
-        Triple(it[1], db.artistDao(), db.gameArtistDao()),
-        Triple(it[2], db.publisherDao(), db.gamePublisherDao()),
-        Triple(it[3], db.playingModDao(), db.gamePlayingModDao()),
-        Triple(it[4], db.languageDao(), db.gameLanguageDao())
+        Triple(it[0], db.designerDao(), db.addOnDesignerDao()),
+        Triple(it[1], db.artistDao(), db.addOnArtistDao()),
+        Triple(it[2], db.publisherDao(), db.addOnPublisherDao()),
+        Triple(it[3], db.playingModDao(), db.addOnPlayingModDao()),
+        Triple(it[4], db.languageDao(), db.addOnLanguageDao())
     )
 
     fun getMultiAddOnTripleListField(it:ArrayList<ArrayList<String>>) = arrayListOf(
-        Triple(it[0], db.designerDao(), db.gameDesignerDao()),
-        Triple(it[1], db.artistDao(), db.gameArtistDao()),
-        Triple(it[2], db.publisherDao(), db.gamePublisherDao()),
-        Triple(it[3], db.playingModDao(), db.gamePlayingModDao()),
-        Triple(it[4], db.languageDao(), db.gameLanguageDao())
+        Triple(it[0], db.designerDao(), db.addOnDesignerDao()),
+        Triple(it[1], db.artistDao(), db.addOnArtistDao()),
+        Triple(it[2], db.publisherDao(), db.addOnPublisherDao()),
+        Triple(it[3], db.playingModDao(), db.addOnPlayingModDao()),
+        Triple(it[4], db.languageDao(), db.addOnLanguageDao())
     )
 
     fun getAddOnTripleListField(it:AddOnBean) = arrayListOf(
@@ -193,7 +193,7 @@ class DbMethod {
         val dao = appInstance.database.gameDao()
         var difficulty:String? = null
         game.difficultyId?.run{
-            val difficultyL = appInstance.database.difficultyDao().getbyId(this)
+            val difficultyL = appInstance.database.difficultyDao().getById(this)
             if (difficultyL.isNotEmpty()) difficulty = difficultyL[0].name
         }
 
@@ -239,7 +239,7 @@ class DbMethod {
         val dao = appInstance.database.addOnDao()
         var difficulty:String? = null
         game.difficultyId?.run{
-            val difficultyL = appInstance.database.difficultyDao().getbyId(this)
+            val difficultyL = appInstance.database.difficultyDao().getById(this)
             if (difficultyL.isNotEmpty()) difficulty = difficultyL[0].name
         }
         var linkGame:String? = null
@@ -275,7 +275,7 @@ class DbMethod {
         val dao = appInstance.database.multiAddOnDao()
         var difficulty:String? = null
         game.difficultyId?.run{
-            val difficultyL = appInstance.database.difficultyDao().getbyId(this)
+            val difficultyL = appInstance.database.difficultyDao().getById(this)
             if (difficultyL.isNotEmpty()) difficulty = difficultyL[0].name
         }
 

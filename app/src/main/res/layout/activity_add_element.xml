@@ -30,11 +30,17 @@
                 android:textSize="30sp"
                 android:textStyle="bold" />
 
-            <ImageView
-                android:id="@+id/iv_picture_choice"
+            <androidx.cardview.widget.CardView
                 android:layout_width="75dp"
-                android:layout_height="75dp"
-                app:srcCompat="@android:drawable/ic_menu_gallery" />
+                android:layout_height="match_parent"
+                app:cardBackgroundColor="@color/cardview_dark_background">
+
+                <ImageView
+                    android:id="@+id/iv_picture_choice"
+                    android:layout_width="75dp"
+                    android:layout_height="75dp"
+                    app:srcCompat="@android:drawable/ic_menu_gallery" />
+            </androidx.cardview.widget.CardView>
 
             <CheckBox
                 android:id="@+id/cb_del_img"
@@ -112,10 +118,17 @@
                 android:textStyle="bold" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAddDesigner"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ll_add_designer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_designer_add"
@@ -141,10 +154,17 @@
                 android:textStyle="bold" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAddArtist"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ll_add_artist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
+
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_artist_add"
@@ -169,10 +189,16 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAddPublisher"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ll_add_publisher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_publisher_add"
@@ -312,10 +338,16 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAddPlayingMod"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ll_add_playing_mod"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_playing_mode_add"
@@ -341,10 +373,16 @@
                 android:textStyle="bold" />
 
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvAddLanguage"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:id="@+id/ll_add_language"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
+            </ScrollView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:id="@+id/btn_language_add"
@@ -445,10 +483,16 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvAddTag"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/ll_add_tag"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btn_tag_add"
@@ -473,10 +517,16 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvAddTopic"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/ll_add_topic"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btn_topic_mode_add"
@@ -500,10 +550,16 @@
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvAddMechanism"
+                <ScrollView
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:id="@+id/ll_add_mechanism"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
                     android:id="@+id/btn_mechanism_add"

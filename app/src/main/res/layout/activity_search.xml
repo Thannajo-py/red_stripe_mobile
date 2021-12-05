@@ -39,8 +39,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_nom"
+            <AutoCompleteTextView
+                android:id="@+id/actv_name"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -48,8 +48,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="Pathfinder"
-                android:inputType="textPersonName" />
+                android:hint="Pathfinder" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -62,8 +61,8 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_designer"
+            <AutoCompleteTextView
+                android:id="@+id/actv_designer"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -71,8 +70,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="Klaus"
-                android:inputType="textPersonName" />
+                android:hint="Klaus" />
 
             <TextView
                 android:id="@+id/textView10"
@@ -86,8 +84,8 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_artist"
+            <AutoCompleteTextView
+                android:id="@+id/actv_artist"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -95,8 +93,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="Dutrait"
-                android:inputType="textPersonName" />
+                android:hint="Dutrait" />
+
 
             <TextView
                 android:id="@+id/textView11"
@@ -109,8 +107,9 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_publisher"
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_publisher"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -118,8 +117,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="Asmodée"
-                android:inputType="textPersonName" />
+                android:hint="Asmodée" />
+
 
             <TextView
                 android:layout_width="wrap_content"
@@ -130,6 +129,7 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
 
             <EditText
                 android:id="@+id/et_nb_player_min"
@@ -143,6 +143,7 @@
                 android:hint="1"
                 android:inputType="number" />
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -152,6 +153,7 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
 
             <EditText
                 android:id="@+id/et_nb_player_max"
@@ -165,6 +167,7 @@
                 android:hint="4"
                 android:inputType="number" />
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -174,6 +177,7 @@
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
+
 
             <EditText
                 android:id="@+id/et_max_time"
@@ -187,6 +191,7 @@
                 android:hint="90"
                 android:inputType="number" />
 
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -197,8 +202,8 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_difficulty"
+            <AutoCompleteTextView
+                android:id="@+id/actv_difficulty"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -206,8 +211,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="vétéran"
-                android:inputType="textPersonName" />
+                android:hint="vétéran" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -242,8 +246,9 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_playing_mode"
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_playing_mode"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -251,8 +256,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="coopératif"
-                android:inputType="textPersonName" />
+                android:hint="coopératif" />
+
 
             <TextView
                 android:id="@+id/textView12"
@@ -266,8 +271,8 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_language"
+            <AutoCompleteTextView
+                android:id="@+id/actv_language"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -275,8 +280,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="français"
-                android:inputType="textPersonName" />
+                android:hint="français" />
+
 
             <TextView
                 android:id="@+id/tv_tag"
@@ -290,8 +295,8 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_tag"
+            <AutoCompleteTextView
+                android:id="@+id/actv_tag"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -299,8 +304,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="classique"
-                android:inputType="textPersonName" />
+                android:hint="classique" />
+
 
             <TextView
                 android:id="@+id/textView15"
@@ -314,8 +319,8 @@
                 android:textStyle="bold" />
 
 
-            <EditText
-                android:id="@+id/et_topic"
+            <AutoCompleteTextView
+                android:id="@+id/actv_topic"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -323,8 +328,8 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="pathfinder"
-                android:inputType="textPersonName" />
+                android:hint="Pathfinder" />
+
 
             <TextView
                 android:id="@+id/textView16"
@@ -337,8 +342,9 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <EditText
-                android:id="@+id/et_mechanism"
+
+            <AutoCompleteTextView
+                android:id="@+id/actv_mechanic"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="10dp"
@@ -346,8 +352,7 @@
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
                 android:ems="10"
-                android:hint="parcours"
-                android:inputType="textPersonName" />
+                android:hint="parcours" />
 
             <Button
                 android:id="@+id/btn_search"

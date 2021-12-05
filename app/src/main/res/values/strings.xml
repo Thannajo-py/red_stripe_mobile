@@ -9,13 +9,15 @@
     <string name="player_number">de %1$s à %2$s joueurs</string>
     <string name="age">%1$s et plus</string>
     <string name="unknown">Inconnu</string>
-    <string name="password_rules">le login ne doit pas être vide,\n
+    <string name="password_rules">
+        le login ne doit pas être vide,\n
         le mot de passe doit contenir au moins:\n
         - 1 lettre minuscule\n
         - 1 lettre majuscule\n
         - 1 nombre\n
         - 1 caractère spécial\n
-        - 6 caractères</string>
+        - 6 caractères
+    </string>
     <string name="save_and_synchronize">Sauvegarder modification et synchroniser</string>
     <string name="reset_content">Réinitialiser le contenu</string>
     <string name="save_local">Sauvegarder base de données</string>
@@ -29,8 +31,12 @@
     <string name="api_add_element">Ajouter un élément avec BGA</string>
     <string name="change_password">Changer de mot de passe</string>
     <string name="disconnect">Se déconnecter</string>
-    <string name="save_synchronize_message">Voulez vous sauvegarder toutes vos modifications et re-synchroniser?</string>
-    <string name="reset_content_message">Voulez vous supprimer votre contenu et recharger la base de données?</string>
+    <string name="save_synchronize_message">
+        Voulez vous sauvegarder toutes vos modifications et re-synchroniser?
+    </string>
+    <string name="reset_content_message">
+        Voulez vous supprimer votre contenu et recharger la base de données?
+    </string>
     <string name="error_content">Erreur: %1$s</string>
     <string name="login">Identifiant</string>
     <string name="password">Mot de passe</string>
@@ -50,4 +56,23 @@
     <string name="password_do_not_match">Changement mot de passe effectué</string>
     <string name="wrong_password">Changement mot de passe effectué</string>
     <string name="search_result">Résultat de la recherche</string>
+    <string name="delete_object">Supprimer les éléments inutilisés</string>
+    <string name="designer">Auteur:</string>
+    <string name="designers">Auteurs:</string>
+    <string name="artist">Illustrateur:</string>
+    <string name="artists">Illustrateurs:</string>
+    <string name="publisher">Editeur:</string>
+    <string name="publishers">Editeurs:</string>
+    <string name="tag">Etiquette:</string>
+    <string name="tags">Etiquettes:</string>
+    <string name="topic">Thème:</string>
+    <string name="topics">Thèmes:</string>
+    <string name="language">Langue:</string>
+    <string name="languages">Langues:</string>
+    <string name="mechanism">Mécanique:</string>
+    <string name="mechanisms">Mécaniques:</string>
+    <string name="playing_mod">Mode de jeu:</string>
+    <string name="playing_mods">Modes de jeu:</string>
+    <string name="difficulty">Difficulté:</string>
+    <string name="difficulties">Difficultés:</string>
 </resources>

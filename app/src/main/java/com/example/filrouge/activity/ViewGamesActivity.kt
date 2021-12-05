@@ -91,6 +91,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
         menu?.add(0, MenuId.ChangePassword.ordinal, 0, getString(R.string.change_password))
         menu?.add(0, MenuId.Disconnect.ordinal, 0, getString(R.string.disconnect))
+        menu?.add(0, MenuId.DeleteObject.ordinal, 0, getString(R.string.delete_object))
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -131,6 +132,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             }
             MenuId.ApiSearch.ordinal -> startActivity(
                 Intent(this, APISearchActivity::class.java)
+            )
+            MenuId.DeleteObject.ordinal -> startActivity(
+                Intent(this, DbObjectDelete::class.java)
             )
         }
         return super.onOptionsItemSelected(item)
@@ -174,7 +178,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                     db.addOnLanguageDao().getList(),
                     db.multiAddOnLanguageDao().getList(),
                     db.deletedItemDao().getAll(),
-                    db.ImageDao().getAll()
+                    db.imageDao().getAll()
                 )), SerialKey.SaveDatabase.name)
             }
         }
@@ -224,7 +228,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 dbSave.addOnLanguage.forEach { db.addOnLanguageDao().insert(it) }
                 dbSave.multiAddOnLanguage.forEach { db.multiAddOnLanguageDao().insert(it) }
                 dbSave.deletedContent.forEach { db.deletedItemDao().insert(it) }
-                dbSave.image.forEach { db.ImageDao().insert(it) }
+                dbSave.image.forEach { db.imageDao().insert(it) }
 
             }
         }
@@ -561,7 +565,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         try {
             val img = sendGetOkHttpRequestImage(url)
             img?.run {
-                appInstance.database.ImageDao().insert(
+                appInstance.database.imageDao().insert(
                     ImageTableBean(
                         0,
                         "$gameName$type",
@@ -614,7 +618,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     private fun cleanImageList(){
         CoroutineScope(SupervisorJob()).launch{
             appInstance.database.runInTransaction {
-                appInstance.database.ImageDao().getAll().forEach {
+                appInstance.database.imageDao().getAll().forEach {
                     when(it.gameType){
                         Type.Game.name -> if(appInstance.database.gameDao()
                                 .getByName(it.gameName).isEmpty())deleteImage(it.name)
@@ -630,7 +634,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     private fun deleteImage(fileName:String){
-        appInstance.database.ImageDao().deleteByName(fileName)
+        appInstance.database.imageDao().deleteByName(fileName)
         File(this@ViewGamesActivity.filesDir, fileName).delete()
 
     }

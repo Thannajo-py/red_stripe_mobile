@@ -22,7 +22,7 @@ var addOnGame:GameBean? = null
 var isLocal:Boolean = true
 
 
-class UserBeanAdapter (val client: UserListener, val addedUserList: ArrayList<UserTableBean>)
+class UserBeanAdapter (private val client: UserListener, private val addedUserList: ArrayList<UserTableBean>)
     : ListAdapter<UserTableBean, UserBeanAdapter.ViewHolder>(UserTableBeanComparator()){
 
     class ViewHolder(val bind: AccountListBinding) : RecyclerView.ViewHolder(bind.root)
@@ -53,7 +53,7 @@ interface UserListener{
 }
 
 
-open class GenericListAdapter(val client: OnGenericListAdapterListener)
+open class GenericListAdapter(private val client: OnGenericListAdapterListener)
     : ListAdapter<CommonGame, GenericListAdapter.ViewHolder>(GameComparator()) {
 
     class ViewHolder(val bind:GameListBinding) : RecyclerView.ViewHolder(bind.root)
@@ -96,7 +96,7 @@ interface OnGenericStringListAdapterListener{
 }
 
 
-open class GenericStringListAdapter(val client: OnGenericStringListAdapterListener, val type:String)
+open class GenericStringListAdapter(private val client: OnGenericStringListAdapterListener, val type:String)
     : ListAdapter<ID, GenericStringListAdapter.ViewHolder>(GameComparator()) {
 
     class ViewHolder(val bind:NameListBinding) : RecyclerView.ViewHolder(bind.root)
@@ -118,9 +118,9 @@ open class GenericStringListAdapter(val client: OnGenericStringListAdapterListen
 
 
 class GenericIDListCbAdapter (
-    val client: GenericIDCbListener,
+    private val client: GenericIDCbListener,
     val type:String,
-    val addedGeneric:ArrayList<String>)
+    private val addedGeneric:ArrayList<String>)
     : ListAdapter<ID, GenericIDListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: NameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -154,9 +154,46 @@ interface GenericIDCbListener{
 }
 
 
+class GenericIDListCbAdapterId (
+    private val client: GenericIDCbListenerId,
+    val type:String,
+    private val addedGeneric:ArrayList<Long>)
+    : ListAdapter<ID, GenericIDListCbAdapterId.ViewHolder>(ItemComparator()){
+    class ViewHolder(val bind: NameListCbBinding) : RecyclerView.ViewHolder(bind.root)
+
+    class ItemComparator<T:ID>: DiffUtil.ItemCallback<T>() {
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
+            = ViewHolder(NameListCbBinding.inflate(
+        LayoutInflater.from(parent.context)))
+
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        val datum = getItem(position)
+        holder.bind.tvName.text = datum.name
+        holder.bind.cbName.isChecked = addedGeneric.contains(datum.id)
+        holder.bind.llNameList.setOnClickListener {
+            client.onGenericClick(datum.id, type, holder.bind.cbName)
+        }
+        holder.bind.cbName.setOnClickListener {
+            client.onGenericClick(datum.id, type, holder.bind.cbName)
+        }
+
+    }
+}
+
+
+interface GenericIDCbListenerId{
+    fun onGenericClick(id:Long, type: String, cb:CheckBox)
+}
+
+
 class GenericCommonGameListCbAdapter<T:CommonGame> (
-    val client: GenericCommonGameCbListener,
-    val addedGeneric:ArrayList<T>
+    private val client: GenericCommonGameCbListener,
+    private val addedGeneric:ArrayList<T>
     ) : ListAdapter<CommonGame, GenericCommonGameListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: GameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -200,7 +237,7 @@ interface GenericCommonGameCbListener{
 }
 
 
-class OneToOneListCbAdapter<T:OneToOne> (val client: GenericOneToOneListener)
+class OneToOneListCbAdapter<T:OneToOne> (private val client: GenericOneToOneListener)
     : ListAdapter<T, OneToOneListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: NameListBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -226,7 +263,7 @@ interface GenericOneToOneListener{
 }
 
 
-open class BgaListAdapter (val client: APISearchActivity)
+open class BgaListAdapter (private val client: APISearchActivity)
     : ListAdapter<BgaGameBean, BgaListAdapter.ViewHolder>(GameComparator()) {
 
     class ViewHolder(val bind: GameListBinding) : RecyclerView.ViewHolder(bind.root)
@@ -259,26 +296,4 @@ open class BgaListAdapter (val client: APISearchActivity)
             }
         }
     }
-}
-
-
-class AddedElementAdapter(
-    val addedElement: ArrayList<String>,
-) : RecyclerView.Adapter<AddedElementAdapter.ViewHolder>() {
-
-    class ViewHolder(val binding: EditableListBinding) : RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ViewHolder(EditableListBinding.inflate(LayoutInflater.from(parent.context)))
-
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.binding.etName.setText(addedElement[position])
-        holder.binding.etName.doAfterTextChanged {  addedElement[position] = it.toString() }
-        holder.binding.fba.setOnClickListener {
-            addedElement.removeAt(position)
-            this.notifyDataSetChanged()
-        }
-    }
-
-    override fun getItemCount() = addedElement.size
 }
