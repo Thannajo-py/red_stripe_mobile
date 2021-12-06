@@ -12,8 +12,6 @@ import android.widget.*
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.content.res.AppCompatResources
-import androidx.appcompat.widget.LinearLayoutCompat
-import androidx.constraintlayout.widget.ConstraintSet
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.drawable.toBitmap
@@ -38,39 +36,31 @@ class AddElement : CommonType(), View.OnClickListener,
     GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener {
 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
-
-    private val addedStringContent: ArrayList<ArrayList<String>> = arrayListOf(arrayListOf(), arrayListOf(), arrayListOf()
-        , arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf(), arrayListOf())
-
     private val listMethod = ListCommonMethod()
 
-    private val designerAdapter = GenericIDListCbAdapter(this, Type.Designer.name, addedStringContent[AddedContent.Designer.ordinal])
-    private val artistAdapter = GenericIDListCbAdapter(this, Type.Artist.name, addedStringContent[AddedContent.Artist.ordinal])
-    private val publisherAdapter = GenericIDListCbAdapter(this, Type.Publisher.name, addedStringContent[AddedContent.Publisher.ordinal])
-    private val languageAdapter = GenericIDListCbAdapter(this, Type.Language.name, addedStringContent[AddedContent.Language.ordinal])
-    private val playingModeAdapter = GenericIDListCbAdapter(this, Type.PlayingMode.name, addedStringContent[AddedContent.PlayingMod.ordinal])
+    private val addedStringContentTypeList = arrayListOf(
+        Type.Designer.name,
+        Type.Artist.name,
+        Type.Publisher.name,
+        Type.PlayingMod.name,
+        Type.Language.name,
+        Type.Mechanism.name,
+        Type.Tag.name,
+        Type.Topic.name,
+    )
+    private val addedStringContentHashMap = HashMap<String,ArrayList<String>>()
 
     private val difficultyAdapter = OneToOneListCbAdapter<DifficultyTableBean>(this)
 
-    private val tagAdapter = GenericIDListCbAdapter(this, Type.Tag.name, addedStringContent[AddedContent.Tag.ordinal])
-
-    private val topicAdapter = GenericIDListCbAdapter(this, Type.Topic.name, addedStringContent[AddedContent.Topic.ordinal])
-
-    private val mechanismAdapter = GenericIDListCbAdapter(this, Type.Mechanism.name, addedStringContent[AddedContent.Mechanism.ordinal])
-
-
-
-    private val addedToListAddons = ArrayList<DesignerWithAddOn>()
-    private val addOnAdapter = GenericCommonGameListCbAdapter<DesignerWithAddOn>(this, addedToListAddons)
-
-    private val addedToListMultiAddOns = ArrayList<DesignerWithMultiAddOn>()
-    private val multiAddOnAdapter = GenericCommonGameListCbAdapter<DesignerWithMultiAddOn>(this, addedToListMultiAddOns)
-
-    private val addedToListGames = ArrayList<DesignerWithGame>()
-    private val gamesAdapter = GenericCommonGameListCbAdapter<DesignerWithGame>(this, addedToListGames)
+    private val gameTypeList = arrayListOf(
+        Type.Game.name,
+        Type.MultiAddOn.name,
+        Type.AddOn.name,
+    )
+    private val addedGameContentHashMap = HashMap<String,ArrayList<CommonGame>>()
 
     private var game:DesignerWithGame? = null
-    private val gameAdapter = OneToOneListCbAdapter<DesignerWithGame>(this)
+    private val addOnGameAdapter = OneToOneListCbAdapter<DesignerWithGame>(this)
 
     private val changedObjectId: Long by lazy{intent.getLongExtra(SerialKey.ToModifyDataId.name, 0L)}
     private val changedObjectType: String? by lazy{intent.getStringExtra(SerialKey.ToModifyDataType.name)}
@@ -83,85 +73,68 @@ class AddElement : CommonType(), View.OnClickListener,
     private var loadImage = false
     private var deleteImage = false
 
-
-    val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
+    private val getContent = registerForActivityResult(ActivityResultContracts.GetContent())
+    { uri: Uri? ->
         binding.ivPictureChoice.setImageURI(uri)
         loadImage = true
     }
 
-    val getPicture = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bmp: Bitmap? ->
+    private val getPicture = registerForActivityResult(
+        ActivityResultContracts.TakePicturePreview()
+    ) { bmp: Bitmap? ->
         binding.ivPictureChoice.setImageBitmap(bmp)
         loadImage = true
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         addOnGame = null
         setContentView(binding.root)
         registerForContextMenu(binding.ivPictureChoice)
+        fillCommonRv()
         binding.btnAdd.setOnClickListener(this)
-        binding.rbGame.setOnClickListener{
-            if (binding.rbGame.isChecked){
-                setView(binding.llGame)
-            }
-        }
-        binding.rbAddOn.setOnClickListener{
-            if (binding.rbAddOn.isChecked){
-                setView(binding.llAddOn)
-            }
-        }
-        binding.rbMultiAddOn.setOnClickListener{
-            if (binding.rbMultiAddOn.isChecked){
-                setView(binding.llMultiAddOn)
-            }
-        }
-
+        radioButtonSetOnClickListener()
         if(changedObjectId != 0L) loadChangedObjectData()
-
-        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter>> =
-            arrayListOf(
-                Pair(binding.rvDesigner,designerAdapter),
-                Pair(binding.rvArtist, artistAdapter),
-                Pair(binding.rvPublisher,publisherAdapter),
-                Pair(binding.rvPlayingMode, playingModeAdapter),
-                Pair(binding.rvLanguage, languageAdapter),
-                Pair(binding.rvMechanism, mechanismAdapter),
-                Pair(binding.rvTag, tagAdapter),
-                Pair(binding.rvTopic, topicAdapter),
-            )
-        fillCommonRV(commonRvAdapterList)
         fillPageRv()
         setAddButtonEvent()
-
         bgaApiGame?.run{
             loadBgaGame(this)
         }
+    }
 
+    private fun radioButtonSetOnClickListener(){
+        gameTypeList.forEach{type->
+            CoroutineScope(SupervisorJob()).launch{
+                val rb = binding::class.members.find{it.name=="rb$type"}!!.call(binding) as RadioButton
+                val ll = binding::class.members.find{it.name=="ll$type"}!!.call(binding) as LinearLayout
+                runOnUiThread {
+                    rb.setOnClickListener { radioButtonSelect(rb.isChecked, ll) }
+                }
+            }
+        }
+    }
 
-
+    private fun radioButtonSelect(checked:Boolean, ll:LinearLayout){
+        if (checked){
+            setView(ll)
+        }
     }
 
 
     private fun loadChangedObjectData(){
         CoroutineScope(SupervisorJob()).launch{
             changedObjectName?.run{
-                when(changedObjectType){
-                    Type.Game.name -> {
-                        loadChangedObjectImage(this, appInstance.database.gameDao())
-                    }
-                    Type.AddOn.name ->  loadChangedObjectImage(this, appInstance.database.addOnDao())
-                    Type.MultiAddOn.name ->  loadChangedObjectImage(this, appInstance.database.multiAddOnDao())
-                }
+                val lowercase = changedObjectType?.replaceFirstChar { it.lowercase() }
+                val dao = appInstance.database::class.members.find{
+                    it.name == "${lowercase}Dao"
+                }!!.call(appInstance.database) as CommonDao<CommonComponent, CommonGame>
+                loadChangedObjectImage(this, dao)
             }
-
-
         }
-
         fillView(changedObjectType, changedObjectId)
     }
 
-    private fun<T> loadChangedObjectImage(name:String, dao:CommonDao<T>){
+    private fun<T, U> loadChangedObjectImage(name:String, dao:CommonDao<T, U>){
         val imgList = dao.getImage(name)
         if(imgList.isNotEmpty()){
             setImage(imgList.first().name)
@@ -180,8 +153,6 @@ class AddElement : CommonType(), View.OnClickListener,
             menu.add(0, MenuId.ResetImage.ordinal, 0, "Réinitialiser l'image")
         }
         menu.add(0, MenuId.DeleteImage.ordinal, 0, "Supprimer l'image")
-
-
     }
 
 
@@ -246,18 +217,17 @@ class AddElement : CommonType(), View.OnClickListener,
     }
 
     private fun<T> requestPermission(permission:String, rc:Int, activity: ActivityResultLauncher<T>, arg:T){
-            if (
-                ContextCompat.checkSelfPermission(this, permission)
-                == PackageManager.PERMISSION_GRANTED
-            ) {
-                activity.launch(arg)
-            } else {
-
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(permission), rc
-                )
-            }
+        if (
+            ContextCompat.checkSelfPermission(this, permission)
+            == PackageManager.PERMISSION_GRANTED
+        ) {
+            activity.launch(arg)
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(permission), rc
+            )
+        }
     }
 
     override fun onRequestPermissionsResult(rc: Int, perm: Array<out String>, gr: IntArray) {
@@ -283,17 +253,15 @@ class AddElement : CommonType(), View.OnClickListener,
         Toast.makeText(this, "permission nécessaire", Toast.LENGTH_SHORT).show()
     }
 
-
     private fun setImage(name: String, type: String){
-        when(type){
-            Type.Game.name -> setImage(name, appInstance.database.gameDao())
-            Type.AddOn.name -> setImage(name, appInstance.database.addOnDao())
-            Type.MultiAddOn.name -> setImage(name, appInstance.database.multiAddOnDao())
-        }
-
+        val lowercase = type.replaceFirstChar { it.lowercase() }
+        val dao = appInstance.database::class.members.find{
+            it.name == "${lowercase}Dao"
+        }!!.call(appInstance.database) as CommonDao<CommonComponent, CommonGame>
+        setImage(name, dao)
     }
 
-    private fun<T> setImage(name: String, dao: CommonDao<T>){
+    private fun<T, U> setImage(name: String, dao: CommonDao<T, U>){
         CoroutineScope(SupervisorJob()).launch{
             val imageList = dao.getImage(name)
             if(imageList.isNotEmpty()){
@@ -316,7 +284,9 @@ class AddElement : CommonType(), View.OnClickListener,
 
     private fun setImage() {
         bgaApiGame?.image_url?.run{
-            Picasso.get().load(this).into(binding.ivPictureChoice)
+            runOnUiThread {
+                Picasso.get().load(this).into(binding.ivPictureChoice)
+            }
             loadImage = true
         }
 
@@ -346,7 +316,6 @@ class AddElement : CommonType(), View.OnClickListener,
         return ll
     }
 
-
     private fun externalImageMenu(): Boolean{
         val urlLink = EditText(this)
         val ll = addLinearLayout(arrayListOf(urlLink))
@@ -364,20 +333,15 @@ class AddElement : CommonType(), View.OnClickListener,
         return true
     }
 
-
     private fun setAddButtonEvent(){
-        val btn_list = arrayListOf(
-            Pair(binding.btnDesignerAdd, binding.llAddDesigner),
-            Pair(binding.btnArtistAdd, binding.llAddArtist),
-            Pair(binding.btnPublisherAdd, binding.llAddPublisher),
-            Pair(binding.btnTagAdd, binding.llAddTag),
-            Pair(binding.btnTopicModeAdd, binding.llAddTopic),
-            Pair(binding.btnLanguageAdd, binding.llAddLanguage),
-            Pair(binding.btnMechanismAdd, binding.llAddMechanism),
-            Pair(binding.btnPlayingModeAdd, binding.llAddPlayingMod)
-        )
-        btn_list.forEach {pair ->
-            pair.first.setOnClickListener { setOnClickAddButton(pair.second) }
+        CoroutineScope(SupervisorJob()).launch{
+            addedStringContentTypeList.forEach { type ->
+                val btn = binding::class.members.find{it.name == "btn${type}Add"}!!.call(binding) as FloatingActionButton
+                val ll = binding::class.members.find{it.name == "llAdd$type"}!!.call(binding) as LinearLayout
+                runOnUiThread {
+                    btn.setOnClickListener { setOnClickAddButton(ll) }
+                }
+            }
         }
     }
 
@@ -402,117 +366,68 @@ class AddElement : CommonType(), View.OnClickListener,
     override fun onClick(v: View?) {
         binding.etError.visibility = View.GONE
         CoroutineScope(SupervisorJob()).launch {
-            appInstance.database.runInTransaction {
-
-
                 val name = binding.etNom.text.toString()
-                if (binding.etNom.text.toString().isBlank()) {
-                    runOnUiThread {
-                        binding.etError.text = "le nom ne peut pas être vide"
-                        binding.etError.visibility = View.VISIBLE
-
-                    }
-                } else if (
-                    (changedObjectId == 0L ||
-                            changedObjectName != name) &&
-                    (binding.rbGame.isChecked && appInstance.database.gameDao().getByName(name)
-                        .isNotEmpty() ||
-                            binding.rbAddOn.isChecked && appInstance.database.addOnDao()
-                        .getByName(name)
-                        .isNotEmpty() ||
-                            binding.rbMultiAddOn.isChecked && appInstance.database.multiAddOnDao()
-                        .getByName(name).isNotEmpty())
-                ) {
-                    runOnUiThread {
-                        binding.etError.text = "Un élément de la même catégorie portant le même nom existe déjà!"
-                        binding.etError.visibility = View.VISIBLE
-                    }
-
-
-                } else {
-
-                    val player_min = testNull(binding.etNbPlayerMin.text.toString())?.toInt()
-                    val player_max = testNull(binding.etNbPlayerMax.text.toString())?.toInt()
-                    val playing_time = testNull(binding.etMaxTime.text.toString())
-                    val designers = addList(AddedContent.Designer.ordinal, appInstance.database.designerDao(), binding.llAddDesigner)
-                    val artists = addList(AddedContent.Artist.ordinal, appInstance.database.artistDao(), binding.llAddArtist)
-                    val publishers = addList(AddedContent.Publisher.ordinal, appInstance.database.publisherDao(), binding.llAddPublisher)
-                    val bgg_link = testNull(binding.etBggLink.text.toString())
-                    val playing_mode = addList(AddedContent.PlayingMod.ordinal, appInstance.database.playingModDao(), binding.llAddPlayingMod)
-                    val language = addList(AddedContent.Language.ordinal, appInstance.database.languageDao(), binding.llAddLanguage)
-                    val age = testNull(binding.etAge.text.toString())?.toInt()
-                    val buying_price = testNull(binding.etBuyingPrice.text.toString())?.toInt() ?: 0
-                    val stock = testNull(binding.etStock.text.toString())?.toInt()
-                    val max_time = testNull(binding.etStock.text.toString())?.toInt()
-                    val by_player = binding.rbByPlayerTrue.isChecked
-                    val tags = addList(AddedContent.Tag.ordinal, appInstance.database.tagDao(), binding.llAddTag)
-                    val topics = addList(AddedContent.Topic.ordinal, appInstance.database.topicDao(), binding.llAddTopic)
-                    val mechanism = addList(AddedContent.Mechanism.ordinal, appInstance.database.mechanismDao(), binding.llAddMechanism)
-                    val games = addedToListGames
-                    val external_image = externalImageUrl
-
-
-                    when (true) {
-                        binding.rbGame.isChecked -> registerGame(
-                            name,
-                            player_min,
-                            player_max,
-                            playing_time,
-                            designers,
-                            artists,
-                            publishers,
-                            bgg_link,
-                            playing_mode,
-                            language,
-                            age,
-                            buying_price,
-                            stock,
-                            max_time,
-                            by_player,
-                            tags,
-                            topics,
-                            mechanism,
-                            addedToListAddons.map { it.name }.toCollection(ArrayList()),
-                            addedToListMultiAddOns.map { it.name }.toCollection(ArrayList()),
-                            external_image
-                        )
-                        binding.rbAddOn.isChecked -> registerAddOn(
-                            name, player_min, player_max,
-                            playing_time, designers, artists, publishers, bgg_link, playing_mode,
-                            language, age, buying_price, stock, max_time, game, external_image
-                        )
-                        binding.rbMultiAddOn.isChecked -> registerMultiAddOn(
-                            name,
-                            player_min,
-                            player_max,
-                            playing_time,
-                            designers,
-                            artists,
-                            publishers,
-                            bgg_link,
-                            playing_mode,
-                            language,
-                            age,
-                            buying_price,
-                            stock,
-                            max_time,
-                            games.map { it.name }.toCollection(ArrayList()),
-                            external_image
-                        )
-
-                    }
-
-                    startActivity(Intent(this@AddElement, ViewGamesActivity::class.java))
-                    finish()
-                }
-            }
-
+                checkNameAvailability(name)
         }
     }
 
-    private fun <T>addList(position: Int, dao:CommonCustomInsert<T>, ll: LinearLayout):ArrayList<String>{
+    private fun checkNameAvailability(name:String){
+        if (binding.etNom.text.toString().isBlank()) {
+            runOnUiThread {
+                binding.etError.text = "le nom ne peut pas être vide"
+                binding.etError.visibility = View.VISIBLE
+            }
+        } else if (
+            (changedObjectId == 0L || changedObjectName != name) &&
+            (binding.rbGame.isChecked
+                    && appInstance.database.gameDao().getByName(name).isNotEmpty()
+                    || binding.rbAddOn.isChecked
+                    && appInstance.database.addOnDao().getByName(name).isNotEmpty()
+                    || binding.rbMultiAddOn.isChecked
+                    && appInstance.database.multiAddOnDao().getByName(name).isNotEmpty())
+        ) {
+            runOnUiThread {
+                binding.etError.text = "Un élément de la même catégorie portant le même nom existe déjà!"
+                binding.etError.visibility = View.VISIBLE
+            }
+        } else {
+            appInstance.database.runInTransaction {
+                registerObject(name)
+            }
+        }
+    }
+
+    private fun registerObject(name:String){
+        val commonData = CommonAddObject(
+            name = name,
+            player_min = testNull(binding.etNbPlayerMin.text.toString())?.toInt(),
+            player_max = testNull(binding.etNbPlayerMax.text.toString())?.toInt(),
+            playing_time = testNull(binding.etMaxTime.text.toString()),
+            designers = addList(Type.Designer.name, appInstance.database.designerDao(), binding.llAddDesigner),
+            artists = addList(Type.Artist.name, appInstance.database.artistDao(), binding.llAddArtist),
+            publishers = addList(Type.Publisher.name, appInstance.database.publisherDao(), binding.llAddPublisher),
+            bgg_link = testNull(binding.etBggLink.text.toString()),
+            playing_mode = addList(Type.PlayingMod.name, appInstance.database.playingModDao(), binding.llAddPlayingMod),
+            language = addList(Type.Language.name, appInstance.database.languageDao(), binding.llAddLanguage),
+            age = testNull(binding.etAge.text.toString())?.toInt(),
+            buying_price = testNull(binding.etBuyingPrice.text.toString())?.toInt() ?: 0,
+            stock = testNull(binding.etStock.text.toString())?.toInt(),
+            max_time = testNull(binding.etStock.text.toString())?.toInt(),
+            external_image = externalImageUrl,
+        )
+        when (true) {
+            binding.rbGame.isChecked -> registerGame(commonData)
+            binding.rbAddOn.isChecked -> registerAddOn(commonData)
+            binding.rbMultiAddOn.isChecked -> registerMultiAddOn(commonData)
+            else -> throw Exception("Unknown type")
+        }
+        startActivity(Intent(this@AddElement, ViewGamesActivity::class.java))
+        finish()
+    }
+
+    private fun <T>addList(type: String, dao:CommonCustomInsert<T>, ll: LinearLayout):ArrayList<String>{
         val finalList = mutableSetOf<String>()
-        finalList.addAll(addedStringContent[position].filter { it.isNotBlank() })
+        finalList.addAll(addedStringContentHashMap[type]!!.filter { it.isNotBlank() })
         val etList = ArrayList<String>()
         ll.forEach {
             if (it is LinearLayout){
@@ -527,43 +442,30 @@ class AddElement : CommonType(), View.OnClickListener,
         etList.forEach {
             if (it.isNotBlank() && dao.getByName(it).isEmpty()) dao.insert(it)
         }
-
-
         return finalList.toCollection(ArrayList())
     }
 
     private fun getDifficultyId(): Long?{
-        if (binding.etDifficulty.text.toString().isNullOrBlank()) return null
-        var difficultyId:Long? = null
+        if (binding.etDifficulty.text.toString().isBlank()) return null
+        val difficultyId: Long?
         val difficultyL = appInstance.database.difficultyDao().getByName(binding.etDifficulty.text.toString())
-        if(difficultyL.isNotEmpty()) difficultyId = difficultyL[0].id
-        else difficultyId = appInstance.database.difficultyDao().insert(DifficultyTableBean(0,binding.etDifficulty.text.toString() ))
-
+        difficultyId = if(difficultyL.isNotEmpty()) difficultyL[0].id
+        else appInstance.database.difficultyDao().insert(DifficultyTableBean(0,binding.etDifficulty.text.toString() ))
         return difficultyId
     }
 
-    private fun registerGame(name: String,
-                     player_min: Int?,
-                     player_max: Int?,
-                     playing_time: String?,
-                     designers: ArrayList<String>,
-                     artists: ArrayList<String>,
-                     publishers: ArrayList<String>,
-                     bgg_link: String?,
-                     playing_mode: ArrayList<String>,
-                     language: ArrayList<String>,
-                     age: Int?,
-                     buying_price:Int?,
-                     stock: Int?,
-                     max_time: Int?,
-                     by_player: Boolean?,
-                     tags: ArrayList<String>,
-                     topics: ArrayList<String>,
-                     mechanism: ArrayList<String>,
-                     add_on: ArrayList<String>,
-                     multi_add_on: ArrayList<String>,
-                     external_image:String?
-    ) {
+    private fun registerGame(data: CommonAddObject) {
+
+        val tags = addList(Type.Tag.name, appInstance.database.tagDao(), binding.llAddTag)
+        val topics = addList(Type.Topic.name, appInstance.database.topicDao(), binding.llAddTopic)
+        val mechanism = addList(Type.Mechanism.name, appInstance.database.mechanismDao(), binding.llAddMechanism)
+        val add_on = addedGameContentHashMap[Type.AddOn.name]!!.map {
+            it.name
+        }.toCollection(ArrayList())
+        val multi_add_on = addedGameContentHashMap[Type.MultiAddOn.name]!!.map {
+            it.name
+        }.toCollection(ArrayList())
+
         var previous: GameTableBean? = null
         CoroutineScope(SupervisorJob()).launch {
             if (changedObjectType == Type.Game.name) {
@@ -577,19 +479,19 @@ class AddElement : CommonType(), View.OnClickListener,
             val game = GameTableBean(
                 previous?.id ?: 0L,
                 previous?.serverId,
-                name,
-                player_min,
-                player_max,
-                playing_time,
+                data.name,
+                data.player_min,
+                data.player_max,
+                data.playing_time,
                 getDifficultyId(),
-                bgg_link,
-                age,
-                buying_price,
-                stock,
-                max_time,
-                external_image,
+                data.bgg_link,
+                data.age,
+                data.buying_price,
+                data.stock,
+                data.max_time,
+                data.external_image,
                 if(deleteImage) null else previous?.picture,
-                by_player,
+                binding.rbByPlayerTrue.isChecked,
                 true
             )
             val id = appInstance.database.gameDao().insert(game)
@@ -599,7 +501,7 @@ class AddElement : CommonType(), View.OnClickListener,
                 when (changedObjectType) {
                     Type.Game.name -> {
                         val gameL = appInstance.database.gameDao().getObjectById(changedObjectId)
-                        if (gameL.isNotEmpty()) dbMethod.delete_link(gameL[0])
+                        if (gameL.isNotEmpty()) dbMethod.deleteLink(gameL[0])
                     }
                     Type.AddOn.name -> {
                         val gameL = appInstance.database.addOnDao().getObjectById(changedObjectId)
@@ -613,39 +515,19 @@ class AddElement : CommonType(), View.OnClickListener,
                     }
                 }
             }
-            dbMethod.insert_link(
+            dbMethod.insertLink(
                 newGame, arrayListOf(
-                    designers, artists, publishers, playing_mode, language, tags,
+                    data.designers, data.artists, data.publishers, data.playing_mode, data.language, tags,
                     topics, mechanism, add_on, multi_add_on
                 )
             )
             if (loadImage){
-                savePicture(name, Type.Game.name)
+                savePicture(data.name, Type.Game.name)
             }
         }
     }
 
-
-
-
-
-    private fun registerAddOn(name: String,
-                      player_min: Int?,
-                      player_max: Int?,
-                      playing_time: String?,
-                      designers: ArrayList<String>,
-                      artists: ArrayList<String>,
-                      publishers: ArrayList<String>,
-                      bgg_link: String?,
-                      playing_mode: ArrayList<String>,
-                      language: ArrayList<String>,
-                      age: Int?,
-                      buying_price:Int?,
-                      stock: Int?,
-                      max_time: Int?,
-                      game: DesignerWithGame?,
-                      external_image: String?
-    ){
+    private fun registerAddOn(data: CommonAddObject){
         var previous: AddOnTableBean? = null
         CoroutineScope(SupervisorJob()).launch {
             if (changedObjectType == Type.AddOn.name) {
@@ -658,17 +540,17 @@ class AddElement : CommonType(), View.OnClickListener,
         val addOn = AddOnTableBean(
             previous?.id?:0L,
             previous?.serverId,
-            name,
-            player_min,
-            player_max,
-            playing_time,
+            data.name,
+            data.player_min,
+            data.player_max,
+            data.playing_time,
             getDifficultyId(),
-            bgg_link,
-            age,
-            buying_price,
-            stock,
-            max_time,
-            external_image,
+            data.bgg_link,
+            data.age,
+            data.buying_price,
+            data.stock,
+            data.max_time,
+            data.external_image,
             previous?.picture,
             game?.id,
             true
@@ -684,7 +566,7 @@ class AddElement : CommonType(), View.OnClickListener,
                 }
                 Type.AddOn.name -> {
                     val gameL = appInstance.database.addOnDao().getObjectById(changedObjectId)
-                    if (gameL.isNotEmpty()) dbMethod.delete_link(gameL[0])
+                    if (gameL.isNotEmpty()) dbMethod.deleteLink(gameL[0])
                 }
                 Type.MultiAddOn.name -> {
                     val gameL = appInstance.database.multiAddOnDao().getObjectById(changedObjectId)
@@ -692,32 +574,18 @@ class AddElement : CommonType(), View.OnClickListener,
                 }
             }
         }
-        dbMethod.insert_link(
+        dbMethod.insertLink(
             newGame, arrayListOf(
-                designers, artists, publishers, playing_mode, language
+                data.designers, data.artists, data.publishers, data.playing_mode, data.language
             )
         )
         if (loadImage){
-            savePicture(name, Type.AddOn.name)
+            savePicture(data.name, Type.AddOn.name)
         }
     }
 
-    private fun registerMultiAddOn(name: String,
-                      player_min: Int?,
-                      player_max: Int?,
-                      playing_time: String?,
-                      designers: ArrayList<String>,
-                      artists: ArrayList<String>,
-                      publishers: ArrayList<String>,
-                      bgg_link: String?,
-                      playing_mode: ArrayList<String>,
-                      language: ArrayList<String>,
-                      age: Int?,
-                      buying_price:Int?,
-                      stock: Int?,
-                      max_time: Int?,
-                      games: ArrayList<String>,
-                           external_image: String?){
+    private fun registerMultiAddOn(data:CommonAddObject){
+        val games = addedGameContentHashMap[Type.Game.name]!!.map{it.name}.toCollection(ArrayList())
         var previous: MultiAddOnTableBean? = null
         CoroutineScope(SupervisorJob()).launch {
             if (changedObjectType == Type.MultiAddOn.name) {
@@ -730,17 +598,17 @@ class AddElement : CommonType(), View.OnClickListener,
         val multiAddOn = MultiAddOnTableBean(
             previous?.id?:0L,
             previous?.serverId,
-            name,
-            player_min,
-            player_max,
-            playing_time,
+            data.name,
+            data.player_min,
+            data.player_max,
+            data.playing_time,
             getDifficultyId(),
-            bgg_link,
-            age,
-            buying_price,
-            stock,
-            max_time,
-            external_image,
+            data.bgg_link,
+            data.age,
+            data.buying_price,
+            data.stock,
+            data.max_time,
+            data.external_image,
             previous?.picture,
             true
         )
@@ -761,20 +629,25 @@ class AddElement : CommonType(), View.OnClickListener,
                 Type.MultiAddOn.name -> {
                     val gameL =
                         appInstance.database.multiAddOnDao().getObjectById(changedObjectId)
-                    if (gameL.isNotEmpty()) dbMethod.delete_link(gameL[0])
+                    if (gameL.isNotEmpty()) dbMethod.deleteLink(gameL[0])
                 }
             }
         }
-        dbMethod.insert_link(
+        dbMethod.insertLink(
             newGame, arrayListOf(
-                designers, artists, publishers, playing_mode, language
+                data.designers, data.artists, data.publishers, data.playing_mode, data.language
             )
         )
         appInstance.database.runInTransaction {
-            dbMethod.gameMultiAddOnLinkListByMultiAddOn(games, appInstance.database.gameDao(), appInstance.database.gameMultiAddOnDao(), id)
+            dbMethod.gameMultiAddOnLinkListByMultiAddOn(
+                games,
+                appInstance.database.gameDao(),
+                appInstance.database.gameMultiAddOnDao(),
+                id
+            )
         }
         if (loadImage){
-            savePicture(name, Type.MultiAddOn.name)
+            savePicture(data.name, Type.MultiAddOn.name)
         }
     }
 
@@ -787,69 +660,54 @@ class AddElement : CommonType(), View.OnClickListener,
 
     private fun testNull(etContent:String) = if(etContent.isBlank() || etContent == "null") null else etContent
 
-
     private fun fillPageRv() {
-        binding.rvGameAddOn.adapter = addOnAdapter
-        layout(binding.rvGameAddOn)
-        appInstance.database.addOnDao().getAllWithDesigner().observe(this, {it?.let{addOnAdapter.submitList(it)}})
+        gameTypeList.forEach {type ->
+            CoroutineScope(SupervisorJob()).launch{
+                val lowerCase = type.replaceFirstChar { it.lowercase() }
+                val rvName = if(type==Type.Game.name) "rv$type" else "rvGame$type"
+                val rv = binding::class.members.find { it.name == rvName }!!.call(binding) as RecyclerView
+                addedGameContentHashMap[type] = ArrayList()
+                val adapter = GenericCommonGameListCbAdapter(this@AddElement, addedGameContentHashMap[type]!!, type)
+                val dao = appInstance.database::class.members.find{it.name == "${lowerCase}Dao"}!!.call(
+                    appInstance.database) as CommonDao<CommonComponent,CommonGame>
+                runOnUiThread {
+                    rv.adapter = adapter
+                    layout(rv)
+                    dao.getAllWithDesigner().observe(this@AddElement, {it?.let{adapter.submitList(it)}})
+                }
+            }
+        }
 
-        binding.rvGameMultiAddOn.adapter = multiAddOnAdapter
-        layout(binding.rvGameMultiAddOn)
-        appInstance.database.multiAddOnDao().getAllWithDesigner().observe(this, {it?.let{multiAddOnAdapter.submitList(it)}})
-
-        binding.rvGames.adapter = gamesAdapter
-        layout(binding.rvGames)
-
-        binding.rvGame.adapter = gameAdapter
-        layout(binding.rvGame)
-
-        appInstance.database.gameDao().getAllWithDesigner().observe(this, {it?.let{
-            gameAdapter.submitList(it)
-            gamesAdapter.submitList(it)
-        }})
+        binding.rvAddOnGame.adapter = addOnGameAdapter
+        layout(binding.rvAddOnGame)
+        appInstance.database.gameDao().getAllWithDesigner().observe(
+            this,
+            {it?.let{ addOnGameAdapter.submitList(it) }}
+        )
 
         binding.rvDifficulty.adapter = difficultyAdapter
         layout(binding.rvDifficulty)
-        appInstance.database.difficultyDao().getAll().asLiveData().observe(this, {it?.let{difficultyAdapter.submitList(it)}})
-
-
+        appInstance.database.difficultyDao().getAll().asLiveData().observe(
+            this,
+            {it?.let{difficultyAdapter.submitList(it)}}
+        )
 
     }
-
-
-
 
     override fun onGenericClick(name: String, type: String, cb:CheckBox) {
-        when(type){
-            Type.Designer.name -> listMethod.listContentManager(addedStringContent[AddedContent.Designer.ordinal], name, cb)
-            Type.Artist.name -> listMethod.listContentManager(addedStringContent[AddedContent.Artist.ordinal], name, cb)
-            Type.Publisher.name -> listMethod.listContentManager(addedStringContent[AddedContent.Publisher.ordinal], name, cb)
-            Type.Language.name -> listMethod.listContentManager(addedStringContent[AddedContent.Language.ordinal], name, cb)
-            Type.PlayingMode.name -> listMethod.listContentManager(addedStringContent[AddedContent.PlayingMod.ordinal], name, cb)
-            Type.Tag.name -> listMethod.listContentManager(addedStringContent[AddedContent.Tag.ordinal], name, cb)
-            Type.Topic.name -> listMethod.listContentManager(addedStringContent[AddedContent.Topic.ordinal], name, cb)
-            Type.Mechanism.name -> listMethod.listContentManager(addedStringContent[AddedContent.Mechanism.ordinal], name, cb)
-        }
-
+        listMethod.listContentManager(addedStringContentHashMap[type]!!, name ,cb)
     }
 
-
-    override fun onGenericClick(datum: CommonGame, view:CheckBox) {
-        when (datum){
-            is DesignerWithGame -> listMethod.listContentManager(addedToListGames, datum, view)
-            is DesignerWithMultiAddOn -> listMethod.listContentManager(addedToListMultiAddOns, datum, view)
-            is DesignerWithAddOn -> listMethod.listContentManager(addedToListAddons, datum, view)
-        }
+    override fun onGenericClick(datum: CommonGame, view:CheckBox, type:String) {
+        listMethod.listContentManager(addedGameContentHashMap[type]!!, datum, view)
     }
-
-
 
     override fun onGenericClick(datum: OneToOne) {
         when(datum){
             is DesignerWithGame -> {
                 if (game == datum) {
                     game = null
-                    binding.tvGame.text = "aucun"
+                    binding.tvGame.text = getString(R.string.none)
                 }
 
                 else {
@@ -861,20 +719,20 @@ class AddElement : CommonType(), View.OnClickListener,
         }
     }
 
-    fun fillView(type: String?, id:Long){
+    private fun fillView(type: String?, id:Long){
         when(type){
             Type.Game.name-> {
                 check(binding.rbGame)
                 fillCommonView(appInstance.database.gameDao(),id)
                 CoroutineScope(SupervisorJob()).launch{
-                    gameFill(appInstance.database.gameDao(), addedStringContent, id)
+                    gameFill(appInstance.database.gameDao(), addedStringContentHashMap, id)
                 }
             }
             Type.AddOn.name -> {
                 check(binding.rbAddOn)
                 fillCommonView(appInstance.database.addOnDao(),id)
                 CoroutineScope(SupervisorJob()).launch{
-                    genericFill(appInstance.database.addOnDao(), addedStringContent, id)
+                    genericFill(appInstance.database.addOnDao(), addedStringContentHashMap, id)
                     val gameL = appInstance.database.addOnDao().getGameFromAddOns(id)
                     if (gameL.isNotEmpty()) {
                         game = gameL[0]
@@ -886,16 +744,14 @@ class AddElement : CommonType(), View.OnClickListener,
                 check(binding.rbMultiAddOn)
                 fillCommonView(appInstance.database.multiAddOnDao(),id)
                 CoroutineScope(SupervisorJob()).launch{
-                    genericFill(appInstance.database.multiAddOnDao(), addedStringContent, id)
-                    addedToListGames.addAll(appInstance.database.multiAddOnDao().getGameObjectFromMultiAddOn(id))
+                    genericFill(appInstance.database.multiAddOnDao(), addedStringContentHashMap, id)
+                    addedGameContentHashMap[Type.Game.name]!!.addAll(appInstance.database.multiAddOnDao().getGameObjectFromMultiAddOn(id))
                 }
             }
-
         }
-
     }
 
-    fun check(rb:RadioButton){
+    private fun check(rb:RadioButton){
         rb.isChecked = true
         when(rb){
             binding.rbGame -> setView(binding.llGame)
@@ -904,33 +760,31 @@ class AddElement : CommonType(), View.OnClickListener,
         }
     }
 
-    fun <T:ID>genericFill(dao: CommonDao<T>, list: ArrayList<ArrayList<String>>, id:Long){
-        list[AddedContent.Designer.ordinal].addAll(dao.getDesignerObject(id).map{it.name})
-        list[AddedContent.Artist.ordinal].addAll(dao.getArtistObject(id).map{it.name})
-        list[AddedContent.Publisher.ordinal].addAll(dao.getPublisherObject(id).map{it.name}?:ArrayList())
-        list[AddedContent.PlayingMod.ordinal].addAll(dao.getPlayingModObject(id).map{it.name}?:ArrayList())
-        list[AddedContent.Language.ordinal].addAll(dao.getLanguageObject(id).map{it.name}?:ArrayList())
+    fun <T:ID, U>genericFill(dao: CommonDao<T, U>, map: HashMap<String, ArrayList<String>>, id:Long){
+        map[Type.Designer.name]!!.addAll(dao.getDesignerObject(id).map{it.name})
+        map[Type.Artist.name]!!.addAll(dao.getArtistObject(id).map{it.name})
+        map[Type.Publisher.name]!!.addAll(dao.getPublisherObject(id).map{it.name})
+        map[Type.PlayingMod.name]!!.addAll(dao.getPlayingModObject(id).map{it.name})
+        map[Type.Language.name]!!.addAll(dao.getLanguageObject(id).map{it.name})
     }
 
-    fun gameFill(dao: GameDao, list: ArrayList<ArrayList<String>>, id:Long){
-        genericFill(dao, list, id)
-        list[AddedContent.Tag.ordinal].addAll(dao.getTagObject(id).map{it.name}?:ArrayList())
-        list[AddedContent.Topic.ordinal].addAll(dao.getTopicObject(id).map{it.name}?:ArrayList())
-        list[AddedContent.Mechanism.ordinal].addAll(dao.getMechanismObject(id).map{it.name}?:ArrayList())
-        addedToListAddons.addAll(appInstance.database.addOnDao().getDesignerWithAddOnOfGames(id))
-        addedToListMultiAddOns.addAll(appInstance.database.multiAddOnDao().getDesignerWithMultiAddOnObjectOfGame(id))
+    fun gameFill(dao: GameDao, map: HashMap<String, ArrayList<String>>, id:Long){
+        genericFill(dao, map, id)
+        map[Type.Tag.name]!!.addAll(dao.getTagObject(id).map{it.name})
+        map[Type.Topic.name]!!.addAll(dao.getTopicObject(id).map{it.name})
+        map[Type.Mechanism.name]!!.addAll(dao.getMechanismObject(id).map{it.name})
+        addedGameContentHashMap[Type.AddOn.name]!!.addAll(appInstance.database.addOnDao().getDesignerWithAddOnOfGames(id))
+        addedGameContentHashMap[Type.MultiAddOn.name]!!.addAll(appInstance.database.multiAddOnDao().getDesignerWithMultiAddOnObjectOfGame(id))
     }
 
 
-    fun <T : CommonComponent> fillCommonView(dao: CommonDao<T>, id: Long) {
+    fun <T : CommonComponent, U> fillCommonView(dao: CommonDao<T, U>, id: Long) {
         dao.getById(id).asLiveData().observe(this, {
-
             if (it.size > 0) it?.let {
                 if(it[0] is GameTableBean) {
                     val x = it[0] as GameTableBean
                     binding.rbByPlayerTrue.isChecked = x.by_player?:false
                 }
-
                 binding.etNom.setText(it[0].name)
                 binding.etAge.setText(it[0].age.toString())
                 binding.etMaxTime.setText(it[0].max_time.toString())
@@ -949,29 +803,25 @@ class AddElement : CommonType(), View.OnClickListener,
         })
     }
 
-    fun fillCommonRV(listPairRecyclerViewAdapter: ArrayList<Pair<RecyclerView, GenericIDListCbAdapter>>) {
-        listPairRecyclerViewAdapter.forEach {
-            it.first.adapter = it.second
-            layout(it.first)
+    private fun fillCommonRv(){
+        addedStringContentTypeList.forEach { type ->
+            CoroutineScope(SupervisorJob()).launch{
+                addedStringContentHashMap[type] = ArrayList()
+                val lowercase = type.replaceFirstChar { it.lowercase() }
+                val adapter = GenericIDListCbAdapter(this@AddElement, type, addedStringContentHashMap[type]!!)
+                val rv = binding::class.members.find {
+                    it.name == "rv$type"
+                }!!.call(binding) as RecyclerView
+                val dao = appInstance.database::class.members.find{
+                    it.name == "${lowercase}Dao"
+                }!!.call(appInstance.database) as CommonCustomInsert<ID>
+                runOnUiThread {
+                    layout(rv)
+                    rv.adapter = adapter
+                    dao.getAll().asLiveData().observe(this@AddElement, {it?.let{adapter.submitList(it)}})
+                }
+            }
         }
-
-        appInstance.database.designerDao().getAll().asLiveData()
-            .observe(this, { it?.let { designerAdapter.submitList(it) } })
-        appInstance.database.artistDao().getAll().asLiveData()
-            .observe(this, { it?.let { artistAdapter.submitList(it) } })
-        appInstance.database.publisherDao().getAll().asLiveData()
-            .observe(this, { it?.let { publisherAdapter.submitList(it) } })
-        appInstance.database.playingModDao().getAll().asLiveData()
-            .observe(this, { it?.let { playingModeAdapter.submitList(it) } })
-        appInstance.database.languageDao().getAll().asLiveData()
-            .observe(this, { it?.let { languageAdapter.submitList(it) } })
-        appInstance.database.tagDao().getAll().asLiveData()
-            .observe(this, { it?.let { tagAdapter.submitList(it) } })
-        appInstance.database.topicDao().getAll().asLiveData()
-            .observe(this, { it?.let { topicAdapter.submitList(it) } })
-        appInstance.database.mechanismDao().getAll().asLiveData()
-            .observe(this, { it?.let { mechanismAdapter.submitList(it) } })
-
     }
 
     fun loadBgaGame(datum:BgaGameBean){
@@ -985,37 +835,35 @@ class AddElement : CommonType(), View.OnClickListener,
         if (datum.type == Constant.Extension.value){
             check(binding.rbAddOn)
         }
-        addElementName(datum.primary_designer?.name, appInstance.database.designerDao(), AddedContent.Designer.ordinal, binding.llAddDesigner)
-        addElementName(datum.primary_publisher?.name, appInstance.database.publisherDao(), AddedContent.Publisher.ordinal, binding.llAddPublisher)
-
-        addToAddedList(datum.artists, AddedContent.Artist.ordinal, appInstance.database.artistDao(), binding.llAddArtist)
-        addToAddedList(convertIdListToNameList(datum.mechanics, ALL_MECHANICS), AddedContent.Mechanism.ordinal, appInstance.database.mechanismDao(), binding.llAddMechanism)
-        addToAddedList(convertIdListToNameList(datum.categories, ALL_CATEGORIES), AddedContent.Topic.ordinal, appInstance.database.topicDao(), binding.llAddTopic)
+        addElementName(datum.primary_designer?.name, appInstance.database.designerDao(), Type.Designer.name, binding.llAddDesigner)
+        addElementName(datum.primary_publisher?.name, appInstance.database.publisherDao(), Type.Publisher.name, binding.llAddPublisher)
+        addToAddedList(datum.artists, Type.Artist.name, appInstance.database.artistDao(), binding.llAddArtist)
+        addToAddedList(convertIdListToNameList(datum.mechanics, ALL_MECHANICS), Type.Mechanism.name, appInstance.database.mechanismDao(), binding.llAddMechanism)
+        addToAddedList(convertIdListToNameList(datum.categories, ALL_CATEGORIES), Type.Topic.name, appInstance.database.topicDao(), binding.llAddTopic)
         bgaApiGame?.image_url?.run{
             setImage()
         }
-
     }
 
-    fun <T>addElementName(name:String?, dao:CommonCustomInsert<T>, position:Int, ll: LinearLayout){
+    fun <T>addElementName(name:String?, dao:CommonCustomInsert<T>, type:String, ll: LinearLayout){
         CoroutineScope(SupervisorJob()).launch{
             name?.run{
                 val answer = dao.getByName(this)
                 if (answer.isEmpty()) {
                     setOnClickAddButton(ll, this)
                 }
-                else addedStringContent[position].add(this)
+                else addedStringContentHashMap[type]!!.add(this)
             }
         }
     }
 
-    fun <T>addToAddedList(list:ArrayList<String>, position:Int, dao:CommonCustomInsert<T>, ll:LinearLayout){
+    fun <T>addToAddedList(list:ArrayList<String>, type:String, dao:CommonCustomInsert<T>, ll:LinearLayout){
         if (list.isNotEmpty()){
             list.forEach {
                 CoroutineScope(SupervisorJob()).launch{
                     val answer = dao.getByName(it)
                     if (answer.isEmpty())setOnClickAddButton(ll, it)
-                    else addedStringContent[position].add(it)
+                    else addedStringContentHashMap[type]!!.add(it)
                 }
             }
         }
@@ -1025,6 +873,5 @@ class AddElement : CommonType(), View.OnClickListener,
         val resultList = ArrayList<String>()
         idList.forEach { for (m in namedList) {if (m.id==it.id){resultList.add(m.name)}} }
         return resultList
-
     }
 }

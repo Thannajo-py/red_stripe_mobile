@@ -22,7 +22,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
     private val artistListAdapter = GenericStringListAdapter(this, Type.Artist.name)
     private val publisherListAdapter = GenericStringListAdapter(this, Type.Publisher.name)
     private val languageListAdapter = GenericStringListAdapter(this, Type.Language.name)
-    private val playingModListAdapter = GenericStringListAdapter(this, Type.PlayingMode.name)
+    private val playingModListAdapter = GenericStringListAdapter(this, Type.PlayingMod.name)
     private val mechanismListAdapter = GenericStringListAdapter(this, Type.Mechanism.name)
     private val tagListAdapter = GenericStringListAdapter(this, Type.Tag.name)
     private val topicListAdapter = GenericStringListAdapter(this, Type.Topic.name)
@@ -39,7 +39,7 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
         setContentView(binding.root)
        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericStringListAdapter>> =
            arrayListOf(Pair(binding.rvDesigner,designerListAdapter), Pair(binding.rvArtist, artistListAdapter),
-           Pair(binding.rvPublisher,publisherListAdapter),Pair(binding.rvPlayingMode, playingModListAdapter),
+           Pair(binding.rvPublisher,publisherListAdapter),Pair(binding.rvPlayingMod, playingModListAdapter),
            Pair(binding.rvLanguage, languageListAdapter), Pair(binding.rvMechanism, mechanismListAdapter),
                Pair(binding.rvTag, tagListAdapter), Pair(binding.rvTopic, topicListAdapter))
         fillCommonRV(commonRvAdapterList)

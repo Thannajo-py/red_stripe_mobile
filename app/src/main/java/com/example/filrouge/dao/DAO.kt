@@ -6,7 +6,7 @@ import com.example.filrouge.bean.*
 import kotlinx.coroutines.flow.Flow
 
 
-interface CommonDao<T>: CommonComponentDao<T>{
+interface CommonDao<T, U>: CommonComponentDao<T>{
     fun getByServerId(id:Long):List<T>
     fun getById(id:Long):Flow<List<T>>
     fun getDifficulty(idGame: Long):LiveData<List<DifficultyTableBean>>
@@ -22,6 +22,7 @@ interface CommonDao<T>: CommonComponentDao<T>{
     fun getLanguageObject(idGame:Long): List<LanguageTableBean>
     fun getList(): List<T>
     fun getImage(name:String): List<ImageTableBean>
+    fun getAllWithDesigner():LiveData<List<U>>
 }
 
 
@@ -35,16 +36,17 @@ interface CommonCustomInsert<T>: CommonComponentDao<T>{
     fun insert(newElement:String)
     fun getDeletableNameList(): Flow<List<T>>
     fun deleteOne(id:Long)
+    fun getAll(): Flow<List<T>>
 }
 
 
 @Dao
-interface GameDao: CommonDao<GameTableBean> {
+interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     @Query("SELECT * FROM game ORDER BY name ASC")
     fun getAll(): Flow<List<GameTableBean>>
 
     @Query("SELECT game.id AS id, game.name AS name, designer.name AS designer, image.name as image FROM game LEFT JOIN gameDesigner ON gameDesigner.gameId = game.id LEFT JOIN designer ON gameDesigner.designerId = designer.id LEFT JOIN image ON image.name = game.name || 'Game' GROUP BY game.name ORDER BY game.name ASC")
-    fun getAllWithDesigner():LiveData<List<DesignerWithGame>>
+    override fun getAllWithDesigner():LiveData<List<DesignerWithGame>>
 
     @Query("SELECT * FROM image WHERE image.name = :name || 'Game'")
     override fun getImage(name: String): List<ImageTableBean>
@@ -169,12 +171,12 @@ interface GameDao: CommonDao<GameTableBean> {
     
     
 @Dao
-interface AddOnDao: CommonDao<AddOnTableBean> {
+interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("SELECT * FROM addOn ORDER BY name ASC")
     fun getAll(): Flow<List<AddOnTableBean>>
 
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn'  GROUP BY addOn.name ORDER BY addOn.name ASC")
-    fun getAllWithDesigner():LiveData<List<DesignerWithAddOn>>
+    override fun getAllWithDesigner():LiveData<List<DesignerWithAddOn>>
 
     @Query("SELECT * FROM image WHERE image.name = :name || 'AddOn'")
     override fun getImage(name: String): List<ImageTableBean>
@@ -284,12 +286,12 @@ interface AddOnDao: CommonDao<AddOnTableBean> {
     
     
 @Dao
-interface MultiAddOnDao: CommonDao<MultiAddOnTableBean> {
+interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> {
     @Query("SELECT * FROM multiAddOn ORDER BY name ASC")
     fun getAll(): Flow<List<MultiAddOnTableBean>>
 
     @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn INNER JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id INNER JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
-    fun getAllWithDesigner(): LiveData<List<DesignerWithMultiAddOn>>
+    override fun getAllWithDesigner(): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT * FROM multiAddOn")
     override fun getList(): List<MultiAddOnTableBean>
@@ -419,7 +421,7 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean> {
 @Dao
 interface TagDao: CommonCustomInsert<TagTableBean> {
     @Query("SELECT * FROM tag ORDER BY name ASC")
-    fun getAll(): Flow<List<TagTableBean>>
+    override fun getAll(): Flow<List<TagTableBean>>
     
     @Query("SELECT * FROM tag")
     fun getList(): List<TagTableBean>
@@ -454,7 +456,7 @@ interface TagDao: CommonCustomInsert<TagTableBean> {
 @Dao
 interface TopicDao: CommonCustomInsert<TopicTableBean> {
     @Query("SELECT * FROM topic ORDER BY name ASC")
-    fun getAll(): Flow<List<TopicTableBean>>
+    override fun getAll(): Flow<List<TopicTableBean>>
     
     @Query("SELECT * FROM topic")
     fun getList(): List<TopicTableBean>
@@ -488,7 +490,7 @@ interface TopicDao: CommonCustomInsert<TopicTableBean> {
 @Dao
 interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
     @Query("SELECT * FROM mechanism ORDER BY name ASC")
-    fun getAll(): Flow<List<MechanismTableBean>>
+    override fun getAll(): Flow<List<MechanismTableBean>>
     
     @Query("SELECT * FROM mechanism")
     fun getList(): List<MechanismTableBean>
@@ -522,7 +524,7 @@ interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
 @Dao
 interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
     @Query("SELECT * FROM designer ORDER BY name ASC")
-    fun getAll(): Flow<List<DesignerTableBean>>
+    override fun getAll(): Flow<List<DesignerTableBean>>
     
     @Query("SELECT * FROM designer")
     fun getList(): List<DesignerTableBean>
@@ -559,7 +561,7 @@ interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
 @Dao
 interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
     @Query("SELECT * FROM artist ORDER BY name ASC")
-    fun getAll(): Flow<List<ArtistTableBean>>
+    override fun getAll(): Flow<List<ArtistTableBean>>
     
     @Query("SELECT * FROM artist")
     fun getList(): List<ArtistTableBean>
@@ -593,7 +595,7 @@ interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
 @Dao
 interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
     @Query("SELECT * FROM publisher ORDER BY name ASC")
-    fun getAll(): Flow<List<PublisherTableBean>>
+    override fun getAll(): Flow<List<PublisherTableBean>>
     
     @Query("SELECT * FROM publisher")
     fun getList(): List<PublisherTableBean>
@@ -627,13 +629,16 @@ interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
 @Dao
 interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     @Query("SELECT * FROM playingMod ORDER BY name ASC")
-    fun getAll(): Flow<List<PlayingModTableBean>>
+    override fun getAll(): Flow<List<PlayingModTableBean>>
     
     @Query("SELECT * FROM playingMod")
     fun getList(): List<PlayingModTableBean>
 
     @Query("SELECT playingMod.id, playingMod.name FROM playingMod LEFT JOIN gamePlayingMod ON gamePlayingMod.playingModId = playingMod.id LEFT JOIN addOnPlayingMod ON addOnPlayingMod.playingModId = playingMod.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.playingModId = playingMod.id WHERE gamePlayingMod.playingModId IS NULL AND addOnPlayingMod.playingModId IS NULL AND multiAddOnPlayingMod.playingModId IS NULL")
     override fun getDeletableNameList(): Flow<List<PlayingModTableBean>>
+
+    @Query("SELECT playingMod.id, playingMod.name FROM playingMod LEFT JOIN gamePlayingMod ON gamePlayingMod.playingModId = playingMod.id LEFT JOIN addOnPlayingMod ON addOnPlayingMod.playingModId = playingMod.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.playingModId = playingMod.id WHERE gamePlayingMod.playingModId IS NULL AND addOnPlayingMod.playingModId IS NULL AND multiAddOnPlayingMod.playingModId IS NULL")
+    fun getDeletableNameList2(): List<PlayingModTableBean>
 
     @Query("SELECT name FROM playingMod")
     override fun getNameList(): List<String>
@@ -661,7 +666,7 @@ interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
 @Dao
 interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
     @Query("SELECT * FROM language ORDER BY name ASC")
-    fun getAll(): Flow<List<LanguageTableBean>>
+    override fun getAll(): Flow<List<LanguageTableBean>>
     
     @Query("SELECT * FROM language")
     fun getList(): List<LanguageTableBean>
@@ -695,7 +700,7 @@ interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
 @Dao
 interface DifficultyDao: CommonCustomInsert<DifficultyTableBean> {
     @Query("SELECT * FROM difficulty ORDER BY name ASC")
-    fun getAll(): Flow<List<DifficultyTableBean>>
+    override fun getAll(): Flow<List<DifficultyTableBean>>
 
     @Query("SELECT * FROM difficulty WHERE id=:id")
     fun getById(id:Long): List<DifficultyTableBean>

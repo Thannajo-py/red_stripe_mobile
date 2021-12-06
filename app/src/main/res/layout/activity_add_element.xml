@@ -350,14 +350,14 @@
             </ScrollView>
 
             <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/btn_playing_mode_add"
+                android:id="@+id/btn_playing_mod_add"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
                 app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvPlayingMode"
+                android:id="@+id/rvPlayingMod"
                 android:layout_width="match_parent"
                 android:layout_height="150dp" />
 
@@ -529,7 +529,7 @@
                 </ScrollView>
 
                 <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/btn_topic_mode_add"
+                    android:id="@+id/btn_topic_add"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clickable="true"
@@ -671,7 +671,7 @@
                     android:textSize="16sp" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvGame"
+                    android:id="@+id/rvAddOnGame"
                     android:layout_width="match_parent"
                     android:layout_height="150dp" />
             </LinearLayout>
@@ -696,7 +696,7 @@
                     android:textStyle="bold" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvGames"
+                    android:id="@+id/rvGame"
                     android:layout_width="match_parent"
                     android:layout_height="150dp" />
             </LinearLayout>

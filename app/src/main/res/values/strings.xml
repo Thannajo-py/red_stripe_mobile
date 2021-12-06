@@ -75,4 +75,5 @@
     <string name="playing_mods">Modes de jeu:</string>
     <string name="difficulty">Difficulté:</string>
     <string name="difficulties">Difficultés:</string>
+    <string name="none">Aucun</string>
 </resources>

@@ -1,12 +1,7 @@
 package com.example.filrouge.activity
 
 import android.os.Bundle
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
-import com.example.filrouge.bean.AddOnTableBean
-import com.example.filrouge.bean.DesignerWithAddOn
-import com.example.filrouge.bean.DesignerWithGame
-import com.example.filrouge.bean.DesignerWithMultiAddOn
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
 
 
@@ -58,7 +53,7 @@ class GenericTypeDetails : CommonType() {
                 db.addOnDao().getWithDesignerFromDifficultyId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
                 db.multiAddOnDao().getWithDesignerFromDifficultyId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})
             }
-            Type.PlayingMode.name -> {
+            Type.PlayingMod.name -> {
                 db.gameDao().getWithDesignerFromPlayingModId(id).observe(this, {it?.let{genericGameAdapter.submitList(it)}})
                 db.addOnDao().getWithDesignerFromPlayingModId(id).observe(this, {it?.let{genericAddOnAdapter.submitList(it)}})
                 db.multiAddOnDao().getWithDesignerFromPlayingModId(id).observe(this, {it?.let{genericMultiAddOnAdapter.submitList(it)}})

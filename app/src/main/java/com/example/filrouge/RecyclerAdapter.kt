@@ -193,7 +193,8 @@ interface GenericIDCbListenerId{
 
 class GenericCommonGameListCbAdapter<T:CommonGame> (
     private val client: GenericCommonGameCbListener,
-    private val addedGeneric:ArrayList<T>
+    private val addedGeneric:ArrayList<T>,
+    val type:String
     ) : ListAdapter<CommonGame, GenericCommonGameListCbAdapter.ViewHolder>(ItemComparator()){
     class ViewHolder(val bind: GameListCbBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -223,17 +224,17 @@ class GenericCommonGameListCbAdapter<T:CommonGame> (
             holder.bind.ivPicture.setImageBitmap(null)
         }
         holder.bind.rootGames.setOnClickListener {
-            client.onGenericClick(datum, holder.bind.cbObject)
+            client.onGenericClick(datum, holder.bind.cbObject, type)
         }
         holder.bind.cbObject.setOnClickListener {
-            client.onGenericClick(datum, holder.bind.cbObject)
+            client.onGenericClick(datum, holder.bind.cbObject, type)
         }
     }
 }
 
 
 interface GenericCommonGameCbListener{
-    fun onGenericClick(datum:CommonGame, view: CheckBox)
+    fun onGenericClick(datum:CommonGame, view: CheckBox, type:String)
 }
 
 

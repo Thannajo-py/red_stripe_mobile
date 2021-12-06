@@ -33,7 +33,7 @@ enum class Type{
     Designer,
     Artist,
     Publisher,
-    PlayingMode,
+    PlayingMod,
     Difficulty,
     Language,
     Tag,

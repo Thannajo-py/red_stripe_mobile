@@ -41,10 +41,10 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        binding.rvGames.adapter = newAdapter
+        binding.rvGame.adapter = newAdapter
         db.gameDao().getAllWithDesigner().observe(this, {it?.let{newAdapter.submitList(it)}})
-        binding.rvGames.layoutManager = GridLayoutManager(this, 1)
-        binding.rvGames.addItemDecoration(MarginItemDecoration(5))
+        binding.rvGame.layoutManager = GridLayoutManager(this, 1)
+        binding.rvGame.addItemDecoration(MarginItemDecoration(5))
         getSave()
     }
 
@@ -91,7 +91,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
         menu?.add(0, MenuId.ChangePassword.ordinal, 0, getString(R.string.change_password))
         menu?.add(0, MenuId.Disconnect.ordinal, 0, getString(R.string.disconnect))
-        menu?.add(0, MenuId.DeleteObject.ordinal, 0, getString(R.string.delete_object))
+        if (currentUser?.delete == true) {
+            menu?.add(0, MenuId.DeleteObject.ordinal, 0, getString(R.string.delete_object))
+        }
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -323,17 +325,17 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                     db.runInTransaction {
                         db.deletedItemDao().deleteAll()
                         db.gameDao().getWithoutServerId().forEach {
-                            dbMethod.delete_link(it)
+                            dbMethod.deleteLink(it)
                             db.gameDao().deleteOne(it.id)
                         }
 
                         db.addOnDao().getWithoutServerId().forEach {
-                            dbMethod.delete_link(it)
+                            dbMethod.deleteLink(it)
                             db.addOnDao().deleteOne(it.id)
                         }
 
                         db.multiAddOnDao().getWithoutServerId().forEach {
-                            dbMethod.delete_link(it)
+                            dbMethod.deleteLink(it)
                             db.multiAddOnDao().deleteOne(it.id)
                         }
 
@@ -346,7 +348,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                 }
                                 result?.deleted_games?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
+                                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb[0])
                                     db.gameDao().deleteOne(it.toLong())
 
                                 }
@@ -363,7 +365,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                 }
                                 result?.deleted_add_ons?.forEach {
                                     val gameInDb = db.addOnDao().getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
+                                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb[0])
                                     db.addOnDao().deleteOne(it.toLong())
 
                                 }
@@ -380,7 +382,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                                 }
                                 result?.deleted_multi_add_ons?.forEach {
                                     val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.delete_link(gameInDb[0])
+                                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb[0])
                                     db.multiAddOnDao().deleteOne(it.toLong())
 
                                 }
@@ -424,9 +426,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
 
-    private fun <T:CommonBase, U:ID, V, W:ID>associativeTableFill(game: T,
+    private fun <T:CommonBase, U:ID, V, W:ID, X>associativeTableFill(game: T,
                                                                   searched_array_list:ArrayList<String>,
-                                                                  gameDao:CommonDao<U>,
+                                                                  gameDao:CommonDao<U, X>,
                                                                   otherDao: CommonCustomInsert<W>,
                                                                   junctionDao:CommonJunctionDAo<V> ){
     val gameL = gameDao.getByServerId(game.id?.toLong() ?: 0)
@@ -454,8 +456,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun <T:CommonBase,U:ID, V, W:ID> commonAssociativeFill(
-        game:T,gameDao:CommonDao<U>,
+    private fun <T:CommonBase,U:ID, V, W:ID, X> commonAssociativeFill(
+        game:T,gameDao:CommonDao<U, X>,
         otherDao: ArrayList<Triple<
                 ArrayList<String>,
                 CommonCustomInsert<out W>,
@@ -497,11 +499,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-
-
-
     private fun apiErrorHandling(e:Exception){
-
         e.printStackTrace()
         runOnUiThread {
             binding.tvGameError.text = getString(R.string.error_content, e.message)
@@ -537,7 +535,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     }
 
-    private fun <T:CommonComponent> loadImages(dao:CommonDao<T>, type:String){
+    private fun <T:CommonComponent, U> loadImages(dao:CommonDao<T, U>, type:String){
         CoroutineScope(SupervisorJob()).launch{
             for (game in dao.getList()){
                 if (dao.getImage(game.name).isEmpty()){
@@ -598,7 +596,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         return textView
     }
 
-    fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
+    private fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
         val ll = LinearLayout(this)
         ll.orientation = LinearLayout.VERTICAL
         ll.gravity = Gravity.CENTER
@@ -652,11 +650,11 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         AlertDialog.Builder(this)
             .setMessage(message)
             .setTitle(getString(R.string.warning))
-            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 run {
                     synchronize(login.text.toString(),pwd.text.toString(), cancel)
                 }
-            }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+            }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
                 Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
             }.setView(ll)
             .show()
@@ -666,7 +664,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         val url = EditText(this)
         val staticUrl = EditText(this)
         val cbIsLocal = CheckBox(this)
-        cbIsLocal.setText(getString(R.string.server_less))
+        cbIsLocal.text = getString(R.string.server_less)
         cbIsLocal.isChecked = isLocal
         val view = arrayListOf<View>(
             addTextView(getString(R.string.url_api)),
@@ -681,7 +679,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         AlertDialog.Builder(this)
             .setMessage(getString(R.string.url_web_message))
             .setTitle(getString(R.string.parameters))
-            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 API_URL = url.text.toString()
                 API_STATIC = staticUrl.text.toString()
                 isLocal = cbIsLocal.isChecked
@@ -694,7 +692,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 startActivity(Intent(this, ViewGamesActivity::class.java))
                 finish()
 
-            }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+            }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
                 Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
             }.setView(ll)
             .show()
@@ -715,12 +713,12 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         val ll = addLinearLayout(view)
         AlertDialog.Builder(this)
             .setTitle(getString(R.string.change_password))
-            .setPositiveButton(getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 run {
                     passwordChange(exPwd, pwd, pwdConfirm)
 
                 }
-            }.setNegativeButton(getString(R.string.cancel)) { dialog, which ->
+            }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
                 Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
             }.setView(ll)
             .show()

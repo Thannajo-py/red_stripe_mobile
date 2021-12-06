@@ -94,7 +94,7 @@ class DbMethod {
         db.multiAddOnLanguageDao()
     )
 
-    fun delete_link(game: ID){
+    fun deleteLink(game: ID){
         when(game){
             is GameTableBean -> db.runInTransaction {
                 getGameTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
@@ -105,11 +105,10 @@ class DbMethod {
             is MultiAddOnTableBean -> db.runInTransaction {
                 getMultiAddOnTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
             }
-
         }
     }
 
-    fun insert_link(game: ID, list:ArrayList<ArrayList<String>>){
+    fun insertLink(game: ID, list:ArrayList<ArrayList<String>>){
         when(game){
             is GameTableBean -> db.runInTransaction {
                 getGameTripleListField(list).forEach {
@@ -126,11 +125,10 @@ class DbMethod {
                     linkList(it.first, it.second, it.third, game.id )
                 }
             }
-
         }
     }
 
-    fun <T:ID, U>linkList(
+    private fun <T:ID, U>linkList(
         name:ArrayList<String>,
         dao:CommonComponentDao<T>,
         joinDao:CommonJunctionDAo<U>,
@@ -138,9 +136,7 @@ class DbMethod {
         name.forEach {
             val list = dao.getByName(it)
             if(list.isNotEmpty()) joinDao.insert(id, list[0].id)
-
         }
-
     }
 
     fun delete(game: ID){
@@ -153,7 +149,6 @@ class DbMethod {
                     )
                 }
                 appInstance.database.gameDao().deleteOne(game.id)
-
             }
             is AddOnTableBean -> db.runInTransaction {
                 getAddOnTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
@@ -173,7 +168,6 @@ class DbMethod {
                 }
                 appInstance.database.multiAddOnDao().deleteOne(game.id)
             }
-
         }
     }
 
@@ -196,7 +190,6 @@ class DbMethod {
             val difficultyL = appInstance.database.difficultyDao().getById(this)
             if (difficultyL.isNotEmpty()) difficulty = difficultyL[0].name
         }
-
         return GameBean(
             game.serverId,
             game.name,
@@ -232,7 +225,6 @@ class DbMethod {
             }.toCollection(ArrayList()),
             game.external_img,
             game.picture)
-
     }
 
     fun convertToBean(game:AddOnTableBean):AddOnBean {
@@ -247,7 +239,6 @@ class DbMethod {
             val gameL = appInstance.database.gameDao().getObjectById(this)
             if (gameL.isNotEmpty()) linkGame = gameL[0].name
         }
-
         return AddOnBean(
             game.serverId,
             game.name,
@@ -268,7 +259,6 @@ class DbMethod {
             linkGame,
             game.external_img,
             game.picture)
-
     }
 
     fun convertToBean(game:MultiAddOnTableBean):MultiAddOnBean {
@@ -278,8 +268,6 @@ class DbMethod {
             val difficultyL = appInstance.database.difficultyDao().getById(this)
             if (difficultyL.isNotEmpty()) difficulty = difficultyL[0].name
         }
-
-
         return MultiAddOnBean(
             game.serverId,
             game.name,
@@ -300,27 +288,25 @@ class DbMethod {
             dao.getGameObjectFromMultiAddOn(game.id).map{it.name}.toCollection(ArrayList()),
             game.external_img,
             game.picture)
-
     }
 
     fun convertToTableBean(it:GameBean):GameTableBean{
-        var gameId: Long = 0L
+        var gameId = 0L
         val gameInDb = db.gameDao().getByServerId(it.id?.toLong() ?: 0L)
         var gameDifficulty: Long? = null
         it.difficulty?.run {
             val listGameDifficulty = db.difficultyDao().getByName(this)
-            if (listGameDifficulty.isNotEmpty()) {
-                gameDifficulty = listGameDifficulty[0].id
+            gameDifficulty = if (listGameDifficulty.isNotEmpty()) {
+                listGameDifficulty[0].id
             } else {
                 val id = db.difficultyDao()
                     .insert(DifficultyTableBean(0, this))
-                gameDifficulty = id
+                id
             }
         }
         if (gameInDb.isNotEmpty()) {
             gameId = gameInDb[0].id
         }
-
         return GameTableBean(
                 gameId,
                 it.id,
@@ -339,29 +325,23 @@ class DbMethod {
                 it.by_player,
                 false
             )
-
     }
 
     fun convertToTableBean(it:AddOnBean):AddOnTableBean{
         val gameInDb = db.addOnDao().getByServerId(it.id?.toLong() ?: 0L)
-        var addOnId: Long = 0L
+        var addOnId = 0L
         var gameDifficulty: Long? = null
         it.difficulty?.run {
             val listGameDifficulty = db.difficultyDao().getByName(this)
             if (listGameDifficulty.isNotEmpty()) gameDifficulty =
                 listGameDifficulty[0].id
-
         }
         var gameId: Long? = null
         it.game?.run {
             val listGame = appInstance.database.gameDao().getByName(this)
             if (listGame.isNotEmpty()) gameId = listGame[0].id
-
         }
-
         if (gameInDb.isNotEmpty()) addOnId = gameInDb[0].id
-
-
         return AddOnTableBean(
                 addOnId,
                 it.id,
@@ -380,22 +360,18 @@ class DbMethod {
                 gameId,
                 false
             )
-
     }
 
     fun convertToTableBean(it:MultiAddOnBean):MultiAddOnTableBean{
-        var gameId: Long = 0L
+        var gameId = 0L
         val gameInDb = db.multiAddOnDao().getByServerId(it.id?.toLong() ?: 0L)
         var gameDifficulty: Long? = null
         it.difficulty?.run {
             val listGameDifficulty = db.difficultyDao().getByName(this)
-
             if (listGameDifficulty.isNotEmpty()) gameDifficulty =
                 listGameDifficulty[0].id
-
         }
         if (gameInDb.isNotEmpty()) gameId = gameInDb[0].id
-
         return MultiAddOnTableBean(
                 gameId,
                 it.id,
@@ -411,7 +387,7 @@ class DbMethod {
                 it.max_time,
                 it.external_img,
                 it.picture,
-                false
+            false
         )
     }
 }

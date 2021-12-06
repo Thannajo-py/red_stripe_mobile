@@ -327,3 +327,28 @@ data class MechanicApiResult(val mechanics:ArrayList<NamedResultBean>)
 
 
 data class CategoriesApiResult(val categories:ArrayList<NamedResultBean>)
+
+data class CommonAddObject(
+        val name: String,
+        val player_min: Int?,
+        val player_max: Int?,
+        val playing_time: String?,
+        val designers: ArrayList<String>,
+        val artists: ArrayList<String>,
+        val publishers: ArrayList<String>,
+        val bgg_link: String?,
+        val playing_mode: ArrayList<String>,
+        val language: ArrayList<String>,
+        val age: Int?,
+        val buying_price: Int?,
+        val stock: Int?,
+        val max_time: Int?,
+        val external_image: String?,
+)
+
+data class GameAddSpecific(
+        val by_player: Boolean,
+        val tags: ArrayList<String>,
+        val topics: ArrayList<String>,
+        val mechanism: ArrayList<String>,
+)
