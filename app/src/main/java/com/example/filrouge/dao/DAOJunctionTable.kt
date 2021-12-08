@@ -9,7 +9,7 @@ import com.example.filrouge.bean.*
 
 interface CommonJunctionDAo<T>{
     fun deleteWithMember1Id(objectId:Long)
-    fun insert(id1:Long, id2:Long)
+    fun insertIds(id1:Long, id2:Long)
 
 }
      
@@ -20,7 +20,7 @@ interface GameMultiAddOnDao: CommonJunctionDAo<GameMultiAddOnTableBean> {
     fun getList(): List<GameMultiAddOnTableBean>
 
     @Query("INSERT INTO gameMultiAddOn(gameId, multiAddOnId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameMultiAddOnTableBean)
@@ -46,7 +46,7 @@ interface GameTagDao: CommonJunctionDAo<GameTagTableBean> {
     fun getList(): List<GameTagTableBean>
 
     @Query("INSERT INTO gameTag(gameId, tagId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameTagTableBean)
@@ -72,7 +72,7 @@ interface GameTopicDao: CommonJunctionDAo<GameTopicTableBean> {
     fun getList(): List<GameTopicTableBean>
 
     @Query("INSERT INTO gameTopic(gameId, topicId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameTopicTableBean)
@@ -98,7 +98,7 @@ interface GameMechanismDao: CommonJunctionDAo<GameMechanismTableBean> {
     fun getList(): List<GameMechanismTableBean>
 
     @Query("INSERT INTO gameMechanism(gameId, mechanismId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameMechanismTableBean)
@@ -124,7 +124,7 @@ interface GameDesignerDao: CommonJunctionDAo<GameDesignerTableBean> {
     fun getList(): List<GameDesignerTableBean>
 
     @Query("INSERT INTO gameDesigner(gameId, designerId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameDesignerTableBean)
@@ -150,7 +150,7 @@ interface AddOnDesignerDao: CommonJunctionDAo<AddOnDesignerTableBean> {
     fun getList(): List<AddOnDesignerTableBean>
 
     @Query("INSERT INTO addOnDesigner(addOnId, designerId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:AddOnDesignerTableBean)
@@ -176,7 +176,7 @@ interface MultiAddOnDesignerDao: CommonJunctionDAo<MultiAddOnDesignerTableBean> 
     fun getList(): List<MultiAddOnDesignerTableBean>
 
     @Query("INSERT INTO multiAddOnDesigner(multiAddOnId, designerId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:MultiAddOnDesignerTableBean)
@@ -202,7 +202,7 @@ interface GameArtistDao: CommonJunctionDAo<GameArtistTableBean> {
     fun getList(): List<GameArtistTableBean>
 
     @Query("INSERT INTO gameArtist(gameId, artistId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameArtistTableBean)
@@ -228,7 +228,7 @@ interface AddOnArtistDao: CommonJunctionDAo<AddOnArtistTableBean> {
     fun getList(): List<AddOnArtistTableBean>
 
     @Query("INSERT INTO addOnArtist(addOnId, artistId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:AddOnArtistTableBean)
@@ -254,7 +254,7 @@ interface MultiAddOnArtistDao: CommonJunctionDAo<MultiAddOnArtistTableBean> {
     fun getList(): List<MultiAddOnArtistTableBean>
 
     @Query("INSERT INTO multiAddOnArtist(multiAddOnId, artistId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:MultiAddOnArtistTableBean)
@@ -280,7 +280,7 @@ interface GamePublisherDao: CommonJunctionDAo<GamePublisherTableBean> {
     fun getList(): List<GamePublisherTableBean>
 
     @Query("INSERT INTO gamePublisher(gameId, publisherId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GamePublisherTableBean)
@@ -306,7 +306,7 @@ interface AddOnPublisherDao: CommonJunctionDAo<AddOnPublisherTableBean> {
     fun getList(): List<AddOnPublisherTableBean>
 
     @Query("INSERT INTO addOnPublisher(addOnId, publisherId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:AddOnPublisherTableBean)
@@ -332,7 +332,7 @@ interface MultiAddOnPublisherDao: CommonJunctionDAo<MultiAddOnPublisherTableBean
     fun getList(): List<MultiAddOnPublisherTableBean>
 
     @Query("INSERT INTO multiAddOnPublisher(multiAddOnId, publisherId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:MultiAddOnPublisherTableBean)
@@ -358,7 +358,7 @@ interface GamePlayingModDao: CommonJunctionDAo<GamePlayingModTableBean> {
     fun getList(): List<GamePlayingModTableBean>
 
     @Query("INSERT INTO gamePlayingMod(gameId, playingModId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GamePlayingModTableBean)
@@ -384,7 +384,7 @@ interface AddOnPlayingModDao: CommonJunctionDAo<AddOnPlayingModTableBean> {
     fun getList(): List<AddOnPlayingModTableBean>
 
     @Query("INSERT INTO addOnPlayingMod(addOnId, playingModId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:AddOnPlayingModTableBean)
@@ -410,7 +410,7 @@ interface MultiAddOnPlayingModDao: CommonJunctionDAo<MultiAddOnPlayingModTableBe
     fun getList(): List<MultiAddOnPlayingModTableBean>
 
     @Query("INSERT INTO multiAddOnPlayingMod(multiAddOnId, playingModId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:MultiAddOnPlayingModTableBean)
@@ -436,7 +436,7 @@ interface GameLanguageDao: CommonJunctionDAo<GameLanguageTableBean> {
     fun getList(): List<GameLanguageTableBean>
 
     @Query("INSERT INTO gameLanguage(gameId, languageId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:GameLanguageTableBean)
@@ -462,7 +462,7 @@ interface AddOnLanguageDao: CommonJunctionDAo<AddOnLanguageTableBean> {
     fun getList(): List<AddOnLanguageTableBean>
 
     @Query("INSERT INTO addOnLanguage(addOnId, languageId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:AddOnLanguageTableBean)
@@ -488,7 +488,7 @@ interface MultiAddOnLanguageDao: CommonJunctionDAo<MultiAddOnLanguageTableBean> 
     fun getList(): List<MultiAddOnLanguageTableBean>
 
     @Query("INSERT INTO multiAddOnLanguage(multiAddOnId, languageId) VALUES (:id1, :id2)")
-    override fun insert(id1: Long, id2:Long)
+    override fun insertIds(id1: Long, id2:Long)
     
     @Insert
     fun insert(line:MultiAddOnLanguageTableBean)

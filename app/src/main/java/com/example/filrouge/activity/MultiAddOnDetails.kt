@@ -17,58 +17,25 @@ import kotlinx.coroutines.launch
 class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
     private val binding: ActivityMultiAddOnDetailBinding by lazy{ ActivityMultiAddOnDetailBinding.inflate(layoutInflater) }
-
-    private val adapter = GenericListAdapter( this)
-
-    private val designerListAdapter = GenericStringListAdapter(this, Type.Designer.name)
-    private val artistListAdapter = GenericStringListAdapter(this, Type.Artist.name)
-    private val publisherListAdapter = GenericStringListAdapter(this, Type.Publisher.name)
-    private val languageListAdapter = GenericStringListAdapter(this, Type.Language.name)
-    private val playingModListAdapter = GenericStringListAdapter(this, Type.PlayingMod.name)
-
-
-
     private val gameId by lazy{intent.extras!!.getSerializable(SerialKey.MultiAddOnId.name) as Long}
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
-        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericStringListAdapter>> =
-            arrayListOf(Pair(binding.rvDesigner,designerListAdapter), Pair(binding.rvArtist, artistListAdapter),
-                Pair(binding.rvPublisher,publisherListAdapter),Pair(binding.rvPlayingMod, playingModListAdapter),
-                Pair(binding.rvLanguage, languageListAdapter))
-        fillCommonRV(commonRvAdapterList)
-
+        fillCommonRV(binding, gameId, this, appInstance.database.multiAddOnDao())
         fillCommonTextView()
-
-        binding.rvMultiAddOn.adapter = adapter
-        layout(binding.rvMultiAddOn)
-        appInstance.database.multiAddOnDao().getGameFromMultiAddOn(gameId).observe(this, {it?.let{
-            adapter.submitList(it)
-        }})
-
-
+        fillGameRV()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension partagée?").setTitle("Attention")
-                .setPositiveButton("ok"){
-                        dialog, which -> CoroutineScope(SupervisorJob()).launch{
-                    val list = appInstance.database.multiAddOnDao().getObjectById(gameId)
-                    if(list.isNotEmpty()){
-                        DbMethod().delete(list[0])
-                    }
-                    startActivity(Intent(this@MultiAddOnDetails, ViewGamesActivity::class.java))
-                    finish()
-                }
-                }.setNegativeButton("cancel"){
-                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                }
-                .show()
+            MenuId.DeleteThis.ordinal -> showAlertBox(
+                this,
+                getString(R.string.delete_multi_add_on),
+                appInstance.database.multiAddOnDao(),
+                Type.MultiAddOn.name,
+                gameId
+            )
             MenuId.ModifyThis.ordinal -> startActivity(
                 Intent(this, AddElement::class.java)
                 .putExtra(SerialKey.ToModifyDataId.name, gameId)
@@ -85,34 +52,16 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
             binding.tvMultiAddOnDetailAge.text = "${it[0].age} et +"
             binding.tvMultiAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
             binding.tvMultiAddOnDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
-        appInstance.database.multiAddOnDao().getDifficulty(gameId).observe(this, {
-            if (it.size > 0) it?.let {
-                val name = it[0].name
-                val id = it[0].id
-                binding.tvDifficulty.text = it[0].name
-                binding.tvDifficulty.setOnClickListener { onDifficultyClick(name,id) }
-            }
-            else binding.tvDifficulty.text = "unknown"
-        })
+        fillDifficultyField(gameId, this, binding.tvDifficulty, appInstance.database.multiAddOnDao())
     }
 
-    fun fillCommonRV(listPairRecyclerViewAdapter:ArrayList<Pair<RecyclerView, GenericStringListAdapter>>){
-        listPairRecyclerViewAdapter.forEach {
-            it.first.adapter = it.second
-            layout(it.first)
-        }
-
-        appInstance.database.multiAddOnDao().getDesigners(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getArtists(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getPublishers(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getPlayingMods(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
-        appInstance.database.multiAddOnDao().getLanguages(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
-
-
+    fun fillGameRV(){
+        val adapter = GenericListAdapter( this)
+        binding.rvMultiAddOn.adapter = adapter
+        layout(binding.rvMultiAddOn)
+        appInstance.database.multiAddOnDao().getGameFromMultiAddOn(gameId).observe(this, {it?.let{
+            adapter.submitList(it)
+        }})
     }
-
-
-
-
 
 }

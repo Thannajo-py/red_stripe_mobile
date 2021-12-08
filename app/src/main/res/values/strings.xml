@@ -53,7 +53,8 @@
     <string name="new_password">Nouveau mot de passe</string>
     <string name="confirm_password">Confirmer mot de passe</string>
     <string name="password_changed">Changement mot de passe effectué</string>
-    <string name="password_do_not_match">Changement mot de passe effectué</string>
+    <string name="password_do_not_match">Les mots de passe sont différents</string>
+    <string name="user_unidentified">Utilisateur non indentifié</string>
     <string name="wrong_password">Changement mot de passe effectué</string>
     <string name="search_result">Résultat de la recherche</string>
     <string name="delete_object">Supprimer les éléments inutilisés</string>
@@ -76,4 +77,8 @@
     <string name="difficulty">Difficulté:</string>
     <string name="difficulties">Difficultés:</string>
     <string name="none">Aucun</string>
+    <string name="playing_time">jusqu\'à %1$s minutes</string>
+    <string name="delete_add_on">"Voulez vous vraiment supprimer cette extension?"</string>
+    <string name="delete_game">"Voulez vous vraiment supprimer ce jeu?"</string>
+    <string name="delete_multi_add_on">"Voulez vous vraiment supprimer cette extension partagée?"</string>
 </resources>

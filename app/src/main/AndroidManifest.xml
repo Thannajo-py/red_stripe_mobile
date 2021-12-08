@@ -21,7 +21,8 @@
         android:theme="@style/Theme.FilRouge">
         <activity
             android:name=".activity.DbObjectDelete"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".activity.ViewGamesActivity"/>
         <activity
             android:name=".activity.APISearchActivity"
             android:exported="true"

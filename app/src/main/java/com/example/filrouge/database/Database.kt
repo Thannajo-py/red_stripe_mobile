@@ -83,7 +83,7 @@ abstract fun multiAddOnPlayingModDao(): MultiAddOnPlayingModDao
 abstract fun gameLanguageDao(): GameLanguageDao
 abstract fun addOnLanguageDao(): AddOnLanguageDao
 abstract fun multiAddOnLanguageDao(): MultiAddOnLanguageDao
-abstract fun deletedItemDao(): DeletedItemDao
+abstract fun deletedContentDao(): DeletedItemDao
 abstract fun imageDao(): ImageDao
 
 companion object{

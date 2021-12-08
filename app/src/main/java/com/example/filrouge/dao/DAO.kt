@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.Flow
 interface CommonDao<T, U>: CommonComponentDao<T>{
     fun getByServerId(id:Long):List<T>
     fun getById(id:Long):Flow<List<T>>
+    fun getObjectById(id:Long): List<T>
     fun getDifficulty(idGame: Long):LiveData<List<DifficultyTableBean>>
     fun getDesigners(idGame:Long): LiveData<List<DesignerTableBean>>
     fun getDesignerObject(idGame:Long): List<DesignerTableBean>
@@ -20,9 +21,12 @@ interface CommonDao<T, U>: CommonComponentDao<T>{
     fun getPlayingModObject(idGame:Long): List<PlayingModTableBean>
     fun getLanguages(idGame:Long): LiveData<List<LanguageTableBean>>
     fun getLanguageObject(idGame:Long): List<LanguageTableBean>
-    fun getList(): List<T>
     fun getImage(name:String): List<ImageTableBean>
     fun getAllWithDesigner():LiveData<List<U>>
+    fun getWithoutServerId():List<T>
+    fun deleteOne(id:Long)
+    fun getList(): List<T>
+    fun insert(data: T) : Long
 }
 
 
@@ -60,8 +64,8 @@ interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     @Query("SELECT * FROM game WHERE id=:id")
     override fun getById(id:Long): Flow<List<GameTableBean>>
 
-    @Query("SELECT * FROM game WHERE id=:gameId")
-    fun getObjectById(gameId:Long): List<GameTableBean>
+    @Query("SELECT * FROM game WHERE id=:id")
+    override fun getObjectById(id:Long): List<GameTableBean>
     
     @Query("SELECT * FROM game WHERE name=:searchedName")
     override fun getByName(searchedName:String): List<GameTableBean>
@@ -70,19 +74,19 @@ interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     override fun getDifficulty(idGame:Long): LiveData<List<DifficultyTableBean>>
 
     @Query("SELECT tag.id AS id, tag.name AS name FROM tag INNER JOIN gameTag ON tagId = tag.id INNER JOIN game ON gameId = :idGame GROUP BY tag.name")
-    fun getTagsOfGame(idGame:Long): LiveData<List<TagTableBean>>
+    fun getTags(idGame:Long): LiveData<List<TagTableBean>>
 
     @Query("SELECT tag.id AS id, tag.name AS name FROM tag INNER JOIN gameTag ON tagId = tag.id INNER JOIN game ON gameId = :idGame GROUP BY tag.name")
     fun getTagObject(idGame:Long): List<TagTableBean>
 
     @Query("SELECT topic.id AS id, topic.name AS name FROM topic INNER JOIN gameTopic ON topicId = topic.id INNER JOIN game ON gameId = :idGame GROUP BY topic.name")
-    fun getTopicsOfGame(idGame:Long): LiveData<List<TopicTableBean>>
+    fun getTopics(idGame:Long): LiveData<List<TopicTableBean>>
 
     @Query("SELECT topic.id AS id, topic.name AS name FROM topic INNER JOIN gameTopic ON topicId = topic.id INNER JOIN game ON gameId = :idGame GROUP BY topic.name")
     fun getTopicObject(idGame:Long): List<TopicTableBean>
 
     @Query("SELECT mechanism.id AS id, mechanism.name AS name FROM mechanism INNER JOIN gameMechanism ON mechanismId = mechanism.id INNER JOIN game ON gameId = :idGame GROUP BY mechanism.name")
-    fun getMechanismsOfGame(idGame:Long): LiveData<List<MechanismTableBean>>
+    fun getMechanisms(idGame:Long): LiveData<List<MechanismTableBean>>
 
     @Query("SELECT mechanism.id AS id, mechanism.name AS name FROM mechanism INNER JOIN gameMechanism ON mechanismId = mechanism.id INNER JOIN game ON gameId = :idGame GROUP BY mechanism.name")
     fun getMechanismObject(idGame:Long): List<MechanismTableBean>
@@ -151,13 +155,13 @@ interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     override fun getByServerId(id:Long):List<GameTableBean>
 
     @Query("SELECT * FROM game WHERE serverId IS NULL")
-    fun getWithoutServerId():List<GameTableBean>
+    override fun getWithoutServerId():List<GameTableBean>
 
     @Query("SELECT * FROM game WHERE hasChanged=1")
     fun getChanged():List<GameTableBean>
 
     @Insert(onConflict =  OnConflictStrategy.REPLACE)
-    fun insert(game: GameTableBean) : Long
+    override fun insert(data: GameTableBean) : Long
     
     @Update
     fun update(game: GameTableBean)
@@ -165,8 +169,8 @@ interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     @Query("DELETE FROM game")
     fun deleteAll()
     
-    @Query("DELETE FROM game WHERE id=:objectId")
-    fun deleteOne(objectId:Long)
+    @Query("DELETE FROM game WHERE id=:id")
+    override fun deleteOne(id:Long)
 }
     
     
@@ -175,8 +179,14 @@ interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("SELECT * FROM addOn ORDER BY name ASC")
     fun getAll(): Flow<List<AddOnTableBean>>
 
-    @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn'  GROUP BY addOn.name ORDER BY addOn.name ASC")
+    @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn' GROUP BY addOn.name ORDER BY addOn.name ASC")
     override fun getAllWithDesigner():LiveData<List<DesignerWithAddOn>>
+
+    @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn' WHERE addOn.name=:name GROUP BY addOn.name")
+    fun getByNameWithDesigner(name:String):List<DesignerWithAddOn>
+
+    @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn LEFT JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id LEFT JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn' WHERE addOn.gameId IS NULL OR addOn.gameId = :gameId GROUP BY addOn.name ORDER BY addOn.name ASC")
+    fun getWithoutGameAndSelectedGameWithDesigner(gameId:Long?):LiveData<List<DesignerWithAddOn>>
 
     @Query("SELECT * FROM image WHERE image.name = :name || 'AddOn'")
     override fun getImage(name: String): List<ImageTableBean>
@@ -193,8 +203,8 @@ interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("SELECT * FROM addOn WHERE id=:id")
     override fun getById(id:Long): Flow<List<AddOnTableBean>>
 
-    @Query("SELECT * FROM addOn WHERE id=:gameId")
-    fun getObjectById(gameId:Long): List<AddOnTableBean>
+    @Query("SELECT * FROM addOn WHERE id=:id")
+    override fun getObjectById(id:Long): List<AddOnTableBean>
 
     @Query("SELECT difficulty.id as id, difficulty.name as name FROM difficulty LEFT JOIN addOn ON difficultyId = difficulty.id WHERE addOn.id = :idGame")
     override fun getDifficulty(idGame:Long): LiveData<List<DifficultyTableBean>>
@@ -232,7 +242,7 @@ interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("SELECT game.id as id, game.name as name, designer.name as designer, image.name as image  FROM game  LEFT JOIN gameDesigner ON  gameDesigner.gameId = game.id LEFT JOIN designer ON designer.id = gameDesigner.designerId LEFT JOIN image on image.name = game.name || 'Game' WHERE game.id=:gameId GROUP BY game.name")
     fun getGameFromAddOn(gameId:Long): LiveData<List<DesignerWithAddOn>>
 
-    @Query("SELECT game.id as id, game.name as name, designer.name as designer, image.name as image FROM addOn LEFT JOIN game ON addOn.gameId = game.id LEFT JOIN gameDesigner ON  gameDesigner.gameId = game.id LEFT JOIN designer ON designer.id = gameDesigner.designerId LEFT JOIN image on image.name = game.name || 'Game' WHERE addOn.gameId=:gameId GROUP BY game.name")
+    @Query("SELECT game.id as id, game.name as name, designer.name as designer, image.name as image FROM addOn LEFT JOIN game ON addOn.gameId = game.id LEFT JOIN gameDesigner ON  gameDesigner.gameId = game.id LEFT JOIN designer ON designer.id = gameDesigner.designerId LEFT JOIN image on image.name = game.name || 'Game' WHERE addOn.id=:gameId GROUP BY game.name")
     fun getGameFromAddOns(gameId:Long): List<DesignerWithGame>
 
     @Query("SELECT addOn.id AS id, addOn.name AS name, designer.name AS designer, image.name as image FROM addOn INNER JOIN addOnDesigner ON addOnDesigner.addOnId = addOn.id INNER JOIN designer ON addOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = addOn.name || 'AddOn' WHERE designer.id = :idDesigner GROUP BY addOn.name ORDER BY addOn.name ASC")
@@ -260,13 +270,13 @@ interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     override fun getByServerId(id:Long):List<AddOnTableBean>
 
     @Query("SELECT * FROM addOn WHERE serverId IS NULL")
-    fun getWithoutServerId():List<AddOnTableBean>
+    override fun getWithoutServerId():List<AddOnTableBean>
 
     @Query("SELECT * FROM addOn WHERE hasChanged=1")
     fun getChanged():List<AddOnTableBean>
 
     @Insert(onConflict =  OnConflictStrategy.REPLACE)
-    fun insert(game: AddOnTableBean) : Long
+    override fun insert(data: AddOnTableBean) : Long
     
     @Update
     fun update(game: AddOnTableBean)
@@ -280,8 +290,8 @@ interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("DELETE FROM addOn")
     fun deleteAll()
     
-    @Query("DELETE FROM addOn WHERE id=:objectId")
-    fun deleteOne(objectId:Long)
+    @Query("DELETE FROM addOn WHERE id=:id")
+    override fun deleteOne(id:Long)
 }
     
     
@@ -290,7 +300,7 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> 
     @Query("SELECT * FROM multiAddOn ORDER BY name ASC")
     fun getAll(): Flow<List<MultiAddOnTableBean>>
 
-    @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn INNER JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id INNER JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
+    @Query("SELECT multiAddOn.id AS id, multiAddOn.name AS name, designer.name AS designer, image.name as image FROM multiAddOn LEFT JOIN multiAddOnDesigner ON multiAddOnDesigner.multiAddOnId = multiAddOn.id LEFT JOIN designer ON multiAddOnDesigner.designerId = designer.id LEFT JOIN image ON image.name = multiAddOn.name || 'MultiAddOn'  GROUP BY multiAddOn.name ORDER BY multiAddOn.name ASC")
     override fun getAllWithDesigner(): LiveData<List<DesignerWithMultiAddOn>>
 
     @Query("SELECT * FROM multiAddOn")
@@ -305,8 +315,8 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> 
     @Query("SELECT * FROM multiAddOn WHERE name=:searchedName")
     override fun getByName(searchedName: String): List<MultiAddOnTableBean>
 
-    @Query("SELECT * FROM game WHERE id=:gameId")
-    fun getObjectById(gameId: Long): List<MultiAddOnTableBean>
+    @Query("SELECT * FROM multiAddOn WHERE id=:id")
+    override fun getObjectById(id: Long): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM multiAddOn WHERE id=:id")
     override fun getById(id: Long): Flow<List<MultiAddOnTableBean>>
@@ -334,7 +344,6 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> 
 
     @Query("SELECT designer.id AS id, designer.name AS name FROM designer INNER JOIN multiAddOnDesigner ON designerId = designer.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY designer.name")
     override fun getDesignerObject(idGame: Long): List<DesignerTableBean>
-
 
     @Query("SELECT artist.id AS id, artist.name AS name FROM artist INNER JOIN multiAddOnArtist ON artistId = artist.id INNER JOIN multiAddOn ON multiAddOnId = :idGame GROUP BY artist.name")
     override fun getArtists(idGame: Long): LiveData<List<ArtistTableBean>>
@@ -399,13 +408,13 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> 
     override fun getByServerId(id: Long): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM multiAddOn WHERE serverId IS NULL")
-    fun getWithoutServerId(): List<MultiAddOnTableBean>
+    override fun getWithoutServerId(): List<MultiAddOnTableBean>
 
     @Query("SELECT * FROM multiAddOn WHERE hasChanged=1")
     fun getChanged(): List<MultiAddOnTableBean>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(game: MultiAddOnTableBean): Long
+    override fun insert(data: MultiAddOnTableBean): Long
 
     @Update
     fun update(game: MultiAddOnTableBean)
@@ -413,8 +422,8 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> 
     @Query("DELETE FROM multiAddOn")
     fun deleteAll()
 
-    @Query("DELETE FROM multiAddOn WHERE id=:objectId")
-    fun deleteOne(objectId: Long)
+    @Query("DELETE FROM multiAddOn WHERE id=:id")
+    override fun deleteOne(id: Long)
 }
     
     
@@ -439,8 +448,8 @@ interface TagDao: CommonCustomInsert<TagTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:TagTableBean)
-    
+    fun insert(newElement: TagTableBean)
+
     @Update
     fun update(game: TagTableBean)
     
@@ -474,8 +483,8 @@ interface TopicDao: CommonCustomInsert<TopicTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:TopicTableBean)
-    
+    fun insert(newElement: TopicTableBean)
+
     @Update
     fun update(game: TopicTableBean)
     
@@ -508,8 +517,8 @@ interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:MechanismTableBean)
-    
+    fun insert(newElement: MechanismTableBean)
+
     @Update
     fun update(game: MechanismTableBean)
     
@@ -545,8 +554,8 @@ interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:DesignerTableBean)
-    
+    fun insert(newElement:DesignerTableBean): Long
+
     @Update
     fun update(game: DesignerTableBean)
     
@@ -579,7 +588,7 @@ interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:ArtistTableBean)
+    fun insert(newElement:ArtistTableBean): Long
 
     @Update
     fun update(game: ArtistTableBean)
@@ -613,8 +622,8 @@ interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:PublisherTableBean)
-    
+    fun insert(newElement:PublisherTableBean): Long
+
     @Update
     fun update(game: PublisherTableBean)
     
@@ -650,8 +659,8 @@ interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     override fun insert(newElement:String)
 
     @Insert
-    fun insert(newElement:PlayingModTableBean)
-    
+    fun insert(newElement:PlayingModTableBean): Long
+
     @Update
     fun update(game: PlayingModTableBean)
     
@@ -685,7 +694,7 @@ interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
 
     @Insert
     fun insert(newElement:LanguageTableBean)
-    
+
     @Update
     fun update(game: LanguageTableBean)
     
@@ -713,6 +722,9 @@ interface DifficultyDao: CommonCustomInsert<DifficultyTableBean> {
 
     @Query("SELECT difficulty.id, difficulty.name FROM difficulty LEFT JOIN game ON game.difficultyId = difficulty.id WHERE game.difficultyId IS NULL")
     override fun getDeletableNameList(): Flow<List<DifficultyTableBean>>
+
+    @Query("SELECT game.id, difficulty.name FROM difficulty LEFT JOIN game ON game.difficultyId = difficulty.id WHERE game.difficultyId IS NULL")
+    fun getDeletableNameList2():List<DifficultyTableBean>
     
     @Query("SELECT * FROM difficulty WHERE name=:searchedName")
     override fun getByName(searchedName:String): List<DifficultyTableBean>
@@ -745,7 +757,7 @@ interface UserDao {
     @Query("SELECT * FROM user ORDER BY login ASC")
     fun checkEmpty(): List<UserTableBean>
 
-    @Insert
+    @Insert(onConflict =  OnConflictStrategy.REPLACE)
     fun insert(user: UserTableBean) : Long
 
     @Query("SELECT * FROM user WHERE login=:name ORDER BY login ASC")
@@ -757,17 +769,16 @@ interface UserDao {
 
 
 @Dao
-interface DeletedItemDao {
+interface DeletedItemDao{
+
     @Query("SELECT * FROM deletedItems")
-    fun getAll(): List<DeletedContentTableBean>
+    fun getList(): List<DeletedContentTableBean>
 
     @Query("SELECT * FROM deletedItems WHERE type=:type")
     fun getByType(type:String): List<DeletedContentTableBean>
 
-
     @Insert
     fun insert(user: DeletedContentTableBean) : Long
-
 
     @Query("DELETE FROM deletedItems")
     fun deleteAll()
@@ -777,11 +788,11 @@ interface DeletedItemDao {
 @Dao
 interface ImageDao {
 
-    @Query("SELECT * FROM image WHERE name=:name")
-    fun getByName(name:String):List<ImageTableBean>
+    @Query("SELECT * FROM image WHERE name=:searchedName")
+    fun getByName(searchedName:String):List<ImageTableBean>
 
     @Query("SELECT * FROM image")
-    fun getAll(): List<ImageTableBean>
+    fun getList(): List<ImageTableBean>
 
     @Insert
     fun insert(user: ImageTableBean) : Long

@@ -1,130 +1,86 @@
 package com.example.filrouge
 
 import com.example.filrouge.bean.*
-import com.example.filrouge.dao.CommonComponentDao
-import com.example.filrouge.dao.CommonJunctionDAo
-import com.example.filrouge.dao.GameDao
-import com.example.filrouge.dao.GameMultiAddOnDao
+import com.example.filrouge.dao.*
 
 
 class DbMethod {
 
     val db = appInstance.database
 
-    fun getGameTripleListField(it:GameBean) = arrayListOf(
-        Triple(it.designers, db.designerDao(), db.gameDesignerDao()),
-        Triple(it.artists, db.artistDao(), db.gameArtistDao()),
-        Triple(it.publishers, db.publisherDao(), db.gamePublisherDao()),
-        Triple(it.playing_mode, db.playingModDao(), db.gamePlayingModDao()),
-        Triple(it.language, db.languageDao(), db.gameLanguageDao()),
-        Triple(it.tags, db.tagDao(), db.gameTagDao()),
-        Triple(it.topics, db.topicDao(), db.gameTopicDao()),
-        Triple(it.mechanism, db.mechanismDao(), db.gameMechanismDao())
+    fun getCommonField() = arrayListOf(
+        Type.Designer.name,
+        Type.Publisher.name,
+        Type.Artist.name,
+        Type.PlayingMod.name,
+        Type.Language.name
     )
 
-    fun getGameTripleListField(it:ArrayList<ArrayList<String>>) = arrayListOf(
-        Triple(it[0], db.designerDao(), db.gameDesignerDao()),
-        Triple(it[1], db.artistDao(), db.gameArtistDao()),
-        Triple(it[2], db.publisherDao(), db.gamePublisherDao()),
-        Triple(it[3], db.playingModDao(), db.gamePlayingModDao()),
-        Triple(it[4], db.languageDao(), db.gameLanguageDao()),
-        Triple(it[5], db.tagDao(), db.gameTagDao()),
-        Triple(it[6], db.topicDao(), db.gameTopicDao()),
-        Triple(it[7], db.mechanismDao(), db.gameMechanismDao()),
-        Triple(it[8], db.multiAddOnDao(), db.gameMultiAddOnDao())
+    fun getGameSpecificField(): ArrayList<String> {
+        val list = getGameCommonSpecificField()
+        list.add(Type.MultiAddOn.name)
+        return list
+    }
+
+    fun getGameCommonSpecificField() = arrayListOf(
+        Type.Tag.name,
+        Type.Topic.name,
+        Type.Mechanism.name,
     )
 
-    fun getAddOnTripleListField(it:ArrayList<ArrayList<String>>) = arrayListOf(
-        Triple(it[0], db.designerDao(), db.addOnDesignerDao()),
-        Triple(it[1], db.artistDao(), db.addOnArtistDao()),
-        Triple(it[2], db.publisherDao(), db.addOnPublisherDao()),
-        Triple(it[3], db.playingModDao(), db.addOnPlayingModDao()),
-        Triple(it[4], db.languageDao(), db.addOnLanguageDao())
+    fun getDeletableList(): ArrayList<String> {
+        val list = getCommonField()
+        list.addAll(getGameCommonSpecificField())
+        list.add(Type.Difficulty.name)
+        return list
+    }
+
+    fun getGameType() = arrayListOf(
+        Type.Game.name,
+        Type.AddOn.name,
+        Type.MultiAddOn.name
     )
 
-    fun getMultiAddOnTripleListField(it:ArrayList<ArrayList<String>>) = arrayListOf(
-        Triple(it[0], db.designerDao(), db.addOnDesignerDao()),
-        Triple(it[1], db.artistDao(), db.addOnArtistDao()),
-        Triple(it[2], db.publisherDao(), db.addOnPublisherDao()),
-        Triple(it[3], db.playingModDao(), db.addOnPlayingModDao()),
-        Triple(it[4], db.languageDao(), db.addOnLanguageDao())
-    )
-
-    fun getAddOnTripleListField(it:AddOnBean) = arrayListOf(
-        Triple(it.designers, db.designerDao(), db.addOnDesignerDao()),
-        Triple(it.artists, db.artistDao(), db.addOnArtistDao()),
-        Triple(it.publishers, db.publisherDao(), db.addOnPublisherDao()),
-        Triple(it.playing_mode, db.playingModDao(), db.addOnPlayingModDao()),
-        Triple(it.language, db.languageDao(), db.addOnLanguageDao())
-    )
-
-    fun getMultiAddOnTripleListField(it:MultiAddOnBean) = arrayListOf(
-        Triple(it.designers, db.designerDao(), db.multiAddOnDesignerDao()),
-        Triple(it.artists, db.artistDao(), db.multiAddOnArtistDao()),
-        Triple(it.publishers, db.publisherDao(), db.multiAddOnPublisherDao()),
-        Triple(it.playing_mode, db.playingModDao(), db.multiAddOnPlayingModDao()),
-        Triple(it.language, db.languageDao(), db.multiAddOnLanguageDao())
-    )
-
-    private fun getGameTableDaoField() = arrayListOf(
-        db.gameDesignerDao(),
-        db.gameArtistDao(),
-        db.gamePublisherDao(),
-        db.gamePlayingModDao(),
-        db.gameLanguageDao(),
-        db.gameTagDao(),
-        db.gameTopicDao(),
-        db.gameMechanismDao(),
-        db.gameMultiAddOnDao()
-    )
-
-    private fun getAddOnTableDaoField() = arrayListOf(
-        db.addOnDesignerDao(),
-        db.addOnArtistDao(),
-        db.addOnPublisherDao(),
-        db.addOnPlayingModDao(),
-        db.addOnLanguageDao()
-    )
-
-    private fun getMultiAddOnTableDaoField() = arrayListOf(
-        db.multiAddOnDesignerDao(),
-        db.multiAddOnArtistDao(),
-        db.multiAddOnPublisherDao(),
-        db.multiAddOnPlayingModDao(),
-        db.multiAddOnLanguageDao()
-    )
-
-    fun deleteLink(game: ID){
-        when(game){
-            is GameTableBean -> db.runInTransaction {
-                getGameTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
-            }
-            is AddOnTableBean -> db.runInTransaction {
-                getAddOnTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
-            }
-            is MultiAddOnTableBean -> db.runInTransaction {
-                getMultiAddOnTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
+    fun deleteLink(game: ID, type: String){
+        getCommonField().forEach {
+            val dao = db.getMember("${type.highToLowCamelCase()}${it}Dao") as CommonJunctionDAo<*>
+            dao.deleteWithMember1Id(game.id)
+        }
+        if (type == Type.Game.name){
+            getGameSpecificField().forEach {
+                val dao = db.getMember("${type.highToLowCamelCase()}${it}Dao") as CommonJunctionDAo<*>
+                dao.deleteWithMember1Id(game.id)
             }
         }
     }
 
-    fun insertLink(game: ID, list:ArrayList<ArrayList<String>>){
-        when(game){
-            is GameTableBean -> db.runInTransaction {
-                getGameTripleListField(list).forEach {
-                    linkList(it.first, it.second, it.third, game.id )
-                }
+    fun<T:CommonDataArrayList> insertLink(game: ID, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
+        findMembers(game, getCommonField(), type, data)
+        if (game is GameTableBean)findMembers(game, getGameSpecificField(), type, data, map)
+    }
+
+    private fun<T:CommonDataArrayList> findMembers(game:ID, list: ArrayList<String>, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
+        list.forEach {
+            val lowercase = it.highToLowCamelCase()
+            val lowerType = type.highToLowCamelCase()
+            val targetList = map?.get(it)?:data.getMember(lowercase)
+            targetList?.run{
+                val list = targetList as ArrayList<String>
+                val targetDao =
+                    appInstance.database.getMember("${lowercase}Dao") as CommonComponentDao<ID>
+                val junctionDao =
+                    appInstance.database.getMember("$lowerType${it}Dao") as CommonJunctionDAo<*>
+                linkList(list, targetDao, junctionDao, game.id)
             }
-            is AddOnTableBean -> db.runInTransaction {
-                getAddOnTripleListField(list).forEach {
-                    linkList(it.first, it.second, it.third, game.id )
-                }
-            }
-            is MultiAddOnTableBean -> db.runInTransaction {
-                getMultiAddOnTripleListField(list).forEach {
-                    linkList(it.first, it.second, it.third, game.id )
-                }
-            }
+        }
+    }
+
+
+    fun setAddOnGameLink(addOnList: ArrayList<CommonGame>, id:Long?){
+        addOnList.forEach {
+            val addOn = appInstance.database.addOnDao().getObjectById(it.id)
+            if (addOn.isNotEmpty()) addOn.first().gameId = id
+            appInstance.database.addOnDao().insert(addOn.first())
         }
     }
 
@@ -135,39 +91,19 @@ class DbMethod {
         id:Long){
         name.forEach {
             val list = dao.getByName(it)
-            if(list.isNotEmpty()) joinDao.insert(id, list[0].id)
+            if(list.isNotEmpty()) joinDao.insertIds(id, list[0].id)
         }
     }
 
-    fun delete(game: ID){
-        when(game){
-            is GameTableBean -> db.runInTransaction {
-                getGameTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
-                game.serverId?.run{
-                    appInstance.database.deletedItemDao().insert(
-                        DeletedContentTableBean(0,this.toLong(), Type.Game.name)
-                    )
-                }
-                appInstance.database.gameDao().deleteOne(game.id)
+    fun delete(game: Previous, type:String){
+        db.runInTransaction {
+            val lowercase = type.highToLowCamelCase()
+            deleteLink(game, type)
+            game.serverId?.run{
+                db.deletedContentDao().insert(DeletedContentTableBean(0, this.toLong(), type))
             }
-            is AddOnTableBean -> db.runInTransaction {
-                getAddOnTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
-                game.serverId?.run{
-                    appInstance.database.deletedItemDao().insert(
-                        DeletedContentTableBean(0,this.toLong(), Type.AddOn.name)
-                    )
-                }
-                appInstance.database.addOnDao().deleteOne(game.id)
-            }
-            is MultiAddOnTableBean -> db.runInTransaction {
-                getMultiAddOnTableDaoField().forEach { it.deleteWithMember1Id(game.id) }
-                game.serverId?.run{
-                    appInstance.database.deletedItemDao().insert(
-                        DeletedContentTableBean(0,this.toLong(), Type.MultiAddOn.name)
-                    )
-                }
-                appInstance.database.multiAddOnDao().deleteOne(game.id)
-            }
+            val dao = db.getMember("${lowercase}Dao")
+            dao!!.getMember("deleteOne", game.id)
         }
     }
 
@@ -179,7 +115,7 @@ class DbMethod {
     ){
         name.forEach {
             val list = dao.getByName(it)
-            if(list.isNotEmpty()) joinDao.insert(list[0].id, id)
+            if(list.isNotEmpty()) joinDao.insertIds(list[0].id, id)
         }
     }
 
@@ -311,7 +247,7 @@ class DbMethod {
                 gameId,
                 it.id,
                 it.name,
-                it.player_min,
+                it.playerMin,
                 it.player_max,
                 it.playing_time,
                 gameDifficulty,
@@ -389,5 +325,14 @@ class DbMethod {
                 it.picture,
             false
         )
+    }
+
+    fun convertStringListToAddOnTableList(list:ArrayList<String>): ArrayList<CommonGame>{
+        val addOnList = ArrayList<CommonGame>()
+        list.forEach {
+            val addOnReturnList = db.addOnDao().getByNameWithDesigner(it)
+            if (addOnReturnList.isNotEmpty()) addOnList.add(addOnReturnList.first())
+        }
+        return addOnList
     }
 }

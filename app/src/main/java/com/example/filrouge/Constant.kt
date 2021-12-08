@@ -1,5 +1,7 @@
 package com.example.filrouge
 
+import com.example.filrouge.bean.*
+
 
 val ALL_MECHANICS = ArrayList<NamedResultBean>()
 val ALL_CATEGORIES = ArrayList<NamedResultBean>()
@@ -45,7 +47,42 @@ enum class Type{
     MultiAddOn
 }
 
-
+enum class SaveDbField{
+    game,
+    addOn,
+    multiAddOn,
+    tag,
+    topic,
+    mechanism,
+    difficulty,
+    designer,
+    artist,
+    publisher,
+    playingMod,
+    language,
+    gameMultiAddOn,
+    gameTag,
+    gameTopic,
+    gameMechanism,
+    gameDesigner,
+    addOnDesigner,
+    multiAddOnDesigner,
+    gameArtist,
+    addOnArtist,
+    multiAddOnArtist,
+    gamePublisher,
+    addOnPublisher,
+    multiAddOnPublisher,
+    gamePlayingMod,
+    addOnPlayingMod,
+    multiAddOnPlayingMod,
+    gameLanguage,
+    addOnLanguage,
+    multiAddOnLanguage,
+    deletedContent,
+    image,
+    user,
+}
 enum class MenuId{
     ApiSearch,
     Synchronize,

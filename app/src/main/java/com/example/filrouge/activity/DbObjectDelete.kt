@@ -22,25 +22,20 @@ class DbObjectDelete : AppCompatActivity(), GenericIDCbListenerId, View.OnClickL
     }
     private val addedContentHashMap = HashMap<String, ArrayList<Long>>()
     private val adapterHashMap = HashMap<String,GenericIDListCbAdapterId>()
-    private val typeList = arrayListOf(
-        Type.Designer.name,
-        Type.Artist.name,
-        Type.Publisher.name,
-        Type.Tag.name,
-        Type.Topic.name,
-        Type.Language.name,
-        Type.Mechanism.name,
-        Type.PlayingMod.name,
-        Type.Difficulty.name,
-    )
     private val listMethod = ListCommonMethod()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        val typeList = getTypeList()
         fillHashMap(typeList)
         bindRvToAdapter(typeList)
         binding.btnDel.setOnClickListener(this)
+    }
+
+    private fun getTypeList():ArrayList<String>{
+        val dbMethod = DbMethod()
+        return dbMethod.getDeletableList()
     }
 
     private fun fillHashMap(typeList:ArrayList<String>){
@@ -57,13 +52,10 @@ class DbObjectDelete : AppCompatActivity(), GenericIDCbListenerId, View.OnClickL
     private fun bindRvToAdapter(typeList:ArrayList<String>){
         typeList.forEach { type ->
             CoroutineScope(SupervisorJob()).launch {
-                val lowercase = type.replaceFirstChar { it.lowercase() }
-                val rv: RecyclerView = binding::class.members.find {
-                    it.name == "rv$type"
-                }!!.call(binding) as RecyclerView
-                val dao: CommonCustomInsert<ID> = appInstance.database::class.members.find {
-                    it.name == "${lowercase}Dao"
-                }!!.call(appInstance.database) as CommonCustomInsert<ID>
+                val lowercase = type.highToLowCamelCase()
+                val rv = binding.getMember("rv$type") as RecyclerView
+                println(appInstance.database.difficultyDao().getDeletableNameList2())
+                val dao = appInstance.database.getMember("${lowercase}Dao") as CommonCustomInsert<ID>
                 runOnUiThread {
                     bindRvToAdapter(rv, type, dao)
                 }
@@ -89,12 +81,12 @@ class DbObjectDelete : AppCompatActivity(), GenericIDCbListenerId, View.OnClickL
         CoroutineScope(SupervisorJob()).launch{
             val db = appInstance.database
             db.runInTransaction {
-                deleteRelatedContent(typeList)
+                deleteRelatedContent(getTypeList())
             }
         }
     }
 
-    fun deleteRelatedContent(typeList:ArrayList<String>){
+    private fun deleteRelatedContent(typeList:ArrayList<String>){
         typeList.forEach { type ->
                 val lowercase = type.replaceFirstChar { it.lowercase() }
                 val dao = appInstance.database::class.members.find {

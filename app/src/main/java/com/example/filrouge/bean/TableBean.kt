@@ -39,6 +39,14 @@ interface CommonGame {
 }
 
 
+interface Previous: ID {
+    override val id: Long
+    override val name: String
+    val serverId: Int?
+    val picture: String?
+}
+
+
 @Entity(tableName = "User")
 data class UserTableBean(
     @PrimaryKey(autoGenerate = true) var id: Long = 0,
@@ -65,7 +73,7 @@ data class DifficultyTableBean(
 )])
 data class GameTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
-    val serverId: Int?,
+    override val serverId: Int?,
     override val name: String,
     override val player_min: Int?,
     override val player_max: Int?,
@@ -80,7 +88,7 @@ data class GameTableBean(
     override val picture:String?,
     val by_player: Boolean?,
     val hasChanged: Boolean
-    ): ID, CommonComponent
+    ): ID, CommonComponent, Previous
 
 
 @Entity(tableName = "addOn", foreignKeys = [ForeignKey(entity = GameTableBean::class,
@@ -90,7 +98,7 @@ data class GameTableBean(
 )])
 data class AddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
-    val serverId: Int?,
+    override val serverId: Int?,
     override val name: String,
     override val player_min: Int?,
     override val player_max: Int?,
@@ -103,10 +111,10 @@ data class AddOnTableBean(
     override val max_time: Int?,
     override val external_img:String?,
     override val picture:String?,
-    val gameId: Long?,
+    var gameId: Long?,
     val hasChanged: Boolean
 
-): ID, CommonComponent
+): ID, CommonComponent, Previous
 
 
 @Entity(tableName = "multiAddOn", foreignKeys = [androidx.room.ForeignKey(
@@ -117,7 +125,7 @@ data class AddOnTableBean(
 )])
 data class MultiAddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
-    val serverId: Int?,
+    override val serverId: Int?,
     override val name: String,
     override val player_min: Int?,
     override val player_max: Int?,
@@ -131,7 +139,7 @@ data class MultiAddOnTableBean(
     override val external_img:String?,
     override val picture:String?,
     val hasChanged: Boolean
-): ID, CommonComponent
+): ID, CommonComponent, Previous
 
 
 @Entity(tableName = "image")
@@ -243,38 +251,43 @@ data class DeletedContentTableBean(
 
 
 data class SavedDatabase(
-    val game: List<GameTableBean>,
-    val addOn: List<AddOnTableBean>,
-    val multiAddOn: List<MultiAddOnTableBean>,
-    val tag: List<TagTableBean>,
-    val topic: List<TopicTableBean>,
-    val mechanism: List<MechanismTableBean>,
-    val user: List<UserTableBean>,
-    val difficulty: List<DifficultyTableBean>,
-    val designer: List<DesignerTableBean>,
-    val artist: List<ArtistTableBean>,
-    val publisher: List<PublisherTableBean>,
-    val playingMod: List<PlayingModTableBean>,
-    val language: List<LanguageTableBean>,
-    val gameMultiAddOn: List<GameMultiAddOnTableBean>,
-    val gameTag: List<GameTagTableBean>,
-    val gameTopic: List<GameTopicTableBean>,
-    val gameMechanism: List<GameMechanismTableBean>,
-    val gameDesigner: List<GameDesignerTableBean>,
-    val addOnDesigner: List<AddOnDesignerTableBean>,
-    val multiAddOnDesigner: List<MultiAddOnDesignerTableBean>,
-    val gameArtist: List<GameArtistTableBean>,
-    val addOnArtist: List<AddOnArtistTableBean>,
-    val multiAddOnArtist: List<MultiAddOnArtistTableBean>,
-    val gamePublisher: List<GamePublisherTableBean>,
-    val addOnPublisher: List<AddOnPublisherTableBean>,
-    val multiAddOnPublisher: List<MultiAddOnPublisherTableBean>,
-    val gamePlayingMod: List<GamePlayingModTableBean>,
-    val addOnPlayingMod: List<AddOnPlayingModTableBean>,
-    val multiAddOnPlayingMod: List<MultiAddOnPlayingModTableBean>,
-    val gameLanguage: List<GameLanguageTableBean>,
-    val addOnLanguage: List<AddOnLanguageTableBean>,
-    val multiAddOnLanguage: List<MultiAddOnLanguageTableBean>,
-    val deletedContent: List<DeletedContentTableBean>,
-    val image: List<ImageTableBean>
+    var game: List<GameTableBean>?=null,
+    var addOn: List<AddOnTableBean>?=null,
+    var multiAddOn: List<MultiAddOnTableBean>?=null,
+    var tag: List<TagTableBean>?=null,
+    var topic: List<TopicTableBean>?=null,
+    var mechanism: List<MechanismTableBean>?=null,
+    var user: List<UserTableBean>?=null,
+    var difficulty: List<DifficultyTableBean>?=null,
+    var designer: List<DesignerTableBean>?=null,
+    var artist: List<ArtistTableBean>?=null,
+    var publisher: List<PublisherTableBean>?=null,
+    var playingMod: List<PlayingModTableBean>?=null,
+    var language: List<LanguageTableBean>?=null,
+    var gameMultiAddOn: List<GameMultiAddOnTableBean>?=null,
+    var gameTag: List<GameTagTableBean>?=null,
+    var gameTopic: List<GameTopicTableBean>?=null,
+    var gameMechanism: List<GameMechanismTableBean>?=null,
+    var gameDesigner: List<GameDesignerTableBean>?=null,
+    var addOnDesigner: List<AddOnDesignerTableBean>?=null,
+    var multiAddOnDesigner: List<MultiAddOnDesignerTableBean>?=null,
+    var gameArtist: List<GameArtistTableBean>?=null,
+    var addOnArtist: List<AddOnArtistTableBean>?=null,
+    var multiAddOnArtist: List<MultiAddOnArtistTableBean>?=null,
+    var gamePublisher: List<GamePublisherTableBean>?=null,
+    var addOnPublisher: List<AddOnPublisherTableBean>?=null,
+    var multiAddOnPublisher: List<MultiAddOnPublisherTableBean>?=null,
+    var gamePlayingMod: List<GamePlayingModTableBean>?=null,
+    var addOnPlayingMod: List<AddOnPlayingModTableBean>?=null,
+    var multiAddOnPlayingMod: List<MultiAddOnPlayingModTableBean>?=null,
+    var gameLanguage: List<GameLanguageTableBean>?=null,
+    var addOnLanguage: List<AddOnLanguageTableBean>?=null,
+    var multiAddOnLanguage: List<MultiAddOnLanguageTableBean>?=null,
+    var deletedContent: List<DeletedContentTableBean>?=null,
+    var image: List<ImageTableBean>?=null
 )
+
+data class IdClass(
+    override val name: String,
+    override val id: Long
+):ID

@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
@@ -19,24 +20,15 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
     private val binding: ActivityAddOnDetailsBinding by lazy{ ActivityAddOnDetailsBinding.inflate(layoutInflater) }
     private val gameId by lazy{ intent.extras!!.getSerializable(SerialKey.AddOnId.name) as Long }
 
-    private val designerListAdapter = GenericStringListAdapter(this, Type.Designer.name)
-    private val artistListAdapter = GenericStringListAdapter(this, Type.Artist.name)
-    private val publisherListAdapter = GenericStringListAdapter(this, Type.Publisher.name)
-    private val languageListAdapter = GenericStringListAdapter(this, Type.Language.name)
-    private val playingModListAdapter = GenericStringListAdapter(this, Type.PlayingMod.name)
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-
         fillCommonTextView()
-        val commonRvAdapterList: ArrayList<Pair<RecyclerView, GenericStringListAdapter>> =
-            arrayListOf(Pair(binding.rvDesigner,designerListAdapter), Pair(binding.rvArtist, artistListAdapter),
-                Pair(binding.rvPublisher,publisherListAdapter),Pair(binding.rvPlayingMod, playingModListAdapter),
-                Pair(binding.rvLanguage, languageListAdapter))
-        fillCommonRV(commonRvAdapterList)
+        fillCommonRV(binding, gameId, this, appInstance.database.addOnDao())
+        fillGameField()
+    }
 
+    fun fillGameField(){
         CoroutineScope(SupervisorJob()).launch{
             val addOn = appInstance.database.addOnDao().getObjectById(gameId)
             if (addOn.isNotEmpty() && addOn[0].gameId != null) {
@@ -64,34 +56,17 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
                 }
             }
         }
-
-
-
-
-
-
-
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            MenuId.DeleteThis.ordinal -> AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer cette extension?").setTitle("Attention")
-                .setPositiveButton("ok"){
-                        dialog, which -> CoroutineScope(SupervisorJob()).launch{
-                        val list = appInstance.database.addOnDao().getObjectById(gameId)
-                        if(list.isNotEmpty()){
-                            DbMethod().delete(list[0])
-                        }
-                        startActivity(Intent(this@AddOnDetails, ViewGamesActivity::class.java))
-                        finish()
-
-                }
-                }.setNegativeButton("cancel"){
-                        dialog, which -> Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
-                }
-                .show()
+            MenuId.DeleteThis.ordinal -> showAlertBox(
+                this,
+                getString(R.string.delete_add_on),
+                appInstance.database.addOnDao(),
+                Type.AddOn.name,
+                gameId
+            )
             MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java)
                 .putExtra(SerialKey.ToModifyDataId.name, gameId)
                 .putExtra(SerialKey.ToModifyDataName.name, binding.tvAddOnDetailName.text)
@@ -101,44 +76,30 @@ class AddOnDetails : GameAddOnMultiAddOnCommonMenu() {
     }
 
 
-    fun fillCommonTextView(){
-        appInstance.database.addOnDao().getById(gameId).asLiveData().observe(this, {if(it.size > 0) it?.let{
-            loadImage(it[0].name, binding.ivDetails, Type.AddOn.name)
-            binding.tvAddOnDetailName.text = it[0].name
-            it[0].age?.run{
-                binding.tvAddOnDetailAge.text = "${it[0].age} et +"
-            }?:run{
 
-            }
-
-            binding.tvAddOnDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
-            binding.tvAddOnDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
-        appInstance.database.addOnDao().getDifficulty(gameId).observe(this, {
+    private fun fillCommonTextView(){
+        appInstance.database.addOnDao().getById(gameId).asLiveData().observe(this, {
             if (it.size > 0) it?.let {
-                val name = it[0].name
-                val id = it[0].id
-                binding.tvDifficulty.text = it[0].name
-                binding.tvDifficulty.setOnClickListener { onDifficultyClick(name,id) }
+                val addOn = it.first()
+                loadImage(addOn.name, binding.ivDetails, Type.AddOn.name)
+                binding.tvAddOnDetailName.text = addOn.name
+                addOn.age?.run {
+                    binding.tvAddOnDetailAge.text = getString(R.string.age, addOn.age.toString())
+                } ?: run {
+                    binding.tvAddOnDetailAge.text = getString(R.string.unknown)
+                }
+
+                binding.tvAddOnDetailPlayingTime.text =
+                    getString(R.string.playing_time, addOn.playing_time)
+                binding.tvAddOnDetailPlayer.text = getString(
+                    R.string.player_number,
+                    addOn.player_min?.toString() ?: getString(R.string.unknown),
+                    addOn.player_max?.toString() ?: getString(R.string.unknown),
+
+                    )
+                fillDifficultyField(gameId,this,binding.tvDifficulty, appInstance.database.addOnDao())
             }
-            else binding.tvDifficulty.text = "unknown"
         })
     }
-
-    fun fillCommonRV(listPairRecyclerViewAdapter:ArrayList<Pair<RecyclerView, GenericStringListAdapter>>){
-        listPairRecyclerViewAdapter.forEach {
-            it.first.adapter = it.second
-            layout(it.first)
-        }
-
-        appInstance.database.addOnDao().getDesigners(gameId).observe(this, {it?.let{designerListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getArtists(gameId).observe(this, {it?.let{artistListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getPublishers(gameId).observe(this, {it?.let{publisherListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getPlayingMods(gameId).observe(this, {it?.let{playingModListAdapter.submitList(it)}})
-        appInstance.database.addOnDao().getLanguages(gameId).observe(this, {it?.let{languageListAdapter.submitList(it)}})
-
-
-    }
-
-
 
 }

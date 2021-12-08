@@ -284,7 +284,7 @@
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvGameDetailAddOn"
+                android:id="@+id/rvAddOn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/game_list" />
@@ -301,7 +301,7 @@
                 android:textStyle="bold" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rvGameDetailMultiAddOn"
+                android:id="@+id/rvMultiAddOn"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 tools:listitem="@layout/game_list" />

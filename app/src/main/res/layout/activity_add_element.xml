@@ -585,7 +585,7 @@
 
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rvGameMultiAddOn"
+                    android:id="@+id/rvMultiAddOn"
                     android:layout_width="match_parent"
                     android:layout_height="150dp" />
 

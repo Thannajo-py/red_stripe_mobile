@@ -16,7 +16,6 @@ import com.example.filrouge.activity.*
 import com.example.filrouge.bean.*
 import com.example.filrouge.dao.CommonCustomInsert
 import com.example.filrouge.dao.CommonDao
-import com.example.filrouge.dao.CommonJunctionDAo
 import com.example.filrouge.databinding.ActivityViewGamesBinding
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
@@ -24,6 +23,8 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
+import kotlin.reflect.KMutableProperty
+import kotlin.reflect.full.memberProperties
 
 
 class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
@@ -33,7 +34,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         ActivityViewGamesBinding.inflate(layoutInflater)
     }
     private val gson = Gson()
-    private val newAdapter = GenericListAdapter(this)
     private val db = appInstance.database
     private val dbMethod = DbMethod()
 
@@ -41,11 +41,16 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
+        fillRvGame()
+        getSave()
+    }
+
+    private fun fillRvGame(){
+        val newAdapter = GenericListAdapter(this)
         binding.rvGame.adapter = newAdapter
         db.gameDao().getAllWithDesigner().observe(this, {it?.let{newAdapter.submitList(it)}})
         binding.rvGame.layoutManager = GridLayoutManager(this, 1)
         binding.rvGame.addItemDecoration(MarginItemDecoration(5))
-        getSave()
     }
 
     override fun onResume() {
@@ -87,8 +92,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
         if(currentUser?.add == true){
             menu?.add(0, MenuId.AddContent.ordinal, 0, getString(R.string.add_element))
+            menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
         }
-        menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
         menu?.add(0, MenuId.ChangePassword.ordinal, 0, getString(R.string.change_password))
         menu?.add(0, MenuId.Disconnect.ordinal, 0, getString(R.string.disconnect))
         if (currentUser?.delete == true) {
@@ -143,357 +148,276 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     private fun saveLocalDatabase(){
-        val db = appInstance.database
         CoroutineScope(SupervisorJob()).launch {
+            val save = SavedDatabase()
             db.runInTransaction {
-                appInstance.sharedPreference.save(gson.toJson(SavedDatabase(
-                    db.gameDao().getList(),
-                    db.addOnDao().getList(),
-                    db.multiAddOnDao().getList(),
-                    db.tagDao().getList(),
-                    db.topicDao().getList(),
-                    db.mechanismDao().getList(),
-                    db.userDao().getList(),
-                    db.difficultyDao().getList(),
-                    db.designerDao().getList(),
-                    db.artistDao().getList(),
-                    db.publisherDao().getList(),
-                    db.playingModDao().getList(),
-                    db.languageDao().getList(),
-                    db.gameMultiAddOnDao().getList(),
-                    db.gameTagDao().getList(),
-                    db.gameTopicDao().getList(),
-                    db.gameMechanismDao().getList(),
-                    db.gameDesignerDao().getList(),
-                    db.addOnDesignerDao().getList(),
-                    db.multiAddOnDesignerDao().getList(),
-                    db.gameArtistDao().getList(),
-                    db.addOnArtistDao().getList(),
-                    db.multiAddOnArtistDao().getList(),
-                    db.gamePublisherDao().getList(),
-                    db.addOnPublisherDao().getList(),
-                    db.multiAddOnPublisherDao().getList(),
-                    db.gamePlayingModDao().getList(),
-                    db.addOnPlayingModDao().getList(),
-                    db.multiAddOnPlayingModDao().getList(),
-                    db.gameLanguageDao().getList(),
-                    db.addOnLanguageDao().getList(),
-                    db.multiAddOnLanguageDao().getList(),
-                    db.deletedItemDao().getAll(),
-                    db.imageDao().getAll()
-                )), SerialKey.SaveDatabase.name)
+                SaveDbField.values().forEach { f->
+                    val name = f.name
+                    val dao = db::class.members.find { it.name == "${name}Dao" }!!.call(db)
+                    val list = dao!!::class.members.find { it.name == "getList" }!!.call(dao)
+                    save::class.memberProperties.filterIsInstance<KMutableProperty<*>>().find{it.name == name}!!.setter.call(save,list)
+                }
+                appInstance.sharedPreference.save(gson.toJson(save), SerialKey.SaveDatabase.name)
+            }
+            runOnUiThread {
+                Toast.makeText(this@ViewGamesActivity, "db save", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
-    private fun loadLocalDatabase(){
-        val db = appInstance.database
 
-        CoroutineScope(SupervisorJob()).launch {
-            db.clearAllTables()
+    private fun loadLocalDatabase(){
+        CoroutineScope(SupervisorJob()).launch{
             db.runInTransaction {
+                db.clearAllTables()
                 val dbSave = gson.fromJson(
                     appInstance.sharedPreference.getValueString(SerialKey.SaveDatabase.name),
                     SavedDatabase::class.java
                 )
-                dbSave.difficulty.forEach { db.difficultyDao().insert(it) }
-                dbSave.game.forEach { db.gameDao().insert(it) }
-                dbSave.addOn.forEach { db.addOnDao().insert(it) }
-                dbSave.multiAddOn.forEach { db.multiAddOnDao().insert(it) }
-                dbSave.tag.forEach { db.tagDao().insert(it) }
-                dbSave.topic.forEach { db.topicDao().insert(it) }
-                dbSave.mechanism.forEach { db.mechanismDao().insert(it) }
-                dbSave.user.forEach { db.userDao().insert(it) }
-                dbSave.designer.forEach { db.designerDao().insert(it) }
-                dbSave.artist.forEach { db.artistDao().insert(it) }
-                dbSave.publisher.forEach { db.publisherDao().insert(it) }
-                dbSave.playingMod.forEach { db.playingModDao().insert(it) }
-                dbSave.language.forEach { db.languageDao().insert(it) }
-                dbSave.gameMultiAddOn.forEach { db.gameMultiAddOnDao().insert(it) }
-                dbSave.gameTag.forEach { db.gameTagDao().insert(it) }
-                dbSave.gameTopic.forEach { db.gameTopicDao().insert(it) }
-                dbSave.gameMechanism.forEach { db.gameMechanismDao().insert(it) }
-                dbSave.gameDesigner.forEach { db.gameDesignerDao().insert(it) }
-                dbSave.addOnDesigner.forEach { db.addOnDesignerDao().insert(it) }
-                dbSave.multiAddOnDesigner.forEach { db.multiAddOnDesignerDao().insert(it) }
-                dbSave.gameArtist.forEach { db.gameArtistDao().insert(it) }
-                dbSave.addOnArtist.forEach { db.addOnArtistDao().insert(it) }
-                dbSave.multiAddOnArtist.forEach { db.multiAddOnArtistDao().insert(it) }
-                dbSave.gamePublisher.forEach { db.gamePublisherDao().insert(it) }
-                dbSave.addOnPublisher.forEach { db.addOnPublisherDao().insert(it) }
-                dbSave.multiAddOnPublisher.forEach { db.multiAddOnPublisherDao().insert(it) }
-                dbSave.gamePlayingMod.forEach { db.gamePlayingModDao().insert(it) }
-                dbSave.addOnPlayingMod.forEach { db.addOnPlayingModDao().insert(it) }
-                dbSave.multiAddOnPlayingMod.forEach { db.multiAddOnPlayingModDao().insert(it) }
-                dbSave.gameLanguage.forEach { db.gameLanguageDao().insert(it) }
-                dbSave.addOnLanguage.forEach { db.addOnLanguageDao().insert(it) }
-                dbSave.multiAddOnLanguage.forEach { db.multiAddOnLanguageDao().insert(it) }
-                dbSave.deletedContent.forEach { db.deletedItemDao().insert(it) }
-                dbSave.image.forEach { db.imageDao().insert(it) }
-
+                SaveDbField.values().forEach{ m->
+                    val name = m.name
+                    val list = dbSave::class.members.find{it.name == name }?.call(dbSave) as ArrayList<*>
+                    list.forEach {
+                        val dao = db::class.members.find{member->member.name == "${name}Dao"}!!.call(db)
+                        dao!!::class.members.find{member->member.name == "insert"}!!.call(dao, it)
+                    }
+                }
             }
         }
     }
+
 
     private fun synchronize(login:String, password:String, cancel:Boolean){
         binding.progressBar.visibility = View.VISIBLE
         binding.tvGameError.visibility = View.GONE
         CoroutineScope(SupervisorJob()).launch {
         val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
-
         var modification = SendApiChange(login,password, ApiResponse(
             ArrayList(), ArrayList(), ArrayList())
             , ApiResponse(ArrayList(), ArrayList(), ArrayList()),
             ApiDelete(ArrayList(), ArrayList(), ArrayList()), timestamp
         )
-
-
         if (!cancel){
-            modification = SendApiChange(login,password, ApiResponse(
-                appInstance.database.gameDao().getWithoutServerId().map{
-                    dbMethod.convertToBean(it)
-                }.toCollection(ArrayList()),
-                appInstance.database.addOnDao().getWithoutServerId().map{
-                    dbMethod.convertToBean(it)
-                }.toCollection(ArrayList()),
-                appInstance.database.multiAddOnDao().getWithoutServerId().map{
-                    dbMethod.convertToBean(it)
-                }.toCollection(ArrayList())
-            )
-                , ApiResponse(
-                    appInstance.database.gameDao().getChanged().map{
-                        dbMethod.convertToBean(it)
-                    }.toCollection(ArrayList()),
-                    appInstance.database.addOnDao().getChanged().map{
-                        dbMethod.convertToBean(it)
-                    }.toCollection(ArrayList()),
-                    appInstance.database.multiAddOnDao().getChanged().map{
-                        dbMethod.convertToBean(it)
-                    }.toCollection(ArrayList()),
-                ),
-                ApiDelete(
-                    appInstance.database.deletedItemDao().getByType(Type.Game.name).map{
-                        DeletedObject(it.idContent.toInt())
-                    }.toCollection(ArrayList()),
-                    appInstance.database.deletedItemDao().getByType(Type.AddOn.name).map{
-                        DeletedObject(it.idContent.toInt())
-                    }.toCollection(ArrayList()),
-                    appInstance.database.deletedItemDao().getByType(Type.MultiAddOn.name).map{
-                        DeletedObject(it.idContent.toInt())
-                    }.toCollection(ArrayList()),
-                    ), timestamp)
+            modification = getDbModification(login, password, timestamp)
         }
-        val content = gson.toJson(ApiBody(modification))
-
-
-
-
-            try {
-                API_URL?.run{
-                    val body = sendPostOkHttpRequest(this, content)
-                    apiReception(body)
-                }
-
-            } catch (e: Exception) {
-                apiErrorHandling(e)
-            }
+            sendApiChangeToServer(modification)
         }
     }
 
+    private fun sendApiChangeToServer(modification:SendApiChange){
+        val content = gson.toJson(ApiBody(modification))
+        println(content)
+        try {
+            API_URL?.run{
+                val body = sendPostOkHttpRequest(this, content)
+                apiReception(body)
+            }
+        }
+        catch (e: Exception) {
+            apiErrorHandling(e)
+        }
+    }
+
+    private fun getDbModification(login:String, password:String, timestamp:Float) =
+    SendApiChange(login,password, ApiResponse(
+        appInstance.database.gameDao().getWithoutServerId().map{
+            dbMethod.convertToBean(it)
+        }.toCollection(ArrayList()),
+        appInstance.database.addOnDao().getWithoutServerId().map{
+            dbMethod.convertToBean(it)
+        }.toCollection(ArrayList()),
+        appInstance.database.multiAddOnDao().getWithoutServerId().map{
+            dbMethod.convertToBean(it)
+        }.toCollection(ArrayList())
+    )
+        , ApiResponse(
+            appInstance.database.gameDao().getChanged().map{
+                dbMethod.convertToBean(it)
+            }.toCollection(ArrayList()),
+            appInstance.database.addOnDao().getChanged().map{
+                dbMethod.convertToBean(it)
+            }.toCollection(ArrayList()),
+            appInstance.database.multiAddOnDao().getChanged().map{
+                dbMethod.convertToBean(it)
+            }.toCollection(ArrayList()),
+        ),
+        ApiDelete(
+            appInstance.database.deletedContentDao().getByType(Type.Game.name).map{
+                DeletedObject(it.idContent.toInt())
+            }.toCollection(ArrayList()),
+            appInstance.database.deletedContentDao().getByType(Type.AddOn.name).map{
+                DeletedObject(it.idContent.toInt())
+            }.toCollection(ArrayList()),
+            appInstance.database.deletedContentDao().getByType(Type.MultiAddOn.name).map{
+                DeletedObject(it.idContent.toInt())
+            }.toCollection(ArrayList()),
+        ), timestamp)
 
 
     private fun apiReception(body:String){
-
         if (body.isNotBlank()){
             val result = gson.fromJson(body, ApiReceive::class.java)
             if (result.timestamp > 0.0){
-                val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
-                if (timestamp < 1.0){
-                    val list = appInstance.database.userDao().checkEmpty()
-                    appInstance.database.clearAllTables()
-                    list.forEach { appInstance.database.userDao().insert(it) }
-                }
-                appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, result.timestamp)
+                actualizeTimeStamp(result.timestamp)
             }
-            if(
-                !result.games.isNullOrEmpty()
-                || !result.add_ons.isNullOrEmpty()
-                || !result.add_ons.isNullOrEmpty()
-            ) {
+            if(!result.isNullOrEmpty()) {
                 CoroutineScope(SupervisorJob()).launch {
-                    db.runInTransaction {
-                        db.deletedItemDao().deleteAll()
-                        db.gameDao().getWithoutServerId().forEach {
-                            dbMethod.deleteLink(it)
-                            db.gameDao().deleteOne(it.id)
-                        }
-
-                        db.addOnDao().getWithoutServerId().forEach {
-                            dbMethod.deleteLink(it)
-                            db.addOnDao().deleteOne(it.id)
-                        }
-
-                        db.multiAddOnDao().getWithoutServerId().forEach {
-                            dbMethod.deleteLink(it)
-                            db.multiAddOnDao().deleteOne(it.id)
-                        }
-
-                    }
-                    result.games?.run {
-                            db.runInTransaction {
-                                val dbGame = db.gameDao()
-                                result.games.forEach {
-                                    dbGame.insert(dbMethod.convertToTableBean(it))
-                                }
-                                result?.deleted_games?.forEach {
-                                    val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb[0])
-                                    db.gameDao().deleteOne(it.toLong())
-
-                                }
-
-                            }
-
-                    }
-
-                    result.add_ons?.run {
-
-                            db.runInTransaction {
-                                result.add_ons.forEach {
-                                    db.addOnDao().insert(dbMethod.convertToTableBean(it))
-                                }
-                                result?.deleted_add_ons?.forEach {
-                                    val gameInDb = db.addOnDao().getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb[0])
-                                    db.addOnDao().deleteOne(it.toLong())
-
-                                }
-
-                            }
-                    }
-
-                    result.multi_add_ons?.run {
-                            db.runInTransaction {
-                                val dbGame = db.multiAddOnDao()
-                                result.multi_add_ons.forEach {
-                                    db.multiAddOnDao().insert(dbMethod.convertToTableBean(it))
-
-                                }
-                                result?.deleted_multi_add_ons?.forEach {
-                                    val gameInDb = dbGame.getByServerId(it.toLong())
-                                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb[0])
-                                    db.multiAddOnDao().deleteOne(it.toLong())
-
-                                }
-                            }
-                    }
-
-                    result.games?.run {
-                        this.forEach {
-                            val listOfTripleFill = dbMethod.getGameTripleListField(it)
-                            commonAssociativeFill(it, db.gameDao(), listOfTripleFill)
-                            gameMultiAddonAssociativeListFill(it)
-                        }
-                    }
-
-                    result.add_ons?.run {
-                        this.forEach {
-                            val listOfTripleFill = dbMethod.getAddOnTripleListField(it)
-                            commonAssociativeFill(it, db.addOnDao(), listOfTripleFill)
-                        }
-                    }
-
-                    result.multi_add_ons?.run {
-                        this.forEach {
-                            val listOfTripleFill = dbMethod.getMultiAddOnTripleListField(it)
-                            commonAssociativeFill(it, db.multiAddOnDao(), listOfTripleFill)
-                        }
-                    }
-
-                    refreshAll()
+                        eraseDeletedItemAndWithoutServerIdItem()
+                        handleResult(result)
+                        refreshAll()
                 }
             }
-
         }
-
         runOnUiThread {
-
             binding.progressBar.visibility = View.GONE
         }
-
     }
 
+    private fun actualizeTimeStamp(timeStamp: Float){
+        val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
+        if (timestamp < 1.0){
+            //a 0.0 timestamp means database reset
+            dbReset()
+        }
+        appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, timeStamp)
+    }
 
+    private fun dbReset(){
+        val list = appInstance.database.userDao().checkEmpty()
+        appInstance.database.clearAllTables()
+        list.forEach { appInstance.database.userDao().insert(it) }
+    }
 
-    private fun <T:CommonBase, U:ID, V, W:ID, X>associativeTableFill(game: T,
-                                                                  searched_array_list:ArrayList<String>,
-                                                                  gameDao:CommonDao<U, X>,
-                                                                  otherDao: CommonCustomInsert<W>,
-                                                                  junctionDao:CommonJunctionDAo<V> ){
-    val gameL = gameDao.getByServerId(game.id?.toLong() ?: 0)
-        if (gameL.isNotEmpty()) {
-            val gameChild = gameL[0]
-            junctionDao.deleteWithMember1Id(gameChild.id)
-            searched_array_list.forEach {
-                CoroutineScope(SupervisorJob()).launch{
-                    db.runInTransaction {
-                        val multiAddOnL = otherDao.getByName(it)
-                        if (multiAddOnL.isNotEmpty()){
-                            val multiAddOn = multiAddOnL[0]
-                            junctionDao.insert(gameChild.id, multiAddOn.id)
+    private fun eraseDeletedItemAndWithoutServerIdItem(){
+        db.runInTransaction {
+            db.deletedContentDao().deleteAll()
+            dbMethod.getGameType().forEach {
+                val lowercase = it.replaceFirstChar { c -> c.lowercase() }
+                val dao = db::class.members.find { p -> p.name == "${lowercase}Dao" }!!
+                    .call(db) as CommonDao<ID, *>
+                dao.getWithoutServerId().forEach { id ->
+                    dbMethod.deleteLink(id, it)
+                    dao.deleteOne(id.id)
+                }
+            }
+        }
+    }
 
-                        }else{
-                            otherDao.insert(it)
-                            val multiAddOnNew = otherDao.getByName(it)
-                            junctionDao.insert(gameChild.id, multiAddOnNew[0].id)
+    private fun handleResult(result:ApiReceive){
+        createDataOfApiResult(result)
+        deleteDataOfApiResult(result)
+        linkDataOfApiResult(result)
+    }
 
+    private fun linkDataOfApiResult(result:ApiReceive){
+        result.game?.run {
+            this.forEach {
+                val gameFieldHashMap = getGameSpecificFieldHashMap(it)
+                val dbGame = db.gameDao().getByName(it.name).first()
+                dbMethod.insertLink(
+                    dbGame,
+                    Type.Game.name,
+                    it,
+                    gameFieldHashMap
+                )
+                dbMethod.setAddOnGameLink(
+                    dbMethod.convertStringListToAddOnTableList(it.addOn), dbGame.id)
+            }
+        }
+
+        result.addOn?.run {
+            this.forEach {
+                val dbGame = db.addOnDao().getByName(it.name).first()
+                dbMethod.insertLink(
+                    dbGame,
+                    Type.AddOn.name,
+                    it
+                )
+            }
+        }
+
+        result.multiAddOn?.run {
+            this.forEach {
+                val dbGame = db.multiAddOnDao().getByName(it.name).first()
+                dbMethod.insertLink(
+                    dbGame,
+                    Type.MultiAddOn.name,
+                    it
+                )
+            }
+        }
+    }
+
+    private fun getGameSpecificFieldHashMap(game:GameBean):HashMap<String, ArrayList<String>>{
+        val hashMap = HashMap<String, ArrayList<String>>()
+        dbMethod.getGameSpecificField().forEach {
+            hashMap[it] = game.getMember(it.highToLowCamelCase()) as ArrayList<String>
+        }
+        return hashMap
+    }
+
+    private fun createDataOfApiResult(result:ApiReceive){
+        val db = appInstance.database
+        val gameTypeList = dbMethod.getGameType()
+        gameTypeList.forEach {
+            val lowercase = it.replaceFirstChar {c-> c.lowercase() }
+            val data = result.getMember(lowercase) as ArrayList<*>?
+            data?.run {
+                db.runInTransaction {
+                    this.forEach { g ->
+                        when (g) {
+                            is GameBean -> insertNewGameData(g)
+                            is AddOnBean ->  db.addOnDao().insert(dbMethod.convertToTableBean(g))
+                            is MultiAddOnBean -> db.multiAddOnDao().insert(dbMethod.convertToTableBean(g))
                         }
-
+                        insertNewCommonData(g)
                     }
                 }
             }
         }
     }
 
-    private fun <T:CommonBase,U:ID, V, W:ID, X> commonAssociativeFill(
-        game:T,gameDao:CommonDao<U, X>,
-        otherDao: ArrayList<Triple<
-                ArrayList<String>,
-                CommonCustomInsert<out W>,
-                CommonJunctionDAo<out V>
-                >>
-    )
-    {
-        otherDao.forEach {
-            associativeTableFill(
-                game,
-                it.first,
-                gameDao,
-                it.second,
-                it.third
-            )
-
+    private fun insertNewGameData(g:GameBean){
+        db.gameDao().insert(dbMethod.convertToTableBean(g))
+        dbMethod.getGameCommonSpecificField().forEach {
+            val lowercase = it.highToLowCamelCase()
+            val list = g.getMember("$lowercase") as ArrayList<String>
+            val dao = db.getMember("${lowercase}Dao") as CommonCustomInsert<*>
+            list.forEach { m->
+                val isAny = dao.getByName(m)
+                if(isAny.isEmpty())dao.insert(m)
+            }
         }
-
     }
 
-    private fun gameMultiAddonAssociativeListFill(it:GameBean){
-        val gameL = db.gameDao().getByServerId(it.id?.toLong() ?: 0)
-        if (gameL.isNotEmpty()) {
-            val gameChild = gameL[0]
-            db.gameMultiAddOnDao().deleteWithMember1Id(gameChild.id)
-            it.multi_add_on.forEach {
-                CoroutineScope(SupervisorJob()).launch{
-                    db.runInTransaction {
-                        val multiAddOnL = db.multiAddOnDao().getByName(it)
-                        if (multiAddOnL.isNotEmpty()){
-                            val multiAddOn = multiAddOnL[0]
-                            db.gameMultiAddOnDao().insert(gameChild.id, multiAddOn.id)
+    private fun insertNewCommonData(g:Any){
+        dbMethod.getCommonField().forEach {
+            val lowercase = it.highToLowCamelCase()
+            val list = g.getMember("$lowercase") as ArrayList<String>
+            val dao = db.getMember("${lowercase}Dao") as CommonCustomInsert<*>
+            list.forEach { m->
+                val isAny = dao.getByName(m)
+                if(isAny.isEmpty())dao.insert(m)
+            }
+        }
+    }
 
-                        }
-
-                    }
+    private fun deleteDataOfApiResult(result: ApiReceive) {
+        val db = appInstance.database
+        val gameTypeList = dbMethod.getGameType()
+        gameTypeList.forEach {
+            val lowercase = it.replaceFirstChar { c->c.lowercase() }
+            val data = result::class.members.find { p ->
+                p.name == "deleted$it"
+            }!!.call(result) as ArrayList<Int>?
+            val dataDb = db::class.members.find{p->
+                p.name == "${lowercase}Dao"
+            }!!.call(db) as CommonDao<ID,*>
+            data?.forEach { id->
+                db.runInTransaction {
+                    val gameInDb = dataDb.getByServerId(id.toLong())
+                    if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb.first(), it)
+                    dataDb.deleteOne(id.toLong())
                 }
             }
         }
@@ -509,7 +433,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-
     override fun onElementClick(datum: CommonGame) {
 
         intent = Intent(this, GameDetails::class.java)
@@ -517,15 +440,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         startActivity(intent)
     }
 
-
-
-
-
     private fun getSave(){
         isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
     }
-
-
 
     private fun refreshAll(){
         loadImages(appInstance.database.gameDao(), Type.Game.name)
@@ -616,7 +533,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     private fun cleanImageList(){
         CoroutineScope(SupervisorJob()).launch{
             appInstance.database.runInTransaction {
-                appInstance.database.imageDao().getAll().forEach {
+                appInstance.database.imageDao().getList().forEach {
                     when(it.gameType){
                         Type.Game.name -> if(appInstance.database.gameDao()
                                 .getByName(it.gameName).isEmpty())deleteImage(it.name)
@@ -715,7 +632,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             .setTitle(getString(R.string.change_password))
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 run {
-                    passwordChange(exPwd, pwd, pwdConfirm)
+                    passwordChangeCheck(exPwd, pwd, pwdConfirm)
 
                 }
             }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
@@ -724,55 +641,52 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             .show()
     }
 
-    private fun passwordChange(exPwd:EditText, pwd:EditText, pwdConfirm:EditText){
-        if(SHA256.encryptThisString(exPwd.text.toString()) == currentUser?.password
-            && currentUser != null){
-            val cUser = currentUser
-            if(pwd.text.toString() == pwdConfirm.text.toString() && cUser != null){
-                if(Regex(RegexPattern.PassWord.pattern).matches(pwd.text.toString())){
-                    CoroutineScope(SupervisorJob()).launch{
-                        val newPasswordUser = UserTableBean(
-                            cUser.id,
-                            cUser.login,
-                            SHA256.encryptThisString(pwd.text.toString()),
-                            cUser.add,
-                            cUser.change,
-                            cUser.delete,
-                            cUser.synchronize,
-                            cUser.addAccount,
-                        cUser.deleteAccount)
-                        appInstance.database.userDao().insert(newPasswordUser)
-                        currentUser = newPasswordUser
-                        Toast.makeText(
-                            this@ViewGamesActivity,
-                            getString(R.string.password_changed),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-                else{
-                    Toast.makeText(
-                        this,
-                        getString(R.string.password_rules),
-                        Toast.LENGTH_LONG
-                    ).show()
-                }
-            }
-            else{
-                Toast.makeText(
-                    this,
-                    getString(R.string.password_do_not_match),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
-        else{
-            Toast.makeText(
-                this,
-                getString(R.string.wrong_password),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
+    private fun passwordChangeCheck(exPwd:EditText, pwd:EditText, pwdConfirm:EditText){
+        currentUser?.run{
+            when(true){
+                !checkPassword(this, exPwd) -> popup(getString(R.string.wrong_password))
+                !checkMatchPwd(pwd, pwdConfirm) -> popup(getString(R.string.password_do_not_match))
+                !regexPwd(pwd) -> popup(getString(R.string.password_rules))
+                else -> passwordChange(pwd, this)
 
+            }
+        }?:run{popup(getString(R.string.user_unidentified))}
+
+    }
+
+    fun checkPassword(user:UserTableBean, etPwd:EditText) =
+        SHA256.encryptThisString(etPwd.text.toString()) == user.password
+
+    fun checkMatchPwd(pwd:EditText, pwd2:EditText) = pwd.text.toString() == pwd2.text.toString()
+
+    fun regexPwd(pwd:EditText) = Regex(RegexPattern.PassWord.pattern).matches(pwd.text.toString())
+
+    fun popup(message:String){
+        Toast.makeText(
+            this,
+            message,
+            Toast.LENGTH_SHORT
+        ).show()
+    }
+
+    fun passwordChange(pwd:EditText, cUser:UserTableBean){
+        CoroutineScope(SupervisorJob()).launch{
+                val newPasswordUser = UserTableBean(
+                    cUser.id,
+                    cUser.login,
+                    SHA256.encryptThisString(pwd.text.toString()),
+                    cUser.add,
+                    cUser.change,
+                    cUser.delete,
+                    cUser.synchronize,
+                    cUser.addAccount,
+                    cUser.deleteAccount
+                )
+                appInstance.database.userDao().insert(newPasswordUser)
+                currentUser = newPasswordUser
+            runOnUiThread {
+                popup(getString(R.string.password_changed))
+            }
+        }
     }
 }
