@@ -15,37 +15,49 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
+
     private val binding by lazy{ActivityDeleteAccountBinding.inflate(layoutInflater)}
     private val accountSelected = ArrayList<UserTableBean>()
     private val accountAdapter = UserBeanAdapter(this, accountSelected)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.btnDel.setOnClickListener(this)
+        fillRvAccount()
+    }
+
+    private fun fillRvAccount(){
         binding.rvAccount.adapter = accountAdapter
         binding.rvAccount.layoutManager = GridLayoutManager(this, 1)
         binding.rvAccount.addItemDecoration(MarginItemDecoration(5))
-        appInstance.database.userDao().getAll().asLiveData().observe(this, {it?.let{accountAdapter.submitList(it)}})
+        appInstance.database.userDao().getAll().asLiveData().observe(
+            this,
+            {it?.let{accountAdapter.submitList(it)}}
+        )
     }
 
     override fun onClick(v: View?) {
-        AlertDialog.Builder(this).setMessage("Voulez vous vraiment supprimer ce jeu?").setTitle("Attention")
-            .setPositiveButton("ok"){
-                    dialog, which -> run{
+        AlertDialog.Builder(this)
+            .setMessage(getString(R.string.delete_accounts))
+            .setTitle(getString(R.string.warning))
+            .setPositiveButton(getString(R.string.ok)){
+                    _, _ -> run{
                 CoroutineScope(SupervisorJob()).launch{
                     accountSelected.forEach {
                         appInstance.database.userDao().deleteUser(it.id)
                     }
                     accountSelected.clear()
                 }
-
-
-
             }
-            }.setNegativeButton("cancel"){
-                    dialog, which -> kotlin.run {
+            }.setNegativeButton(getString(R.string.cancel)){
+                    _, _ -> kotlin.run {
 
-                Toast.makeText(this, "Annulé", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    this,
+                    getString(R.string.canceled),
+                    Toast.LENGTH_SHORT
+                ).show()
             }
             }
             .show()

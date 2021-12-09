@@ -39,7 +39,6 @@
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Title"
                     android:textColor="#673AB7"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -48,13 +47,10 @@
                     android:id="@+id/tvDesigner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Designer"
                     android:textColor="#FFFFFF"
                     android:textSize="18sp"
                     android:textStyle="italic" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

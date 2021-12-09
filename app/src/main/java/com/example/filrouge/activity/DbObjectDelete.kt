@@ -54,8 +54,8 @@ class DbObjectDelete : AppCompatActivity(), GenericIDCbListenerId, View.OnClickL
             CoroutineScope(SupervisorJob()).launch {
                 val lowercase = type.highToLowCamelCase()
                 val rv = binding.getMember("rv$type") as RecyclerView
-                println(appInstance.database.difficultyDao().getDeletableNameList2())
-                val dao = appInstance.database.getMember("${lowercase}Dao") as CommonCustomInsert<ID>
+                val dao = appInstance.database.getMember("${lowercase}Dao")
+                        as CommonCustomInsert<ID>
                 runOnUiThread {
                     bindRvToAdapter(rv, type, dao)
                 }

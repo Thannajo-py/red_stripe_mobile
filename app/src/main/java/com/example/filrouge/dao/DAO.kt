@@ -646,9 +646,6 @@ interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     @Query("SELECT playingMod.id, playingMod.name FROM playingMod LEFT JOIN gamePlayingMod ON gamePlayingMod.playingModId = playingMod.id LEFT JOIN addOnPlayingMod ON addOnPlayingMod.playingModId = playingMod.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.playingModId = playingMod.id WHERE gamePlayingMod.playingModId IS NULL AND addOnPlayingMod.playingModId IS NULL AND multiAddOnPlayingMod.playingModId IS NULL")
     override fun getDeletableNameList(): Flow<List<PlayingModTableBean>>
 
-    @Query("SELECT playingMod.id, playingMod.name FROM playingMod LEFT JOIN gamePlayingMod ON gamePlayingMod.playingModId = playingMod.id LEFT JOIN addOnPlayingMod ON addOnPlayingMod.playingModId = playingMod.id LEFT JOIN multiAddOnPlayingMod ON multiAddOnPlayingMod.playingModId = playingMod.id WHERE gamePlayingMod.playingModId IS NULL AND addOnPlayingMod.playingModId IS NULL AND multiAddOnPlayingMod.playingModId IS NULL")
-    fun getDeletableNameList2(): List<PlayingModTableBean>
-
     @Query("SELECT name FROM playingMod")
     override fun getNameList(): List<String>
     
@@ -722,9 +719,6 @@ interface DifficultyDao: CommonCustomInsert<DifficultyTableBean> {
 
     @Query("SELECT difficulty.id, difficulty.name FROM difficulty LEFT JOIN game ON game.difficultyId = difficulty.id WHERE game.difficultyId IS NULL")
     override fun getDeletableNameList(): Flow<List<DifficultyTableBean>>
-
-    @Query("SELECT game.id, difficulty.name FROM difficulty LEFT JOIN game ON game.difficultyId = difficulty.id WHERE game.difficultyId IS NULL")
-    fun getDeletableNameList2():List<DifficultyTableBean>
     
     @Query("SELECT * FROM difficulty WHERE name=:searchedName")
     override fun getByName(searchedName:String): List<DifficultyTableBean>
@@ -753,9 +747,6 @@ interface UserDao {
 
     @Query("SELECT * FROM user ORDER BY login ASC")
     fun getList():List<UserTableBean>
-
-    @Query("SELECT * FROM user ORDER BY login ASC")
-    fun checkEmpty(): List<UserTableBean>
 
     @Insert(onConflict =  OnConflictStrategy.REPLACE)
     fun insert(user: UserTableBean) : Long

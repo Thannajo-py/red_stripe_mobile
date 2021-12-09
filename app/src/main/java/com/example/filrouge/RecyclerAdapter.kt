@@ -22,8 +22,10 @@ var addOnGame:GameBean? = null
 var isLocal:Boolean = true
 
 
-class UserBeanAdapter (private val client: UserListener, private val addedUserList: ArrayList<UserTableBean>)
-    : ListAdapter<UserTableBean, UserBeanAdapter.ViewHolder>(UserTableBeanComparator()){
+class UserBeanAdapter (
+    private val client: UserListener,
+    private val addedUserList: ArrayList<UserTableBean>
+    ) : ListAdapter<UserTableBean, UserBeanAdapter.ViewHolder>(UserTableBeanComparator()){
 
     class ViewHolder(val bind: AccountListBinding) : RecyclerView.ViewHolder(bind.root)
 
@@ -212,7 +214,6 @@ class GenericCommonGameListCbAdapter<T:CommonGame> (
         holder.bind.tvDesigner.text = datum.designer
         holder.bind.cbObject.isChecked = addedGeneric.contains(datum)
         datum.image?.run{
-
             val file = File(holder.bind.tvDesigner.context.filesDir, this)
             val compressedBitMap = BitmapFactory.decodeByteArray(
                 file.readBytes(),

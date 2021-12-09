@@ -3,11 +3,6 @@ package com.example.filrouge
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-
-fun listEquality(list:ArrayList<String>, otherList:ArrayList<String>) =
-        list.size == otherList.size && list.all{otherList.contains(it)}
-
-
 interface CommonDataArrayList{
         val designer: ArrayList<String>
         val artist: ArrayList<String>
@@ -225,21 +220,4 @@ data class CommonAddObject(
         val stock: Int?,
         val max_time: Int?,
         val external_image: String?,
-):CommonDataArrayList
-
-
-data class GameAddSpecific(
-        val by_player: Boolean,
-        val tags: ArrayList<String>,
-        val topics: ArrayList<String>,
-        val mechanism: ArrayList<String>,
-)
-
-
-data class CommonArrayList(
-        override val designer: ArrayList<String>,
-        override val artist: ArrayList<String>,
-        override val publisher: ArrayList<String>,
-        override val playingMod: ArrayList<String>,
-        override val language: ArrayList<String>,
 ):CommonDataArrayList

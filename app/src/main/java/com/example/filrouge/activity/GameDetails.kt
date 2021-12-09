@@ -1,10 +1,8 @@
 package com.example.filrouge.activity
 
-import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
@@ -17,9 +15,10 @@ import kotlinx.coroutines.launch
 
 class GameDetails : GameAddOnMultiAddOnCommonMenu(){
 
-    private val binding: ActivityGameDetailsBinding by lazy{ ActivityGameDetailsBinding.inflate(layoutInflater) }
+    private val binding: ActivityGameDetailsBinding by lazy{
+        ActivityGameDetailsBinding.inflate(layoutInflater)
+    }
     private val gameId by lazy{intent.extras!!.getSerializable(SerialKey.GameId.name) as Long}
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,17 +30,40 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
         fillCommonTextView()
     }
 
-    fun fillCommonTextView(){
-        appInstance.database.gameDao().getById(gameId).asLiveData().observe(this, {if(it.size > 0) it?.let{
-            loadImage(it[0].name, binding.ivDetails, Type.Game.name)
-            binding.tvGameDetailName.text = it[0].name
-            binding.tvGameDetailAge.text = "${it[0].age} et +"
-            binding.tvGameDetailPlayingTime.text = "jusqu'à ${it[0].max_time} minutes"
-            binding.tvGameDetailPlayer.text = "de ${it[0].player_min} à ${it[0].player_max} joueurs"} })
+    private fun fillCommonTextView(){
+        appInstance.database.gameDao().getById(gameId).asLiveData().observe(
+        this,
+            {
+                it?.let{
+                    if(it.isNotEmpty()) {
+                        val element = it.first()
+                        loadImage(
+                            element.name,
+                            binding.ivDetails,
+                            Type.Game.name,
+                            binding.pbIvDetails
+                        )
+                        binding.tvGameDetailName.text = element.name
+                        binding.tvGameDetailAge.text = getDataStringOrUnknown(
+                            element.age,
+                            R.string.age
+                        )
+                        binding.tvGameDetailPlayingTime.text =getDataStringOrUnknown(
+                            element.playing_time,
+                            R.string.playing_time,
+                        )
+                        binding.tvGameDetailPlayer.text = getPlayerNumberOrUnknown(
+                            element.player_min,
+                            element.player_max,
+                        )
+                    }
+                }
+            }
+        )
         fillDifficultyField(gameId,this, binding.tvDifficulty, appInstance.database.gameDao())
     }
 
-    fun fillGameSpecificRv(){
+    private fun fillGameSpecificRv(){
         val dbMethod = DbMethod()
         dbMethod.getGameCommonSpecificField().forEach{
             CoroutineScope(SupervisorJob()).launch{
@@ -58,23 +80,28 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
         }
     }
 
-    fun fillRvAddOn(){
+    private fun fillRvAddOn(){
         val adapter = GenericListAdapter( this)
         binding.rvAddOn.adapter = adapter
         layout(binding.rvAddOn)
-        appInstance.database.addOnDao().getDesignerWithAddOnOfGame(gameId).observe(this, {it?.let{adapter.submitList(it)}})
+        appInstance.database.addOnDao().getDesignerWithAddOnOfGame(gameId).observe(
+            this,
+            {it?.let{adapter.submitList(it)}}
+        )
     }
 
-    fun fillRvMultiAddOn(){
+    private fun fillRvMultiAddOn(){
         val adapter = GenericListAdapter( this)
         binding.rvMultiAddOn.adapter = adapter
         layout(binding.rvMultiAddOn)
-        appInstance.database.multiAddOnDao().getDesignerWithMultiAddOnOfGame(gameId).observe(this, {it?.let{adapter.submitList(it)}})
+        appInstance.database.multiAddOnDao().getDesignerWithMultiAddOnOfGame(gameId).observe(
+            this,
+            {it?.let{adapter.submitList(it)}}
+        )
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-
             MenuId.DeleteThis.ordinal -> showAlertBox(
                 this,
                 getString(R.string.delete_game),
@@ -82,7 +109,8 @@ class GameDetails : GameAddOnMultiAddOnCommonMenu(){
                 Type.Game.name,
                 gameId
             )
-            MenuId.ModifyThis.ordinal -> startActivity(Intent(this, AddElement::class.java)
+            MenuId.ModifyThis.ordinal -> startActivity(
+                Intent(this, AddElement::class.java)
                 .putExtra(SerialKey.ToModifyDataId.name, gameId)
                 .putExtra(SerialKey.ToModifyDataName.name, binding.tvGameDetailName.text)
                 .putExtra(SerialKey.ToModifyDataType.name, Type.Game.name))

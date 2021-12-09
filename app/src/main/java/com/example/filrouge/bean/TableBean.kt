@@ -121,7 +121,7 @@ data class AddOnTableBean(
     entity = DifficultyTableBean::class,
     parentColumns = ["id"],
     childColumns = ["difficultyId"],
-    onDelete = androidx.room.ForeignKey.SET_NULL
+    onDelete = ForeignKey.SET_NULL
 )])
 data class MultiAddOnTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
@@ -156,17 +156,6 @@ data class DesignerTableBean(
     @PrimaryKey(autoGenerate = true) override var id: Long = 0,
     override val name:String
 ): ID
-
-
-data class DesignerTableBean2(
-    override var id: Long = 0,
-    override val name:String,
-    val idGame:Long,
-    val idAddOn:Long,
-    val idMultiAddOn:Long,
-
-): ID
-
 
 @Entity(tableName = "artist")
 data class ArtistTableBean(
@@ -286,8 +275,3 @@ data class SavedDatabase(
     var deletedContent: List<DeletedContentTableBean>?=null,
     var image: List<ImageTableBean>?=null
 )
-
-data class IdClass(
-    override val name: String,
-    override val id: Long
-):ID

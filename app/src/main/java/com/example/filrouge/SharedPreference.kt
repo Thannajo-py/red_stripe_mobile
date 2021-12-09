@@ -40,7 +40,6 @@ class SharedPreference(val context: Context) {
     }
 
     fun removeValue(KEY_NAME: String) {
-
         val editor: SharedPreferences.Editor = sharedPref.edit()
         editor.remove(KEY_NAME)
         editor.apply()

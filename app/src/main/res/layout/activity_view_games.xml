@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center_horizontal"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".activity.ViewGamesActivity">
 
@@ -13,7 +13,7 @@
         style="?android:attr/progressBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:visibility="gone"
+        android:visibility="visible"
         tools:visibility="visible" />
 
     <TextView
@@ -29,6 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="5dp"
-        tools:listitem="@layout/game_list" />
+        android:visibility="gone"
+        tools:listitem="@layout/game_list"
+        tools:visibility="visible" />
 
 </LinearLayout>

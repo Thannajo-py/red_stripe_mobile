@@ -16,7 +16,9 @@ import kotlinx.coroutines.launch
 
 class Search : AppCompatActivity(), View.OnClickListener {
 
-    private val binding:ActivitySearchBinding by lazy{ActivitySearchBinding.inflate(layoutInflater)}
+    private val binding:ActivitySearchBinding by lazy{
+        ActivitySearchBinding.inflate(layoutInflater)
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)

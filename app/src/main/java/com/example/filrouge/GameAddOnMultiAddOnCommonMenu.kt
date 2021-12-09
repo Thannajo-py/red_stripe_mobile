@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.view.Menu
+import android.view.View
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
@@ -39,10 +41,13 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
                 val adapter = GenericStringListAdapter(this@GameAddOnMultiAddOnCommonMenu, it)
                 val field = dao.getMember("get${it}s", gameId)
                         as LiveData<List<ID>>
+                val pb = binding.getMember("pbRv$it") as ProgressBar
                 runOnUiThread {
                     rv.adapter = adapter
                     layout(rv)
                     field.observe(app, {it?.let{adapter.submitList(it)}})
+                    rv.visibility = View.VISIBLE
+                    pb.visibility = View.GONE
                 }
             }
         }
@@ -77,4 +82,26 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
             }
             .show()
     }
+
+    protected fun getDataStringOrUnknown(data:Any?, id:Int):String{
+        var string = ""
+        data?.run{
+            string = getString(id, data.toString())
+        }?:run{
+            string = getString(R.string.unknown)
+        }
+        return string
+    }
+
+    protected fun getPlayerNumberOrUnknown(playerMin: Int?, playerMax: Int?) =
+        when(true){
+            playerMin == null && playerMax == null -> getString(R.string.unknown)
+            playerMin != null && playerMax != null -> getString(
+                R.string.player_number,
+                playerMin.toString(),
+                playerMax.toString()
+            )
+            playerMin != null -> getString(R.string.player_min, playerMin.toString())
+            else -> getString(R.string.player_max, playerMax.toString())
+        }
 }

@@ -3,7 +3,6 @@ package com.example.filrouge.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
@@ -16,15 +15,21 @@ import kotlinx.coroutines.launch
 
 class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
 
-    private val binding: ActivityCreateNewAccountBinding by lazy{ ActivityCreateNewAccountBinding.inflate(layoutInflater)}
+    private val binding: ActivityCreateNewAccountBinding by lazy{
+        ActivityCreateNewAccountBinding.inflate(layoutInflater)
+    }
     private val db = appInstance.database.userDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         binding.btnRegister.setOnClickListener(this)
+        handleNoUserCase()
+    }
+
+    private fun handleNoUserCase(){
         CoroutineScope(SupervisorJob()).launch{
-            if(db.checkEmpty().isEmpty()){
+            if(db.getList().isEmpty()){
                 runOnUiThread {
                     binding.llCbox.visibility = View.GONE
                 }
@@ -38,50 +43,63 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View?) {
         binding.tvError.visibility = View.GONE
-        if (binding.editTextTextPassword.text.toString() == binding.editTextTextPassword2.text.toString()){
+        CoroutineScope(SupervisorJob()).launch{
             val regex = Regex(RegexPattern.PassWord.pattern)
             val password = binding.editTextTextPassword.text.toString()
             val login = binding.editTextTextPersonName.text.toString()
-            if (regex.matches(password) && login.isNotBlank()){
-                CoroutineScope(SupervisorJob()).launch {
-                    val isUserDbEmpty = db.checkEmpty().isEmpty()
-                    if (!db.getUser(login).isEmpty()) {
-                        runOnUiThread {
-                            Toast.makeText(this@CreateNewAccount, "Login déjà pris", Toast.LENGTH_LONG).show()
-                        }
-                    } else {
-                        val user = UserTableBean(
-                            0,
-                            login,
-                            SHA256.encryptThisString(password),
-                            isSuperAccount(binding.cbAdd, isUserDbEmpty),
-                            isSuperAccount(binding.cbChange, isUserDbEmpty),
-                            isSuperAccount(binding.cbDelete, isUserDbEmpty),
-                            isSuperAccount(binding.cbSynchronize, isUserDbEmpty),
-                            isSuperAccount(binding.cbCreateAccount, isUserDbEmpty),
-                            isSuperAccount(binding.cbDeleteAccount, isUserDbEmpty)
-                        )
-                        if (isUserDbEmpty) {
-                            currentUser = user
-                        }
-                        db.insert(user)
-                        runOnUiThread {
-                            Toast.makeText(this@CreateNewAccount, "Succès!", Toast.LENGTH_LONG).show()
-                            startActivity(Intent(this@CreateNewAccount, ViewGamesActivity::class.java))
-                            finish()
-                        }
-                    }
-                }
+            when(true){
+                !checkPasswordMatch() -> handleError(getString(R.string.password_do_not_match))
+                !checkPassword(password, login, regex) ->
+                    handleError(getString(R.string.password_rules))
+                !checkFreeLogin(login) -> handleError(getString(R.string.login_already_taken))
+                else -> createUser(login, password)
             }
-            else{
-                binding.tvError.text = getString(R.string.password_rules)
-                binding.tvError.visibility = View.VISIBLE
-            }
-        }else{
-            binding.tvError.text =  "les mots de passe ne sont pas identiques"
+        }
+    }
+
+    private fun createUser(login:String, password:String){
+        val isUserDbEmpty = db.getList().isEmpty()
+        val user = UserTableBean(
+            0,
+            login,
+            SHA256.encryptThisString(password),
+            isSuperAccount(binding.cbAdd, isUserDbEmpty),
+            isSuperAccount(binding.cbChange, isUserDbEmpty),
+            isSuperAccount(binding.cbDelete, isUserDbEmpty),
+            isSuperAccount(binding.cbSynchronize, isUserDbEmpty),
+            isSuperAccount(binding.cbCreateAccount, isUserDbEmpty),
+            isSuperAccount(binding.cbDeleteAccount, isUserDbEmpty)
+        )
+        if (isUserDbEmpty) {
+            currentUser = user
+        }
+        db.insert(user)
+        runOnUiThread {
+            Toast.makeText(
+                this@CreateNewAccount,
+                getString(R.string.success),
+                Toast.LENGTH_LONG
+            ).show()
+            startActivity(Intent(this@CreateNewAccount, ViewGamesActivity::class.java))
+            finish()
+        }
+    }
+
+    private fun checkFreeLogin(login:String) = db.getUser(login).isEmpty()
+
+    private fun handleError(message:String){
+        runOnUiThread {
+            binding.tvError.text =  message
             binding.tvError.visibility = View.VISIBLE
         }
     }
 
-    private fun isSuperAccount(view:CheckBox, isUserDbEmpty:Boolean) = if (isUserDbEmpty) true else view.isChecked
+    private fun checkPassword(password: String, login: String, regex:Regex) =
+        regex.matches(password) && login.isNotBlank()
+
+    private fun checkPasswordMatch() =
+        binding.editTextTextPassword.text.toString() == binding.editTextTextPassword2.text.toString()
+
+    private fun isSuperAccount(view:CheckBox, isUserDbEmpty:Boolean) =
+        if (isUserDbEmpty) true else view.isChecked
 }

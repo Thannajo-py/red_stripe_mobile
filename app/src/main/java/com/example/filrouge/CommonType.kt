@@ -2,12 +2,14 @@ package com.example.filrouge
 
 import android.content.Intent
 import android.graphics.BitmapFactory
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.activity.*
 import com.example.filrouge.bean.*
+import com.example.filrouge.dao.CommonDao
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -22,18 +24,19 @@ abstract class CommonType
         list.addItemDecoration(MarginItemDecoration(5))
     }
 
-    fun loadImage(element:String, image: ImageView, type:String){
+    fun loadImage(element:String, image: ImageView, type:String, pb:ProgressBar){
         CoroutineScope(SupervisorJob()).launch {
-            when (type) {
-                Type.Game.name -> if (appInstance.database.gameDao().getImage(element)
-                        .isNotEmpty()
-                ) getFile("$element$type", image) else image.setImageBitmap(null)
-                Type.AddOn.name -> if (appInstance.database.addOnDao().getImage(element)
-                        .isNotEmpty()
-                ) getFile("$element$type", image) else image.setImageBitmap(null)
-                Type.MultiAddOn.name -> if (appInstance.database.multiAddOnDao().getImage(element)
-                        .isNotEmpty()
-                ) getFile("$element$type", image) else image.setImageBitmap(null)
+            val lowCamelCase = type.highToLowCamelCase()
+            val dao = appInstance.database.getMember("${lowCamelCase}Dao") as CommonDao<*, *>
+            val imageList = dao.getImage(element)
+            if (imageList.isNotEmpty()) {
+                getFile("$element$type", image)
+            } else {
+                image.setImageBitmap(null)
+            }
+            runOnUiThread {
+                pb.visibility = View.GONE
+                image.visibility = View.VISIBLE
             }
         }
     }

@@ -21,7 +21,7 @@ fun sendPostOkHttpRequest(url: String, paramJson:String): String {
     return if (response.code !in 200..299) {
         throw Exception("Réponse du serveur incorrect : ${response.code}")
     } else {
-//Résultat de la requete.
+        //Résultat de la requete.
         response.body?.string() ?: ""
     }
 }
@@ -34,6 +34,7 @@ fun sendGetOkHttpRequestImage(url: String): ByteArray? {
     return if (response.code !in 200..299) {
         throw Exception("Réponse du serveur incorrect : ${response.code}")
     } else {
+        //Résultat de la requete.
         response.body?.bytes()
     }
 }
@@ -46,6 +47,7 @@ fun sendGetOkHttpRequest(url: String): String? {
     return if (response.code !in 200..299) {
         throw Exception("Réponse du serveur incorrect : ${response.code}")
     } else {
+        //Résultat de la requete.
         response.body?.string()
     }
 }

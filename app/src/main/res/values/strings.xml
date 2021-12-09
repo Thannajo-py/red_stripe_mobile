@@ -7,6 +7,8 @@
     <string name="delete">Supprimer</string>
     <string name="modify">Modifier</string>
     <string name="player_number">de %1$s à %2$s joueurs</string>
+    <string name="player_min">depuis %1$s joueurs</string>
+    <string name="player_max">Jusqu\'à %1$s joueurs</string>
     <string name="age">%1$s et plus</string>
     <string name="unknown">Inconnu</string>
     <string name="password_rules">
@@ -27,6 +29,7 @@
     <string name="download_images">Télécharger les images</string>
     <string name="add_account">Ajouter un compte</string>
     <string name="delete_account">Supprimer un compte</string>
+    <string name="delete_accounts">Voulez vous vraiment supprimer ces comptes?</string>
     <string name="add_element">Ajouter un élément</string>
     <string name="api_add_element">Ajouter un élément avec BGA</string>
     <string name="change_password">Changer de mot de passe</string>
@@ -78,7 +81,25 @@
     <string name="difficulties">Difficultés:</string>
     <string name="none">Aucun</string>
     <string name="playing_time">jusqu\'à %1$s minutes</string>
-    <string name="delete_add_on">"Voulez vous vraiment supprimer cette extension?"</string>
-    <string name="delete_game">"Voulez vous vraiment supprimer ce jeu?"</string>
-    <string name="delete_multi_add_on">"Voulez vous vraiment supprimer cette extension partagée?"</string>
+    <string name="delete_add_on">Voulez vous vraiment supprimer cette extension?</string>
+    <string name="delete_game">Voulez vous vraiment supprimer ce jeu?</string>
+    <string name="delete_multi_add_on">
+        Voulez vous vraiment supprimer cette extension partagée?
+    </string>
+    <string name="wrong_login_or_password">Login ou mot de passe incorrect</string>
+    <string name="login_already_taken">Login déjà pris</string>
+    <string name="success">Succès</string>
+    <string name="name_cannot_be_empty">Le nom ne peut pas être vide</string>
+    <string name="take_photo">Prendre une photo</string>
+    <string name="add_external_url">Ajouter un lien vers une url</string>
+    <string name="get_image_from_storage">Choisir une image dans la mémoire</string>
+    <string name="delete_image">Supprimer l\'image</string>
+    <string name="reset_image">Réinitialiser l\'image</string>
+    <string name="external_image_link_copy">copier le ien vers l\'image externe</string>
+    <string name="external_image_link">lien vers l\'image externe</string>
+    <string name="authorization_required">Permission nécessaire</string>
+    <string name="name_already_exist">
+        Un élément de la même catégorie portant le même nom existe déjà!
+    </string>
+
 </resources>

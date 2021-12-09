@@ -14,69 +14,108 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private val binding: ActivityMainBinding by lazy{ ActivityMainBinding.inflate(layoutInflater) }
-    val dbUser = appInstance.database.userDao()
+    private val dbUser = appInstance.database.userDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        API_URL = appInstance.sharedPreference.getValueString(SerialKey.APIUrl.name)
-        API_STATIC = appInstance.sharedPreference.getValueString(SerialKey.APIStaticUrl.name)
+        recoverApiStatic()
+        handleNoUser()
         binding.btnLogin.setOnClickListener(this)
+        handleRememberedUser()
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+        displayLoginField()
+    }
+
+    private fun handleRememberedUser(){
         appInstance.sharedPreference.getValueString(SerialKey.SavedUser.name)?.run{
             val userRemembered = gson.fromJson(this,UserTableBean::class.java)
             CoroutineScope(SupervisorJob()).launch{
                 val savedUserList = dbUser.getUser(userRemembered.login)
-                if(savedUserList.isNotEmpty()){
-                    val savedUser = savedUserList[0]
-                    if (savedUser == userRemembered){
-                        currentUser = userRemembered
-                        startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
-                    }
+                when(true){
+                    savedUserList.isEmpty() -> displayLoginField()
+                    rememberedUserError(savedUserList, userRemembered) -> displayLoginField()
+                    else -> autoLogin(userRemembered)
                 }
             }
+        }?:run{
+            displayLoginField()
         }
+    }
+
+    private fun rememberedUserError(userList:List<UserTableBean>, userRemembered: UserTableBean) =
+        userList.first() != userRemembered
+
+    private fun autoLogin(userRemembered:UserTableBean){
+        currentUser = userRemembered
+        startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
+    }
+
+    private fun displayLoginField(){
+        runOnUiThread {
+            binding.progressBarRegisterUser.visibility = View.GONE
+            binding.llLoginField.visibility = View.VISIBLE
+        }
+    }
+
+   private fun handleNoUser(){
         CoroutineScope(SupervisorJob()).launch {
-            if (dbUser.checkEmpty().isEmpty()) {
+            if (dbUser.getList().isEmpty()) {
                 startActivity(Intent(this@MainActivity, CreateNewAccount::class.java))
             }
         }
-
     }
 
+    private fun recoverApiStatic(){
+        API_URL = appInstance.sharedPreference.getValueString(SerialKey.APIUrl.name)
+        API_STATIC = appInstance.sharedPreference.getValueString(SerialKey.APIStaticUrl.name)
+    }
 
     override fun onClick(v: View?) {
-
-        binding.tvLoginError.visibility = View.GONE
-        binding.progressBarLogin.visibility = View.VISIBLE
+        startLoading()
         val password = binding.etPassword.text.toString()
         val login = binding.etLogin.text.toString()
-
         CoroutineScope(SupervisorJob()).launch{
             val userLogin = dbUser.getUser(login)
-            if (userLogin.isNotEmpty() &&
-                SHA256.encryptThisString(password) == userLogin[0].password){
-                if(binding.checkBox.isChecked){
-                    appInstance.sharedPreference.save(gson.toJson(userLogin[0]), SerialKey.SavedUser.name)
-                }
-                else{
-                    appInstance.sharedPreference.removeValue(SerialKey.SavedUser.name)
-                }
-                currentUser = userLogin[0].copy()
-                startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
+            when(true){
+                userLogin.isEmpty() -> handleLoginPasswordError()
+                !checkLoginPassword(password, userLogin) -> handleLoginPasswordError()
+                else -> manualLogin(userLogin.first())
             }
-            else{
-                runOnUiThread {
-                    binding.tvLoginError.text = "Wrong login or password"
-                    binding.tvLoginError.visibility = View.VISIBLE
-                }
-
-            }
-            runOnUiThread {
-                binding.progressBarLogin.visibility = View.GONE
-            }
-
+            endLoading()
         }
-
     }
 
+    private fun checkLoginPassword(password:String, userLogin:List<UserTableBean>) =
+        SHA256.encryptThisString(password) == userLogin.first().password
+
+    private fun handleLoginPasswordError(){
+        runOnUiThread {
+            binding.tvLoginError.text = getString(R.string.wrong_login_or_password)
+            binding.tvLoginError.visibility = View.VISIBLE
+        }
+    }
+
+    private fun manualLogin(user:UserTableBean){
+        if(binding.checkBox.isChecked){
+            appInstance.sharedPreference.save(gson.toJson(user), SerialKey.SavedUser.name)
+        }
+        else{
+            appInstance.sharedPreference.removeValue(SerialKey.SavedUser.name)
+        }
+        currentUser = user.copy()
+        startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
+    }
+
+    private fun startLoading(){
+        binding.tvLoginError.visibility = View.GONE
+        binding.progressBarLogin.visibility = View.VISIBLE
+    }
+
+    private fun endLoading() = runOnUiThread {
+        binding.progressBarLogin.visibility = View.GONE
+    }
 }
