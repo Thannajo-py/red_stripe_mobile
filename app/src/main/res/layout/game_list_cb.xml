@@ -56,8 +56,5 @@
                     android:textStyle="italic" />
             </LinearLayout>
         </LinearLayout>
-
     </LinearLayout>
-
-
 </androidx.cardview.widget.CardView>

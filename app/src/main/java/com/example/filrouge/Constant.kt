@@ -1,8 +1,5 @@
 package com.example.filrouge
 
-import com.example.filrouge.bean.*
-
-
 val ALL_MECHANICS = ArrayList<NamedResultBean>()
 val ALL_CATEGORIES = ArrayList<NamedResultBean>()
 
@@ -47,6 +44,7 @@ enum class Type{
     MultiAddOn
 }
 
+
 enum class SaveDbField{
     Game,
     AddOn,
@@ -83,6 +81,8 @@ enum class SaveDbField{
     Image,
     User,
 }
+
+
 enum class MenuId{
     ApiSearch,
     Synchronize,
@@ -109,20 +109,7 @@ enum class MenuId{
 
 
 enum class RegexPattern(val pattern:String){
-    PassWord("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{6,}$")
-}
-
-
-enum class AddedContent{
-    Designer,
-    Artist,
-    Publisher,
-    Tag,
-    Topic,
-    Language,
-    Mechanism,
-    PlayingMod,
-    Difficulty,
+    PassWord("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$")
 }
 
 

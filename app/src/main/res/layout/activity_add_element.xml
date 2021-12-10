@@ -35,7 +35,7 @@
                 android:id="@+id/ivPictureChoice"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:contentDescription="Game image"
+                android:contentDescription="@string/game_picture"
                 app:srcCompat="@android:drawable/ic_menu_gallery"
                 android:visibility="gone"
                 tools:visibility="visible" />
@@ -49,20 +49,12 @@
                 tools:visibility="visible" />
         </androidx.cardview.widget.CardView>
 
-        <CheckBox
-            android:id="@+id/cb_del_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Supprimer l'image actuelle"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Nom:"
+            android:text="@string/name"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -76,7 +68,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="Pathfinder"
+            android:hint="@string/pathfinder"
             android:autofillHints="name"
             android:inputType="textPersonName" />
 
@@ -85,7 +77,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Type:"
+            android:text="@string/type"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -100,19 +92,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Jeu" />
+                android:text="@string/game" />
 
             <RadioButton
                 android:id="@+id/rb_add_on"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Extension" />
+                android:text="@string/add_on" />
 
             <RadioButton
                 android:id="@+id/rb_multi_add_on"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="extension partagées" />
+                android:text="@string/multi_add_on" />
         </RadioGroup>
 
         <TextView
@@ -120,7 +112,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Auteur:"
+            android:text="@string/designers"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -143,7 +135,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:contentDescription="@string/add"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:focusable="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvDesigner"
@@ -166,7 +160,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Illustrateur:"
+            android:text="@string/artists"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -189,7 +183,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:contentDescription="@string/add"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:focusable="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvArtist"
@@ -211,7 +207,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Editeur:"
+            android:text="@string/publishers"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -232,7 +228,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:contentDescription="@string/game_picture"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:focusable="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPublisher"
@@ -254,7 +252,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Nombre de joueurs minimum:"
+            android:text="@string/min_player_number"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -268,7 +266,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="1"
+            android:hint="@string/one"
             android:inputType="number" />
 
         <TextView
@@ -276,7 +274,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Nombre de joueurs maximum:"
+            android:text="@string/max_player_number"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -290,7 +288,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="4"
+            android:hint="@string/four"
             android:inputType="number" />
 
         <TextView
@@ -298,7 +296,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Temps de jeu maximum(en minutes):"
+            android:text="@string/max_time"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -312,7 +310,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="90"
+            android:hint="@string/ninety"
             android:inputType="number" />
 
         <TextView
@@ -320,7 +318,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Difficulté:"
+            android:text="@string/difficulty"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -334,7 +332,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="vétéran"
+            android:hint="@string/veteran"
             android:inputType="textPersonName" />
 
         <androidx.recyclerview.widget.RecyclerView
@@ -347,7 +345,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Age minimum:"
+            android:text="@string/min_age"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -361,7 +359,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="7"
+            android:hint="@string/seven"
             android:inputType="number" />
 
         <TextView
@@ -370,7 +368,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Mode de jeu:"
+            android:text="@string/playing_mods"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -391,7 +389,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            android:contentDescription="@string/add"
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:focusable="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvPlayingMod"
@@ -414,7 +414,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="Language:"
+            android:text="@string/languages"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -433,10 +433,12 @@
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/btn_language_add"
+            android:contentDescription="@string/add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            app:srcCompat="@android:drawable/ic_input_add" />
+            app:srcCompat="@android:drawable/ic_input_add"
+            android:focusable="true" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvLanguage"
@@ -459,7 +461,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="lien externe:"
+            android:text="@string/external_link"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -473,7 +475,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="http://www.bgg.com"
+            android:hint="@string/bgg_link_example"
             android:inputType="textPersonName" />
 
         <TextView
@@ -481,7 +483,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="nombre:"
+            android:text="@string/number"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -495,7 +497,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="1"
+            android:hint="@string/one"
             android:inputType="number" />
 
         <TextView
@@ -503,7 +505,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
-            android:text="prix d'achat:"
+            android:text="@string/buying_price"
             android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -517,7 +519,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:ems="10"
-            android:hint="25"
+            android:hint="@string/twenty_five"
             android:inputType="number" />
 
         <LinearLayout
@@ -535,7 +537,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Tag:"
+                android:text="@string/tags"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -555,8 +557,10 @@
                 android:id="@+id/btn_tag_add"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:contentDescription="@string/add"
                 android:clickable="true"
-                app:srcCompat="@android:drawable/ic_input_add" />
+                app:srcCompat="@android:drawable/ic_input_add"
+                android:focusable="true" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTag"
@@ -578,7 +582,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Thèmes:"
+                android:text="@string/topics"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -599,7 +603,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                app:srcCompat="@android:drawable/ic_input_add" />
+                android:contentDescription="@string/add"
+                app:srcCompat="@android:drawable/ic_input_add"
+                android:focusable="true" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvTopic"
@@ -621,7 +627,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Mécanique de jeu:"
+                android:text="@string/mechanisms"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -643,6 +649,7 @@
                 android:layout_height="wrap_content"
                 android:focusable="true"
                 android:clickable="true"
+                android:contentDescription="@string/add"
                 app:srcCompat="@android:drawable/ic_input_add" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -665,7 +672,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="extensions multiples associées"
+                android:text="@string/multi_add_ons"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -681,7 +688,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="extensions associées"
+                android:text="@string/add_ons"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -696,7 +703,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="temps de jeu par joueur"
+                android:text="@string/by_player"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -713,7 +720,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="vrai" />
+                    android:text="@string/right" />
 
                 <RadioButton
                     android:id="@+id/rb_by_player_false"
@@ -721,7 +728,7 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:checked="true"
-                    android:text="faux" />
+                    android:text="@string/wrong" />
 
             </RadioGroup>
 
@@ -741,7 +748,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="jeu associé"
+                android:text="@string/link_game"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -752,7 +759,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:ems="10"
-                android:text="aucun"
+                android:text="@string/none"
                 android:textAlignment="center"
                 android:textColor="#000000"
                 android:textSize="16sp" />
@@ -777,7 +784,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="jeux associés"
+                android:text="@string/link_games"
                 android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -794,7 +801,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="error"
+            android:text="@string/error"
             android:textColor="#FB0000"
             android:textSize="20sp"
             android:visibility="gone"
@@ -804,7 +811,7 @@
             android:id="@+id/btn_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="ajouter" />
+            android:text="@string/add" />
 
     </LinearLayout>
 </ScrollView>

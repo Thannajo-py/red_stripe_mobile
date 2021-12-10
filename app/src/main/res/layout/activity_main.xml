@@ -32,7 +32,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
             android:ems="10"
-            android:hint="Your login"
+            android:hint="@string/login"
+            android:autofillHints="name"
             android:inputType="textPersonName" />
 
         <EditText
@@ -44,7 +45,8 @@
             android:layout_marginEnd="20dp"
             android:layout_marginRight="20dp"
             android:ems="10"
-            android:hint="Your password"
+            android:hint="@string/password"
+            android:autofillHints="password"
             android:inputType="textPassword" />
 
         <CheckBox
@@ -52,19 +54,19 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
-            android:text="Rester Connecté" />
+            android:text="@string/stay_connected" />
 
         <Button
             android:id="@+id/btn_login"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="login" />
+            android:text="@string/login" />
 
         <TextView
             android:id="@+id/tvLoginError"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Error"
+            android:text="@string/error"
             android:textColor="#FD0000"
             android:textSize="20sp"
             android:textStyle="italic"

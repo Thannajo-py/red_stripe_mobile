@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,136 +7,134 @@
     android:orientation="vertical"
     tools:context=".activity.CreateNewAccount">
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_login"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextTextPersonName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:orientation="vertical">
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:ems="10"
+            android:hint="@string/login"
+            android:autofillHints="name"
+            android:inputType="textPersonName" />
 
-            <TextView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_password"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextTextPassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:ems="10"
+            android:hint="@string/password"
+            android:inputType="textPassword"
+            android:autofillHints="password"/>
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/enter_password_again"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:id="@+id/editTextTextPassword2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginEnd="20dp"
+            android:layout_marginRight="20dp"
+            android:ems="10"
+            android:hint="@string/password"
+            android:autofillHints="password"
+            android:inputType="textPassword" />
+
+        <LinearLayout
+            android:id="@+id/ll_cbox"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible">
+
+            <CheckBox
+                android:id="@+id/cb_add"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="enter login:"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="@string/add_permission" />
 
-            <EditText
-                android:id="@+id/editTextTextPersonName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:ems="10"
-                android:hint="Login"
-                android:inputType="textPersonName" />
-
-            <TextView
+            <CheckBox
+                android:id="@+id/cb_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="enter password:"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="@string/delete_permission" />
 
-            <EditText
-                android:id="@+id/editTextTextPassword"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:ems="10"
-                android:hint="PassWord"
-                android:inputType="textPassword" />
-
-            <TextView
-                android:id="@+id/textView4"
+            <CheckBox
+                android:id="@+id/cb_change"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="enter password again:"
-                android:textSize="20sp"
-                android:textStyle="bold" />
+                android:text="@string/modify_permission" />
 
-            <EditText
-                android:id="@+id/editTextTextPassword2"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:ems="10"
-                android:hint="PassWord"
-                android:inputType="textPassword" />
-
-            <LinearLayout
-                android:id="@+id/ll_cbox"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <CheckBox
-                    android:id="@+id/cb_add"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Permission Ajouter" />
-
-                <CheckBox
-                    android:id="@+id/cb_delete"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Permission Supprimer" />
-
-                <CheckBox
-                    android:id="@+id/cb_change"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Permission Modifier" />
-
-                <CheckBox
-                    android:id="@+id/cb_synchronize"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Permission Synchroniser" />
-
-                <CheckBox
-                    android:id="@+id/cb_create_account"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Permission Création Compte" />
-
-                <CheckBox
-                    android:id="@+id/cb_delete_account"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Permission Suppression Compte" />
-            </LinearLayout>
-
-            <Button
-                android:id="@+id/btn_register"
+            <CheckBox
+                android:id="@+id/cb_synchronize"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="enregister" />
+                android:text="@string/synchronize_permission" />
 
-            <TextView
-                android:id="@+id/tvError"
-                android:layout_width="match_parent"
+            <CheckBox
+                android:id="@+id/cb_create_account"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Error"
-                android:textColor="#FB0000"
-                android:textSize="20sp"
-                android:textStyle="italic"
-                android:visibility="gone"
-                tools:visibility="visible" />
+                android:text="@string/account_create_permission" />
+
+            <CheckBox
+                android:id="@+id/cb_delete_account"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/delete_account_permission" />
         </LinearLayout>
-    </ScrollView>
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btn_register"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/save" />
+
+        <TextView
+            android:id="@+id/tvError"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/error"
+            android:textColor="#FB0000"
+            android:textSize="20sp"
+            android:textStyle="italic"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </LinearLayout>
+
+</ScrollView>
