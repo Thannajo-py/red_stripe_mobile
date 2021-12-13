@@ -12,42 +12,55 @@ val gson = Gson()
 val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
 
 
+/**
+ * method for POST httpRequest with String Body Return
+ * use for communication with API of the server
+ * @author Anthony Monteiro
+ */
 fun sendPostOkHttpRequest(url: String, paramJson:String): String {
-//Création de la requete
+//Build request
     val body = paramJson.toRequestBody(MEDIA_TYPE_JSON)
-    val request = Request.Builder().post(body).url(url).build()
-
-    val response = client.newCall(request).execute() //Analyse du code retour
+    val request = Request.Builder().post(body).url(url).build() //Execute request
+    val response = client.newCall(request).execute() //Analyse response code
     return if (response.code !in 200..299) {
-        throw Exception("Réponse du serveur incorrect : ${response.code}")
+        throw Exception("Incorrect server answer : ${response.code}")
     } else {
-        //Résultat de la requete.
+        //Request result
         response.body?.string() ?: ""
     }
 }
 
 
+/**
+ * method for GET httpRequest with ByteArray Body Return
+ * used for downloading picture from external link
+ */
 fun sendGetOkHttpRequestImage(url: String): ByteArray? {
-//Création de la requete
-    val request = Request.Builder().url(url).build() //Execution de la requête
-    val response = client.newCall(request).execute() //Analyse du code retour
+//Build request
+    val request = Request.Builder().url(url).build() //Execute request
+    val response = client.newCall(request).execute() //Analyse response code
     return if (response.code !in 200..299) {
-        throw Exception("Réponse du serveur incorrect : ${response.code}")
+        throw Exception("Incorrect server answer : ${response.code}")
     } else {
-        //Résultat de la requete.
+        //Request result
         response.body?.bytes()
     }
 }
 
 
+/**
+ * method for GET httpRequest with String Body Return
+ * use for communication with BGA API
+ * @author Anthony Monteiro
+ */
 fun sendGetOkHttpRequest(url: String): String? {
-//Création de la requete
-    val request = Request.Builder().url(url).build() //Execution de la requête
-    val response = client.newCall(request).execute() //Analyse du code retour
+//Build request
+    val request = Request.Builder().url(url).build() //Execute request
+    val response = client.newCall(request).execute() //Analyse response code
     return if (response.code !in 200..299) {
-        throw Exception("Réponse du serveur incorrect : ${response.code}")
+        throw Exception("Incorrect server answer : ${response.code}")
     } else {
-        //Résultat de la requete.
+        //Request result
         response.body?.string()
     }
 }

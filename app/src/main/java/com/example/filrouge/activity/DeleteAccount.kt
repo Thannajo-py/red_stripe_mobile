@@ -18,7 +18,6 @@ class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
 
     private val binding by lazy{ActivityDeleteAccountBinding.inflate(layoutInflater)}
     private val accountSelected = ArrayList<UserTableBean>()
-    private val accountAdapter = UserBeanAdapter(this, accountSelected)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,39 +27,59 @@ class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
     }
 
     private fun fillRvAccount(){
-        binding.rvAccount.adapter = accountAdapter
+        val adapter = UserBeanAdapter(this, accountSelected)
+        binding.rvAccount.adapter = adapter
         binding.rvAccount.layoutManager = GridLayoutManager(this, 1)
         binding.rvAccount.addItemDecoration(MarginItemDecoration(5))
         appInstance.database.userDao().getAll().asLiveData().observe(
             this,
-            {it?.let{accountAdapter.submitList(it)}}
+            {it?.let{adapter.submitList(it)}}
         )
     }
 
     override fun onClick(v: View?) {
-        AlertDialog.Builder(this)
-            .setMessage(getString(R.string.delete_accounts))
-            .setTitle(getString(R.string.warning))
-            .setPositiveButton(getString(R.string.ok)){
-                    _, _ -> run{
-                CoroutineScope(SupervisorJob()).launch{
-                    accountSelected.forEach {
-                        appInstance.database.userDao().deleteUser(it.id)
-                    }
-                    accountSelected.clear()
+        if (accountSelected.isNotEmpty()){
+            AlertDialog.Builder(this)
+                .setMessage(
+                    resources.getQuantityString(
+                    R.plurals.delete_accounts,
+                    accountSelected.size
+                    )
+                )
+                .setTitle(getString(R.string.warning))
+                .setPositiveButton(getString(R.string.ok)){
+                        _, _ -> run{
+                    deleteSelectedAccount()
                 }
-            }
-            }.setNegativeButton(getString(R.string.cancel)){
-                    _, _ -> kotlin.run {
+                }
+                .setNegativeButton(getString(R.string.cancel)){
+                        _, _ -> kotlin.run {
+                    Toast.makeText(
+                        this,
+                        getString(R.string.canceled),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+                }
+                .show()
+        }
+        else{
+            Toast.makeText(
+                this,
+                getString(R.string.delete_account_none_selected),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+    }
 
-                Toast.makeText(
-                    this,
-                    getString(R.string.canceled),
-                    Toast.LENGTH_SHORT
-                ).show()
+    private fun handleNullOrDeletedUser(){
+        currentUser?.run{
+            if(appInstance.database.userDao().getUser(this.login).isEmpty()){
+                finishAffinity()
             }
-            }
-            .show()
+        }?:run{
+            finishAffinity()
+        }
     }
 
     override fun onUserClick(datum: UserTableBean, position:Int) {
@@ -68,6 +87,16 @@ class DeleteAccount : AppCompatActivity(), View.OnClickListener, UserListener {
             accountSelected.remove(datum)
         }else{
             accountSelected.add(datum)
+        }
+    }
+
+    private fun deleteSelectedAccount(){
+        CoroutineScope(SupervisorJob()).launch{
+            accountSelected.forEach {
+                appInstance.database.userDao().deleteUser(it.id)
+            }
+            accountSelected.clear()
+            handleNullOrDeletedUser()
         }
     }
 }

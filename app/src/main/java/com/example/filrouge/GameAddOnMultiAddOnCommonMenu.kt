@@ -22,8 +22,15 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
+/**
+ * parent class GameDetails, AddOnDetails, MultiAddOnDetails
+ * give common method
+ */
 open class GameAddOnMultiAddOnCommonMenu :CommonType(){
 
+    /**
+     * Common menu for class children
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if(currentUser?.delete == true){
             menu?.add(0,MenuId.DeleteThis.ordinal,0,getString(R.string.delete))
@@ -33,6 +40,12 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
         }
         return super.onCreateOptionsMenu(menu)
     }
+
+    /**
+     * give adapter to RecyclerView change layout and
+     * use kotlin reflection to semantically linked RecyclerView to Progress bar
+     * for CommonField see: [DbMethod.getCommonField]
+     */
     protected fun fillCommonRV(binding:ViewBinding, gameId:Long, app:LifecycleOwner, dao:CommonDao<*,*>){
         val dbMethod = DbMethod()
         dbMethod.getCommonField().forEach{
@@ -53,16 +66,23 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
         }
     }
 
+    /**
+     * Handle difficulty for children
+     */
     protected fun fillDifficultyField(gameId:Long, app:LifecycleOwner, tvDifficulty:TextView, dao:CommonDao<*,*>){
         dao.getDifficulty(gameId).observe(app, {
-            if (it.size > 0) it?.let {
-                val difficulty = it.first()
-                val name = difficulty.name
-                val id = difficulty.id
-                tvDifficulty.text = name
-                tvDifficulty.setOnClickListener { onDifficultyClick(name, id) }
-            }
-            else tvDifficulty.text = getString(R.string.unknown)
+             it?.let {
+                 if (it.isNotEmpty()) {
+                     val difficulty = it.first()
+                     val name = difficulty.name
+                     val id = difficulty.id
+                     tvDifficulty.text = name
+                     tvDifficulty.setOnClickListener { onDifficultyClick(name, id) }
+                 }
+                 else tvDifficulty.text = getString(R.string.unknown)
+            }?:let{
+                 tvDifficulty.text = getString(R.string.unknown)
+             }
         })
     }
 
@@ -83,6 +103,9 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
             .show()
     }
 
+    /**
+     * @return filled string if not null [data] else "unknown"
+     */
     protected fun getDataStringOrUnknown(data:Any?, id:Int):String{
         var string = ""
         data?.run{
@@ -93,6 +116,9 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
         return string
     }
 
+    /**
+     * @return String answered based on non-null field
+     */
     protected fun getPlayerNumberOrUnknown(playerMin: Int?, playerMax: Int?) =
         when(true){
             playerMin == null && playerMax == null -> getString(R.string.unknown)

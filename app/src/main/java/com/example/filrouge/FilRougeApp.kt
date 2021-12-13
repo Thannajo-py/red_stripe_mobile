@@ -1,9 +1,11 @@
 package com.example.filrouge
 
 import android.app.Application
-import com.example.filrouge.bean.UserTableBean
 
 lateinit var appInstance:FilRougeApp
+/**
+ * Contain application-wide constant
+ */
 class FilRougeApp: Application() {
 
     val database by lazy{FilRougeRoomDatabase.getDatabase(this)}

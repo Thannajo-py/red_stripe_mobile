@@ -82,15 +82,12 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
             val userLogin = dbUser.getUser(login)
             when(true){
                 userLogin.isEmpty() -> handleLoginPasswordError()
-                !checkLoginPassword(password, userLogin) -> handleLoginPasswordError()
+                !isValid(password, userLogin.first().password) -> handleLoginPasswordError()
                 else -> manualLogin(userLogin.first())
             }
             endLoading()
         }
     }
-
-    private fun checkLoginPassword(password:String, userLogin:List<UserTableBean>) =
-        SHA256.encryptThisString(password) == userLogin.first().password
 
     private fun handleLoginPasswordError(){
         runOnUiThread {
@@ -101,7 +98,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun manualLogin(user:UserTableBean){
         if(binding.checkBox.isChecked){
-            appInstance.sharedPreference.save(gson.toJson(user), SerialKey.SavedUser.name)
+            appInstance.sharedPreference.saveString(gson.toJson(user), SerialKey.SavedUser.name)
         }
         else{
             appInstance.sharedPreference.removeValue(SerialKey.SavedUser.name)

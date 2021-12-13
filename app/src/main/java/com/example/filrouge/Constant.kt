@@ -24,6 +24,7 @@ enum class SerialKey{
     SaveDatabase,
     ApiBgaGame,
     ApiBgaImage,
+    SelectedLanguage
 
 }
 

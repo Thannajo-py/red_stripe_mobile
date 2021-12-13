@@ -11,6 +11,9 @@
         android:id="@+id/llNameList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
         android:orientation="horizontal">
 
         <CheckBox

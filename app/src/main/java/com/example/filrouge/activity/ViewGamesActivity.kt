@@ -2,6 +2,7 @@ package com.example.filrouge.activity
 
 
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
@@ -26,7 +27,7 @@ import java.lang.Exception
 
 class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
-    private val binding: ActivityViewGamesBinding by lazy{
+    private val binding: ActivityViewGamesBinding by lazy {
         ActivityViewGamesBinding.inflate(layoutInflater)
     }
     private val gson = Gson()
@@ -41,10 +42,10 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         getSave()
     }
 
-    private fun fillRvGame(){
+    private fun fillRvGame() {
         val newAdapter = GenericListAdapter(this)
         binding.rvGame.adapter = newAdapter
-        db.gameDao().getAllWithDesigner().observe(this, {it?.let{newAdapter.submitList(it)}})
+        db.gameDao().getAllWithDesigner().observe(this, { it?.let { newAdapter.submitList(it) } })
         binding.rvGame.layoutManager = GridLayoutManager(this, 1)
         binding.rvGame.addItemDecoration(MarginItemDecoration(5))
         displayRV()
@@ -55,19 +56,19 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         super.onResume()
     }
 
-    private fun displayRV(){
+    private fun displayRV() {
         binding.progressBar.visibility = View.GONE
         binding.rvGame.visibility = View.VISIBLE
     }
 
-    private fun hideRV(){
+    private fun hideRV() {
         binding.rvGame.visibility = View.GONE
         binding.progressBar.visibility = View.VISIBLE
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if (currentUser?.synchronize == true) {
-            if (!isLocal){
+            if (!isLocal) {
                 menu?.add(
                     0,
                     MenuId.Synchronize.ordinal,
@@ -76,7 +77,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 )
                 menu?.add(0, MenuId.ResetDB.ordinal, 0, getString(R.string.reset_content))
 
-            }else{
+            } else {
                 menu?.add(0, MenuId.SaveLocalDatabase.ordinal, 0, getString(R.string.save_local))
                 menu?.add(0, MenuId.LoadLocalDatabase.ordinal, 0, getString(R.string.reset_local))
             }
@@ -88,14 +89,14 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             )
         }
         menu?.add(0, MenuId.Search.ordinal, 0, getString(R.string.search))
-        menu?.add(0, MenuId.LoadImages.ordinal,0,getString(R.string.download_images))
-        if (currentUser?.addAccount == true){
+        menu?.add(0, MenuId.LoadImages.ordinal, 0, getString(R.string.download_images))
+        if (currentUser?.addAccount == true) {
             menu?.add(0, MenuId.CreateAccount.ordinal, 0, getString(R.string.add_account))
         }
-        if (currentUser?.deleteAccount == true){
+        if (currentUser?.deleteAccount == true) {
             menu?.add(0, MenuId.DeleteAccount.ordinal, 0, getString(R.string.delete_account))
         }
-        if(currentUser?.add == true){
+        if (currentUser?.add == true) {
             menu?.add(0, MenuId.AddContent.ordinal, 0, getString(R.string.add_element))
             menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
         }
@@ -108,7 +109,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
+        when (item.itemId) {
             MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
             MenuId.DeleteAccount.ordinal -> startActivity(
                 Intent(this, DeleteAccount::class.java)
@@ -153,17 +154,20 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         return super.onOptionsItemSelected(item)
     }
 
-    private fun saveLocalDatabase(){
+    private fun saveLocalDatabase() {
         CoroutineScope(SupervisorJob()).launch {
             val save = SavedDatabase()
             db.runInTransaction {
-                SaveDbField.values().forEach { f->
+                SaveDbField.values().forEach { f ->
                     val name = f.name.highToLowCamelCase()
                     val dao = db.getMember("${name}Dao")
                     val list = dao!!.getMember("getList")
                     save.setMember(name, list)
                 }
-                appInstance.sharedPreference.save(gson.toJson(save), SerialKey.SaveDatabase.name)
+                appInstance.sharedPreference.saveString(
+                    gson.toJson(save),
+                    SerialKey.SaveDatabase.name
+                )
             }
             runOnUiThread {
                 Toast.makeText(
@@ -175,16 +179,16 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun loadLocalDatabase(){
+    private fun loadLocalDatabase() {
         hideRV()
-        CoroutineScope(SupervisorJob()).launch{
+        CoroutineScope(SupervisorJob()).launch {
             db.runInTransaction {
                 db.clearAllTables()
                 val dbSave = gson.fromJson(
                     appInstance.sharedPreference.getValueString(SerialKey.SaveDatabase.name),
                     SavedDatabase::class.java
                 )
-                SaveDbField.values().forEach{ m->
+                SaveDbField.values().forEach { m ->
                     val name = m.name.highToLowCamelCase()
                     val list = dbSave.getMember(name) as ArrayList<*>
                     list.forEach {
@@ -197,88 +201,88 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun synchronize(login:String, password:String, cancel:Boolean){
+    private fun synchronize(login: String, password: String, cancel: Boolean) {
         hideRV()
         binding.tvGameError.visibility = View.GONE
         CoroutineScope(SupervisorJob()).launch {
-        val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
-        var modification = SendApiChange(login,password, ApiResponse(
-            ArrayList(), ArrayList(), ArrayList())
-            , ApiResponse(ArrayList(), ArrayList(), ArrayList()),
-            ApiDelete(ArrayList(), ArrayList(), ArrayList()), timestamp
-        )
-        if (!cancel){
-            modification = getDbModification(login, password, timestamp)
-        }
+            val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
+            var modification = SendApiChange(
+                login, password, ApiResponse(
+                    ArrayList(), ArrayList(), ArrayList()
+                ), ApiResponse(ArrayList(), ArrayList(), ArrayList()),
+                ApiDelete(ArrayList(), ArrayList(), ArrayList()), timestamp
+            )
+            if (!cancel) {
+                modification = getDbModification(login, password, timestamp)
+            }
             sendApiChangeToServer(modification)
         }
     }
 
-    private fun sendApiChangeToServer(modification:SendApiChange){
+    private fun sendApiChangeToServer(modification: SendApiChange) {
         val content = gson.toJson(ApiBody(modification))
         try {
-            API_URL?.run{
+            API_URL?.run {
                 val body = sendPostOkHttpRequest(this, content)
                 apiReception(body)
             }
-        }
-        catch (e: Exception) {
+        } catch (e: Exception) {
             apiErrorHandling(e)
         }
     }
 
-    private fun getDbModification(login:String, password:String, timestamp:Float) =
-    SendApiChange(
-        login,
-        password,
-        ApiResponse(
-            appInstance.database.gameDao().getWithoutServerId().map{
-                dbMethod.convertToBean(it)
-            }.toCollection(ArrayList()),
-            appInstance.database.addOnDao().getWithoutServerId().map{
-                dbMethod.convertToBean(it)
-            }.toCollection(ArrayList()),
-            appInstance.database.multiAddOnDao().getWithoutServerId().map{
-                dbMethod.convertToBean(it)
-            }.toCollection(ArrayList())
-        ),
-        ApiResponse(
-            appInstance.database.gameDao().getChanged().map{
-                dbMethod.convertToBean(it)
-            }.toCollection(ArrayList()),
-            appInstance.database.addOnDao().getChanged().map{
-                dbMethod.convertToBean(it)
-            }.toCollection(ArrayList()),
-            appInstance.database.multiAddOnDao().getChanged().map{
-                dbMethod.convertToBean(it)
-            }.toCollection(ArrayList()),
-        ),
-        ApiDelete(
-            appInstance.database.deletedContentDao().getByType(Type.Game.name).map{
-                DeletedObject(it.idContent.toInt())
-            }.toCollection(ArrayList()),
-            appInstance.database.deletedContentDao().getByType(Type.AddOn.name).map{
-                DeletedObject(it.idContent.toInt())
-            }.toCollection(ArrayList()),
-            appInstance.database.deletedContentDao().getByType(Type.MultiAddOn.name).map{
-                DeletedObject(it.idContent.toInt())
-            }.toCollection(ArrayList()),
-        ),
-        timestamp
-    )
+    private fun getDbModification(login: String, password: String, timestamp: Float) =
+        SendApiChange(
+            login,
+            password,
+            ApiResponse(
+                appInstance.database.gameDao().getWithoutServerId().map {
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+                appInstance.database.addOnDao().getWithoutServerId().map {
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+                appInstance.database.multiAddOnDao().getWithoutServerId().map {
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList())
+            ),
+            ApiResponse(
+                appInstance.database.gameDao().getChanged().map {
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+                appInstance.database.addOnDao().getChanged().map {
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+                appInstance.database.multiAddOnDao().getChanged().map {
+                    dbMethod.convertToBean(it)
+                }.toCollection(ArrayList()),
+            ),
+            ApiDelete(
+                appInstance.database.deletedContentDao().getByType(Type.Game.name).map {
+                    DeletedObject(it.idContent.toInt())
+                }.toCollection(ArrayList()),
+                appInstance.database.deletedContentDao().getByType(Type.AddOn.name).map {
+                    DeletedObject(it.idContent.toInt())
+                }.toCollection(ArrayList()),
+                appInstance.database.deletedContentDao().getByType(Type.MultiAddOn.name).map {
+                    DeletedObject(it.idContent.toInt())
+                }.toCollection(ArrayList()),
+            ),
+            timestamp
+        )
 
 
-    private fun apiReception(body:String){
-        if (body.isNotBlank()){
+    private fun apiReception(body: String) {
+        if (body.isNotBlank()) {
             val result = gson.fromJson(body, ApiReceive::class.java)
-            if (result.timestamp > 0.0){
+            if (result.timestamp > 0.0) {
                 actualizeTimeStamp(result.timestamp)
             }
-            if(!result.isNullOrEmpty()) {
+            if (!result.isNullOrEmpty()) {
                 CoroutineScope(SupervisorJob()).launch {
-                        eraseDeletedItemAndWithoutServerIdItem()
-                        handleResult(result)
-                        refreshAll()
+                    eraseDeletedItemAndWithoutServerIdItem()
+                    handleResult(result)
+                    refreshAll()
                 }
             }
         }
@@ -287,22 +291,22 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun actualizeTimeStamp(timeStamp: Float){
+    private fun actualizeTimeStamp(timeStamp: Float) {
         val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
-        if (timestamp < 1.0){
+        if (timestamp < 1.0) {
             //a 0.0 timestamp means database reset
             dbReset()
         }
         appInstance.sharedPreference.saveFloat(SerialKey.Timestamp.name, timeStamp)
     }
 
-    private fun dbReset(){
+    private fun dbReset() {
         val list = appInstance.database.userDao().getList()
         appInstance.database.clearAllTables()
         list.forEach { appInstance.database.userDao().insert(it) }
     }
 
-    private fun eraseDeletedItemAndWithoutServerIdItem(){
+    private fun eraseDeletedItemAndWithoutServerIdItem() {
         db.runInTransaction {
             db.deletedContentDao().deleteAll()
             dbMethod.getGameType().forEach {
@@ -316,23 +320,23 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun handleResult(result:ApiReceive){
+    private fun handleResult(result: ApiReceive) {
         createDataOfApiResult(result)
         deleteDataOfApiResult(result)
         linkDataOfApiResult(result)
     }
 
-    private fun linkDataOfApiResult(result:ApiReceive){
+    private fun linkDataOfApiResult(result: ApiReceive) {
         linkGame(result)
         linkAddOn(result)
         linkMultiAddOn(result)
     }
 
-    private fun linkGame(result:ApiReceive){
+    private fun linkGame(result: ApiReceive) {
         result.game?.run {
             this.forEach {
                 val gameFieldHashMap = getGameSpecificFieldHashMap(it)
-                try{
+                try {
                     val dbGame = db.gameDao().getByName(it.name).first()
                     dbMethod.insertLink(
                         dbGame,
@@ -341,9 +345,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                         gameFieldHashMap
                     )
                     dbMethod.setAddOnGameLink(
-                        dbMethod.convertStringListToAddOnTableList(it.addOn), dbGame.id)
-                }
-                catch(e:Exception){
+                        dbMethod.convertStringListToAddOnTableList(it.addOn), dbGame.id
+                    )
+                } catch (e: Exception) {
                     e.printStackTrace()
                     println(it.name)
                 }
@@ -351,18 +355,17 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun linkAddOn(result:ApiReceive){
+    private fun linkAddOn(result: ApiReceive) {
         result.addOn?.run {
             this.forEach {
-                try{
+                try {
                     val dbGame = db.addOnDao().getByName(it.name).first()
                     dbMethod.insertLink(
                         dbGame,
                         Type.AddOn.name,
                         it
                     )
-                }
-                catch(e:Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                     println(it.name)
                 }
@@ -370,18 +373,17 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun linkMultiAddOn(result: ApiReceive){
+    private fun linkMultiAddOn(result: ApiReceive) {
         result.multiAddOn?.run {
             this.forEach {
-                try{
+                try {
                     val dbGame = db.multiAddOnDao().getByName(it.name).first()
                     dbMethod.insertLink(
                         dbGame,
                         Type.MultiAddOn.name,
                         it
                     )
-                }
-                catch(e:Exception){
+                } catch (e: Exception) {
                     e.printStackTrace()
                     println(it.name)
                 }
@@ -389,7 +391,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun getGameSpecificFieldHashMap(game:GameBean):HashMap<String, ArrayList<String>>{
+    private fun getGameSpecificFieldHashMap(game: GameBean): HashMap<String, ArrayList<String>> {
         val hashMap = HashMap<String, ArrayList<String>>()
         dbMethod.getGameSpecificField().forEach {
             hashMap[it] = game.getMember(it.highToLowCamelCase()) as ArrayList<String>
@@ -397,7 +399,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         return hashMap
     }
 
-    private fun createDataOfApiResult(result:ApiReceive){
+    private fun createDataOfApiResult(result: ApiReceive) {
         val db = appInstance.database
         val gameTypeList = dbMethod.getGameType()
         gameTypeList.forEach {
@@ -408,8 +410,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                     this.forEach { g ->
                         when (g) {
                             is GameBean -> insertNewGameData(g)
-                            is AddOnBean ->  db.addOnDao().insert(dbMethod.convertToTableBean(g))
-                            is MultiAddOnBean -> db.multiAddOnDao().insert(dbMethod.convertToTableBean(g))
+                            is AddOnBean -> db.addOnDao().insert(dbMethod.convertToTableBean(g))
+                            is MultiAddOnBean -> db.multiAddOnDao()
+                                .insert(dbMethod.convertToTableBean(g))
                         }
                         insertNewCommonData(g)
                     }
@@ -418,27 +421,27 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun insertNewGameData(g:GameBean){
+    private fun insertNewGameData(g: GameBean) {
         db.gameDao().insert(dbMethod.convertToTableBean(g))
         dbMethod.getGameCommonSpecificField().forEach {
             val loweCamelCase = it.highToLowCamelCase()
             val list = g.getMember(loweCamelCase) as ArrayList<String>
             val dao = db.getMember("${loweCamelCase}Dao") as CommonCustomInsert<*>
-            list.forEach { m->
+            list.forEach { m ->
                 val isAny = dao.getByName(m)
-                if(isAny.isEmpty())dao.insert(m)
+                if (isAny.isEmpty()) dao.insert(m)
             }
         }
     }
 
-    private fun insertNewCommonData(g:Any){
+    private fun insertNewCommonData(g: Any) {
         dbMethod.getCommonField().forEach {
             val loweCamelCase = it.highToLowCamelCase()
             val list = g.getMember(loweCamelCase) as ArrayList<String>
             val dao = db.getMember("${loweCamelCase}Dao") as CommonCustomInsert<*>
-            list.forEach { m->
+            list.forEach { m ->
                 val isAny = dao.getByName(m)
-                if(isAny.isEmpty())dao.insert(m)
+                if (isAny.isEmpty()) dao.insert(m)
             }
         }
     }
@@ -449,8 +452,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         gameTypeList.forEach {
             val lowCamelCase = it.highToLowCamelCase()
             val data = result.getMember("deleted$it") as ArrayList<Int>?
-            val dataDb = db.getMember("${lowCamelCase}Dao") as CommonDao<ID,*>
-            data?.forEach { id->
+            val dataDb = db.getMember("${lowCamelCase}Dao") as CommonDao<ID, *>
+            data?.forEach { id ->
                 db.runInTransaction {
                     val gameInDb = dataDb.getByServerId(id.toLong())
                     if (gameInDb.isNotEmpty()) dbMethod.deleteLink(gameInDb.first(), it)
@@ -460,7 +463,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun apiErrorHandling(e:Exception){
+    private fun apiErrorHandling(e: Exception) {
         e.printStackTrace()
         runOnUiThread {
             binding.tvGameError.text = getString(R.string.error_content, e.message)
@@ -476,30 +479,29 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         startActivity(intent)
     }
 
-    private fun getSave(){
+    private fun getSave() {
         isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
     }
 
-    private fun refreshAll(){
+    private fun refreshAll() {
         loadImages(appInstance.database.gameDao(), Type.Game.name)
         loadImages(appInstance.database.addOnDao(), Type.AddOn.name)
         loadImages(appInstance.database.multiAddOnDao(), Type.MultiAddOn.name)
         cleanImageList()
     }
 
-    private fun <T:CommonComponent, U> loadImages(dao:CommonDao<T, U>, type:String){
-        CoroutineScope(SupervisorJob()).launch{
-            for (game in dao.getList()){
-                if (dao.getImage(game.name).isEmpty()){
+    private fun <T : CommonComponent, U> loadImages(dao: CommonDao<T, U>, type: String) {
+        CoroutineScope(SupervisorJob()).launch {
+            for (game in dao.getList()) {
+                if (dao.getImage(game.name).isEmpty()) {
 
-                    if (!game.external_img.isNullOrBlank()){
-                        launch{
+                    if (!game.external_img.isNullOrBlank()) {
+                        launch {
                             getImage(game.external_img!!, game.name, type)
                         }
 
-                    }
-                    else if (!game.picture.isNullOrBlank() && API_STATIC != null){
-                        launch{
+                    } else if (!game.picture.isNullOrBlank() && API_STATIC != null) {
+                        launch {
                             getImage("$API_STATIC${game.picture}", game.name, type)
                         }
                     }
@@ -511,7 +513,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         }
     }
 
-    private fun getImage(url:String, gameName:String, type:String){
+    private fun getImage(url: String, gameName: String, type: String) {
         try {
             val img = sendGetOkHttpRequestImage(url)
             img?.run {
@@ -531,12 +533,12 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
             }
 
-        }catch(e:Exception){
+        } catch (e: Exception) {
             e.printStackTrace()
         }
     }
 
-    private fun addTextView(text:String):TextView{
+    private fun addTextView(text: String): TextView {
         val textView = TextView(this)
         textView.text = text
         textView.typeface = Typeface.DEFAULT_BOLD
@@ -547,16 +549,16 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         return textView
     }
 
-    private fun addLinearLayout(elements:ArrayList<View>):LinearLayout{
+    private fun addLinearLayout(elements: ArrayList<View>): LinearLayout {
         val ll = LinearLayout(this)
         ll.orientation = LinearLayout.VERTICAL
         ll.gravity = Gravity.CENTER
-        ll.setPadding(20,0,20,0)
+        ll.setPadding(20, 0, 20, 0)
         elements.forEach { ll.addView(it) }
         return ll
     }
 
-    private fun addEditTextPassword():EditText{
+    private fun addEditTextPassword(): EditText {
         val pwd = EditText(this)
         pwd.inputType = InputType.TYPE_TEXT_VARIATION_PASSWORD
         pwd.transformationMethod = PasswordTransformationMethod.getInstance()
@@ -564,29 +566,32 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     }
 
-    private fun cleanImageList(){
-        CoroutineScope(SupervisorJob()).launch{
+    private fun cleanImageList() {
+        CoroutineScope(SupervisorJob()).launch {
             appInstance.database.runInTransaction {
                 appInstance.database.imageDao().getList().forEach {
-                    when(it.gameType){
-                        Type.Game.name -> if(appInstance.database.gameDao()
-                                .getByName(it.gameName).isEmpty())deleteImage(it.name)
-                        Type.AddOn.name -> if(appInstance.database.addOnDao()
-                                .getByName(it.gameName).isEmpty()) deleteImage(it.name)
-                        Type.MultiAddOn.name -> if(appInstance.database.multiAddOnDao()
-                                .getByName(it.gameName).isEmpty()) deleteImage(it.name)
+                    when (it.gameType) {
+                        Type.Game.name -> if (appInstance.database.gameDao()
+                                .getByName(it.gameName).isEmpty()
+                        ) deleteImage(it.name)
+                        Type.AddOn.name -> if (appInstance.database.addOnDao()
+                                .getByName(it.gameName).isEmpty()
+                        ) deleteImage(it.name)
+                        Type.MultiAddOn.name -> if (appInstance.database.multiAddOnDao()
+                                .getByName(it.gameName).isEmpty()
+                        ) deleteImage(it.name)
                     }
                 }
             }
         }
     }
 
-    private fun deleteImage(fileName:String){
+    private fun deleteImage(fileName: String) {
         appInstance.database.imageDao().deleteByName(fileName)
         File(this@ViewGamesActivity.filesDir, fileName).delete()
     }
 
-    private fun synchronizeBox(message:String, cancel:Boolean){
+    private fun synchronizeBox(message: String, cancel: Boolean) {
         val login = EditText(this)
         val pwd = addEditTextPassword()
         val view = arrayListOf<View>(
@@ -601,7 +606,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             .setTitle(getString(R.string.warning))
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 run {
-                    synchronize(login.text.toString(),pwd.text.toString(), cancel)
+                    synchronize(login.text.toString(), pwd.text.toString(), cancel)
                 }
             }.setNegativeButton(getString(R.string.cancel)) { _, _ ->
                 Toast.makeText(this, getString(R.string.canceled), Toast.LENGTH_SHORT).show()
@@ -609,7 +614,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             .show()
     }
 
-    private fun urlParameterBox(){
+    private fun urlParameterBox() {
         val url = EditText(this)
         val staticUrl = EditText(this)
         val cbIsLocal = CheckBox(this)
@@ -633,8 +638,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 API_STATIC = staticUrl.text.toString()
                 isLocal = cbIsLocal.isChecked
                 appInstance.sharedPreference.saveBoolean(SerialKey.IsLocal.name, isLocal)
-                appInstance.sharedPreference.save(url.text.toString(), SerialKey.APIUrl.name)
-                appInstance.sharedPreference.save(
+                appInstance.sharedPreference.saveString(url.text.toString(), SerialKey.APIUrl.name)
+                appInstance.sharedPreference.saveString(
                     staticUrl.text.toString(),
                     SerialKey.APIStaticUrl.name
                 )
@@ -646,7 +651,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             .show()
     }
 
-    private fun changePasswordBox(){
+    private fun changePasswordBox() {
         val exPwd = addEditTextPassword()
         val pwd = addEditTextPassword()
         val pwdConfirm = addEditTextPassword()
@@ -672,41 +677,43 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             .show()
     }
 
-    private fun passwordChangeCheck(exPwd:EditText, pwd:EditText, pwdConfirm:EditText){
-        currentUser?.run{
-            when(true){
-                !checkPassword(this, exPwd) -> popup(getString(R.string.wrong_password))
+    private fun passwordChangeCheck(exPwd: EditText, pwd: EditText, pwdConfirm: EditText) {
+        currentUser?.run {
+            when (true) {
+                !isValid(this.password, exPwd.text.toString()) ->
+                    popup(getString(R.string.wrong_password))
                 !checkMatchPwd(pwd, pwdConfirm) -> popup(getString(R.string.password_do_not_match))
                 !regexPwd(pwd) -> popup(getString(R.string.password_rules))
                 else -> passwordChange(pwd, this)
 
             }
-        }?:run{popup(getString(R.string.user_unidentified))}
+        } ?: run { popup(getString(R.string.user_unidentified)) }
     }
 
-    private fun checkPassword(user:UserTableBean, etPwd:EditText) =
-        SHA256.encryptThisString(etPwd.text.toString()) == user.password
-
-    private fun checkMatchPwd(pwd:EditText, pwd2:EditText) =
+    private fun checkMatchPwd(pwd: EditText, pwd2: EditText) =
         pwd.text.toString() == pwd2.text.toString()
 
-    private fun regexPwd(pwd:EditText) =
+    private fun regexPwd(pwd: EditText) =
         Regex(RegexPattern.PassWord.pattern).matches(pwd.text.toString())
 
-    private fun popup(message:String){
-        Toast.makeText(
-            this,
-            message,
-            Toast.LENGTH_SHORT
-        ).show()
+    private fun popup(message: String) {
+        runOnUiThread {
+            Toast.makeText(
+                this,
+                message,
+                Toast.LENGTH_SHORT
+            ).show()
+        }
     }
 
-    private fun passwordChange(pwd:EditText, cUser:UserTableBean){
-        CoroutineScope(SupervisorJob()).launch{
+    private fun passwordChange(pwd: EditText, cUser: UserTableBean) {
+        generateHashedPass(pwd.text.toString())?.run {
+            val password = this
+            CoroutineScope(SupervisorJob()).launch {
                 val newPasswordUser = UserTableBean(
                     cUser.id,
                     cUser.login,
-                    SHA256.encryptThisString(pwd.text.toString()),
+                    password,
                     cUser.add,
                     cUser.change,
                     cUser.delete,
@@ -716,9 +723,10 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 )
                 appInstance.database.userDao().insert(newPasswordUser)
                 currentUser = newPasswordUser
-            runOnUiThread {
                 popup(getString(R.string.password_changed))
             }
+        } ?: run {
+            popup(getString(R.string.password_register_error))
         }
     }
 }

@@ -3,9 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/first"
     android:gravity="center"
-    tools:context=".activity.DeleteAccount"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activity.DeleteAccount">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -25,14 +26,16 @@
             android:id="@+id/btn_del"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/delete" />
+            android:backgroundTint="@color/second"
+            android:text="@string/delete"
+            android:textColor="@color/fourth" />
 
         <TextView
             android:id="@+id/tvError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/error"
-            android:textColor="#FB0000"
+            android:textColor="@color/fourth"
             android:textSize="20sp"
             android:textStyle="italic"
             android:visibility="gone"

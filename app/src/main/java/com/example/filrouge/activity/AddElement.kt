@@ -33,7 +33,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 
 class AddElement : CommonType(), View.OnClickListener,
-    GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener {
+    GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener{
 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
     private val listMethod = ListCommonMethod()
@@ -77,15 +77,21 @@ class AddElement : CommonType(), View.OnClickListener,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        addOnGame = null
         setContentView(binding.root)
         registerForContextMenu(binding.ivPictureChoice)
+        fillAddedStringContentHashMap()
         fillCommonRv()
         binding.btnAdd.setOnClickListener(this)
         radioButtonSetOnClickListener()
         fillPageRv()
         setAddButtonEvent()
         loadObject()
+    }
+
+    private fun fillAddedStringContentHashMap(){
+        getAddedStringContentType().forEach {
+            addedStringContentHashMap[it] = arrayListOf()
+        }
     }
 
     private fun loadObject(){
@@ -717,7 +723,7 @@ class AddElement : CommonType(), View.OnClickListener,
     }
 
     private fun setAddOnGameAdapter(){
-        val addOnAdapter = OneToOneListCbAdapter<DesignerWithGame>(this)
+        val addOnAdapter = AddOnGameListAdapter(this)
         binding.rvAddOnGame.adapter = addOnAdapter
         layout(binding.rvAddOnGame)
         appInstance.database.gameDao().getAllWithDesigner().observe(
@@ -727,7 +733,7 @@ class AddElement : CommonType(), View.OnClickListener,
     }
 
     private fun setDifficultyAdapter(){
-        val difficultyAdapter = OneToOneListCbAdapter<DifficultyTableBean>(this)
+        val difficultyAdapter = OneToOneListAdapter<DifficultyTableBean>(this)
         binding.rvDifficulty.adapter = difficultyAdapter
         layout(binding.rvDifficulty)
         appInstance.database.difficultyDao().getAll().asLiveData().observe(
@@ -876,7 +882,6 @@ class AddElement : CommonType(), View.OnClickListener,
     private fun fillCommonRv(){
         getAddedStringContentType().forEach { type ->
             CoroutineScope(SupervisorJob()).launch{
-                addedStringContentHashMap[type] = ArrayList()
                 val lowCamelCase = type.highToLowCamelCase()
                 val adapter = GenericIDListCbAdapter(
                     this@AddElement,

@@ -3,11 +3,16 @@ package com.example.filrouge
 import com.example.filrouge.bean.*
 import com.example.filrouge.dao.*
 
-
+/**
+ * Contain method frequently used with database and database related object
+ */
 class DbMethod {
 
     val db = appInstance.database
 
+    /**
+     * list of common field use for semantic linking
+     */
     fun getCommonField() = arrayListOf(
         Type.Designer.name,
         Type.Publisher.name,
@@ -16,18 +21,27 @@ class DbMethod {
         Type.Language.name
     )
 
+    /**
+     * list of Game specific field use for semantic linking
+     */
     fun getGameSpecificField(): ArrayList<String> {
         val list = getGameCommonSpecificField()
         list.add(Type.MultiAddOn.name)
         return list
     }
 
+    /**
+     * list of Game string specific field use for semantic linking
+     */
     fun getGameCommonSpecificField() = arrayListOf(
         Type.Tag.name,
         Type.Topic.name,
         Type.Mechanism.name,
     )
 
+    /**
+     * list of non-game data to be handled with [DeletedObject]
+     */
     fun getDeletableList(): ArrayList<String> {
         val list = getCommonField()
         list.addAll(getGameCommonSpecificField())
@@ -35,12 +49,18 @@ class DbMethod {
         return list
     }
 
+    /**
+     * list of all game-type object
+     */
     fun getGameType() = arrayListOf(
         Type.Game.name,
         Type.AddOn.name,
         Type.MultiAddOn.name
     )
 
+    /**
+     *
+     */
     fun deleteLink(game: ID, type: String){
         getCommonField().forEach {
             val dao = db.getMember("${type.highToLowCamelCase()}${it}Dao") as CommonJunctionDAo<*>
@@ -65,12 +85,12 @@ class DbMethod {
             val lowerType = type.highToLowCamelCase()
             val targetList = map?.get(it)?:data.getMember(lowercase)
             targetList?.run{
-                val list = targetList as ArrayList<String>
+                val toList = this as ArrayList<String>
                 val targetDao =
                     appInstance.database.getMember("${lowercase}Dao") as CommonComponentDao<ID>
                 val junctionDao =
                     appInstance.database.getMember("$lowerType${it}Dao") as CommonJunctionDAo<*>
-                linkList(list, targetDao, junctionDao, game.id)
+                linkList(toList, targetDao, junctionDao, game.id)
             }
         }
     }

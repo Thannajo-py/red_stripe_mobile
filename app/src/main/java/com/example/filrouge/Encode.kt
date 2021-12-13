@@ -1,24 +1,18 @@
 package com.example.filrouge
 
-import java.security.NoSuchAlgorithmException
-import java.math.BigInteger
-import java.security.MessageDigest
+import org.mindrot.jbcrypt.BCrypt
+
+/**
+ *hash a plaintext password using the typical log rounds (10)
+ * @return encrypted password
+ */
+fun generateHashedPass(pass: String) = BCrypt.hashpw(pass, BCrypt.gensalt())
 
 
-object SHA256 {
+/**
+ *compare password to hash version
+ * @return true if password matches hash
+ */
+fun isValid(clearTextPassword: String, hashedPass: String) =
+    BCrypt.checkpw(clearTextPassword, hashedPass)
 
-    fun encryptThisString(input: String): String {
-        return try {
-            val md = MessageDigest.getInstance("SHA-256")
-            val messageDigest = md.digest(input.toByteArray())
-            val no = BigInteger(1, messageDigest)
-            var hashtext = no.toString(16)
-            while (hashtext.length < 32) {
-                hashtext = "0$hashtext"
-            }
-            hashtext
-        } catch (e: NoSuchAlgorithmException) {
-            throw RuntimeException(e)
-        }
-    }
-}

@@ -4,7 +4,9 @@ import android.graphics.Rect
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 
-
+/**
+ * a class made for handling margin between element in adapter list
+ */
 class MarginItemDecoration(private val spaceSize: Int) : RecyclerView.ItemDecoration() {
 
     override fun getItemOffsets(

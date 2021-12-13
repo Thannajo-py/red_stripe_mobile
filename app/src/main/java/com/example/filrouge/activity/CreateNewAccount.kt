@@ -59,29 +59,36 @@ class CreateNewAccount : AppCompatActivity(), View.OnClickListener {
 
     private fun createUser(login:String, password:String){
         val isUserDbEmpty = db.getList().isEmpty()
-        val user = UserTableBean(
-            0,
-            login,
-            SHA256.encryptThisString(password),
-            isSuperAccount(binding.cbAdd, isUserDbEmpty),
-            isSuperAccount(binding.cbChange, isUserDbEmpty),
-            isSuperAccount(binding.cbDelete, isUserDbEmpty),
-            isSuperAccount(binding.cbSynchronize, isUserDbEmpty),
-            isSuperAccount(binding.cbCreateAccount, isUserDbEmpty),
-            isSuperAccount(binding.cbDeleteAccount, isUserDbEmpty)
-        )
-        if (isUserDbEmpty) {
-            currentUser = user
+        try{
+           val encryptedPassword = generateHashedPass(password)!!
+            val user = UserTableBean(
+                0,
+                login,
+                encryptedPassword,
+                isSuperAccount(binding.cbAdd, isUserDbEmpty),
+                isSuperAccount(binding.cbChange, isUserDbEmpty),
+                isSuperAccount(binding.cbDelete, isUserDbEmpty),
+                isSuperAccount(binding.cbSynchronize, isUserDbEmpty),
+                isSuperAccount(binding.cbCreateAccount, isUserDbEmpty),
+                isSuperAccount(binding.cbDeleteAccount, isUserDbEmpty)
+            )
+            if (isUserDbEmpty) {
+                currentUser = user
+            }
+            db.insert(user)
+            runOnUiThread {
+                Toast.makeText(
+                    this@CreateNewAccount,
+                    getString(R.string.success),
+                    Toast.LENGTH_LONG
+                ).show()
+                startActivity(Intent(this@CreateNewAccount, ViewGamesActivity::class.java))
+                finish()
+            }
         }
-        db.insert(user)
-        runOnUiThread {
-            Toast.makeText(
-                this@CreateNewAccount,
-                getString(R.string.success),
-                Toast.LENGTH_LONG
-            ).show()
-            startActivity(Intent(this@CreateNewAccount, ViewGamesActivity::class.java))
-            finish()
+        catch(e:Exception){
+            e.printStackTrace()
+            handleError(getString(R.string.password_register_error))
         }
     }
 
