@@ -52,6 +52,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun autoLogin(userRemembered:UserTableBean){
         currentUser = userRemembered
         startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
+        finish()
     }
 
     private fun displayLoginField(){
@@ -65,6 +66,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         CoroutineScope(SupervisorJob()).launch {
             if (dbUser.getList().isEmpty()) {
                 startActivity(Intent(this@MainActivity, CreateNewAccount::class.java))
+                finish()
             }
         }
     }
@@ -105,6 +107,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
         currentUser = user.copy()
         startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
+        finish()
     }
 
     private fun startLoading(){

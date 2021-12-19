@@ -16,15 +16,26 @@ import kotlinx.coroutines.launch
 import java.io.File
 
 
+/**
+ * Common method for [AddElement], [GenericTypeDetails], [GameDetails], [AddOnDetails],
+ * [MultiAddOnDetails]
+ */
 abstract class CommonType
     : AppCompatActivity(),  OnGenericStringListAdapterListener, OnGenericListAdapterListener {
 
-    fun layout(list: RecyclerView){
+    /**
+     * Handle [RecyclerView] layout Manager and space between [RecyclerView] element
+     */
+    protected fun layout(list: RecyclerView){
         list.layoutManager = GridLayoutManager(this,1)
         list.addItemDecoration(MarginItemDecoration(5))
     }
 
-    fun loadImage(element:String, image: ImageView, type:String, pb:ProgressBar){
+    /**
+     * get the proper image for an [ImageView] if in the database else null
+     * handle [ProgressBar] and [ImageView] visibility
+     */
+    protected fun loadImage(element:String, image: ImageView, type:String, pb:ProgressBar){
         CoroutineScope(SupervisorJob()).launch {
             val lowCamelCase = type.highToLowCamelCase()
             val dao = appInstance.database.getMember("${lowCamelCase}Dao") as CommonDao<*, *>
@@ -32,7 +43,9 @@ abstract class CommonType
             if (imageList.isNotEmpty()) {
                 getFile("$element$type", image)
             } else {
-                image.setImageBitmap(null)
+                runOnUiThread {
+                    image.setImageBitmap(null)
+                }
             }
             runOnUiThread {
                 pb.visibility = View.GONE
@@ -41,6 +54,11 @@ abstract class CommonType
         }
     }
 
+    /**
+     * get a file by name
+     * transform the [ByteArray] file into a Bitmap
+     * load image inside an [ImageView]
+     */
     private fun getFile(name:String, image:ImageView){
         runOnUiThread {
             val file = File(image.context.filesDir, name)
@@ -53,39 +71,60 @@ abstract class CommonType
         }
     }
 
+    /**
+     * handle click on non-game and non-difficulty element and launch the associated [GenericTypeDetails]
+     */
     override fun onElementClick(datum: ID, type:String) {
         startActivity(Intent(this, GenericTypeDetails::class.java)
             .putExtra(SerialKey.Type.name, type)
             .putExtra(SerialKey.GenericId.name, datum.id)
             .putExtra(SerialKey.Name.name, datum.name))
+        finish()
     }
 
-    fun onDifficultyClick(name: String, id:Long) {
+    /**
+     * handle click on specific difficulty element and launch the associated [GenericTypeDetails]
+     */
+    protected fun onDifficultyClick(name: String, id:Long) {
         startActivity(Intent(this, GenericTypeDetails::class.java)
             .putExtra(SerialKey.Type.name, Type.Difficulty.name)
             .putExtra(SerialKey.GenericId.name, id)
             .putExtra(SerialKey.Name.name, name))
+        finish()
     }
 
+    /**
+     * handle click on game element and launch the associated activity
+     */
     override fun onElementClick(datum: CommonGame) {
         when (datum){
-            is DesignerWithAddOn -> startActivity(
-                Intent(
-                    this,
-                    AddOnDetails::class.java
-                ).putExtra(SerialKey.AddOnId.name, datum.id)
-            )
-            is DesignerWithMultiAddOn -> startActivity(
-                Intent(
-                    this,
-                    MultiAddOnDetails::class.java
-                ).putExtra(SerialKey.MultiAddOnId.name, datum.id)
-            )
-            is DesignerWithGame -> startActivity(
-                Intent(
-                    this,
-                    GameDetails::class.java
-                ).putExtra(SerialKey.GameId.name, datum.id))
+            is DesignerWithAddOn -> {
+                startActivity(
+                    Intent(
+                        this,
+                        AddOnDetails::class.java
+                    ).putExtra(SerialKey.AddOnId.name, datum.id)
+                )
+                    finish()
+            }
+            is DesignerWithMultiAddOn -> {
+                startActivity(
+                    Intent(
+                        this,
+                        MultiAddOnDetails::class.java
+                    ).putExtra(SerialKey.MultiAddOnId.name, datum.id)
+                )
+                finish()
+            }
+            is DesignerWithGame -> {
+                startActivity(
+                    Intent(
+                        this,
+                        GameDetails::class.java
+                    ).putExtra(SerialKey.GameId.name, datum.id)
+                )
+                finish()
+            }
         }
     }
 }

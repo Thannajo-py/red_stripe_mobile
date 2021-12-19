@@ -33,11 +33,14 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
                 Type.MultiAddOn.name,
                 gameId
             )
-            MenuId.ModifyThis.ordinal -> startActivity(
+            MenuId.ModifyThis.ordinal -> {
+                startActivity(
                 Intent(this, AddElement::class.java)
                 .putExtra(SerialKey.ToModifyDataId.name, gameId)
                 .putExtra(SerialKey.ToModifyDataName.name, binding.tvMultiAddOnDetailName.text)
                 .putExtra(SerialKey.ToModifyDataType.name, Type.MultiAddOn.name))
+                finish()
+            }
         }
         return super.onOptionsItemSelected(item)
     }

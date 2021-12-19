@@ -811,7 +811,16 @@
             android:id="@+id/btn_add"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:backgroundTint="@color/second"
             android:text="@string/add" />
+
+        <ProgressBar
+            android:id="@+id/pbBtnAdd"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="75dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </LinearLayout>
 </ScrollView>

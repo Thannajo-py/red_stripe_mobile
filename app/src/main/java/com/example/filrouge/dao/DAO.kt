@@ -5,7 +5,9 @@ import androidx.room.*
 import com.example.filrouge.bean.*
 import kotlinx.coroutines.flow.Flow
 
-
+/**
+ * interface of all game-type DAO
+ */
 interface CommonDao<T, U>: CommonComponentDao<T>{
     fun getByServerId(id:Long):List<T>
     fun getById(id:Long):Flow<List<T>>
@@ -30,12 +32,18 @@ interface CommonDao<T, U>: CommonComponentDao<T>{
 }
 
 
+/**
+ * interface of all game related DAO
+ */
 interface CommonComponentDao<T>{
     fun getByName(searchedName:String): List<T>
     fun getNameList(): List<String>
 }
 
 
+/**
+ * interface of all game linked element DAO
+ */
 interface CommonCustomInsert<T>: CommonComponentDao<T>{
     fun insert(newElement:String)
     fun getDeletableNameList(): Flow<List<T>>
@@ -43,7 +51,9 @@ interface CommonCustomInsert<T>: CommonComponentDao<T>{
     fun getAll(): Flow<List<T>>
 }
 
-
+/**
+ * DAO for game table(main game)
+ */
 @Dao
 interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     @Query("SELECT * FROM game ORDER BY name ASC")
@@ -172,8 +182,11 @@ interface GameDao: CommonDao<GameTableBean, DesignerWithGame> {
     @Query("DELETE FROM game WHERE id=:id")
     override fun deleteOne(id:Long)
 }
-    
-    
+
+
+/**
+ * dao for addOn table (addOn game)
+ */
 @Dao
 interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("SELECT * FROM addOn ORDER BY name ASC")
@@ -293,8 +306,11 @@ interface AddOnDao: CommonDao<AddOnTableBean, DesignerWithAddOn> {
     @Query("DELETE FROM addOn WHERE id=:id")
     override fun deleteOne(id:Long)
 }
-    
-    
+
+
+/**
+ * dao for addOn table (addOn game)
+ */
 @Dao
 interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> {
     @Query("SELECT * FROM multiAddOn ORDER BY name ASC")
@@ -425,8 +441,10 @@ interface MultiAddOnDao: CommonDao<MultiAddOnTableBean, DesignerWithMultiAddOn> 
     @Query("DELETE FROM multiAddOn WHERE id=:id")
     override fun deleteOne(id: Long)
 }
-    
-    
+
+/**
+ * DAO of tag table(main game only)
+  */
 @Dao
 interface TagDao: CommonCustomInsert<TagTableBean> {
     @Query("SELECT * FROM tag ORDER BY name ASC")
@@ -460,8 +478,10 @@ interface TagDao: CommonCustomInsert<TagTableBean> {
     override fun deleteOne(id:Long)
     
 }
-    
 
+/**
+ * DAO for topic table (main game only)
+ */
 @Dao
 interface TopicDao: CommonCustomInsert<TopicTableBean> {
     @Query("SELECT * FROM topic ORDER BY name ASC")
@@ -495,7 +515,10 @@ interface TopicDao: CommonCustomInsert<TopicTableBean> {
     override fun deleteOne(id:Long)
 }
 
-    
+
+/**
+ * DAO for mechanism Table (main game only)
+ */
 @Dao
 interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
     @Query("SELECT * FROM mechanism ORDER BY name ASC")
@@ -529,7 +552,10 @@ interface MechanismDao: CommonCustomInsert<MechanismTableBean> {
     override fun deleteOne(id:Long)
 }
 
-    
+
+/**
+ * DAO for designer of all game type
+ */
 @Dao
 interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
     @Query("SELECT * FROM designer ORDER BY name ASC")
@@ -565,8 +591,11 @@ interface DesignerDao: CommonCustomInsert<DesignerTableBean> {
     @Query("DELETE FROM designer WHERE id=:id")
     override fun deleteOne(id:Long)
 }
-    
-    
+
+
+/**
+ * DAO for artist table (all game type)
+ */
 @Dao
 interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
     @Query("SELECT * FROM artist ORDER BY name ASC")
@@ -600,7 +629,10 @@ interface ArtistDao: CommonCustomInsert<ArtistTableBean> {
     override fun deleteOne(id:Long)
 }
 
-    
+
+/**
+ * DAO for publisher table (all game type)
+ */
 @Dao
 interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
     @Query("SELECT * FROM publisher ORDER BY name ASC")
@@ -633,8 +665,11 @@ interface PublisherDao: CommonCustomInsert<PublisherTableBean> {
     @Query("DELETE FROM publisher WHERE id=:id")
     override fun deleteOne(id:Long)
 }
-    
 
+
+/**
+ * DAO for playingMod table (all game type)
+ */
 @Dao
 interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     @Query("SELECT * FROM playingMod ORDER BY name ASC")
@@ -668,7 +703,10 @@ interface PlayingModDao: CommonCustomInsert<PlayingModTableBean> {
     override fun deleteOne(id:Long)
 }
 
-    
+
+/**
+ * DAO for language table (all game type)
+ */
 @Dao
 interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
     @Query("SELECT * FROM language ORDER BY name ASC")
@@ -701,8 +739,11 @@ interface LanguageDao: CommonCustomInsert<LanguageTableBean> {
     @Query("DELETE FROM language WHERE id=:id")
     override fun deleteOne(id:Long)
 }
-    
 
+
+/**
+ * DAO for difficulty table (all game type)
+ */
 @Dao
 interface DifficultyDao: CommonCustomInsert<DifficultyTableBean> {
     @Query("SELECT * FROM difficulty ORDER BY name ASC")
@@ -740,6 +781,9 @@ interface DifficultyDao: CommonCustomInsert<DifficultyTableBean> {
 }
 
 
+/**
+ * DAO for user table (handle connection and permissions)
+ */
 @Dao
 interface UserDao {
     @Query("SELECT * FROM user ORDER BY login ASC")
@@ -759,6 +803,9 @@ interface UserDao {
 }
 
 
+/**
+ * DAO for deletedItems table (handle server present game deleted)
+ */
 @Dao
 interface DeletedItemDao{
 
@@ -776,6 +823,9 @@ interface DeletedItemDao{
 }
 
 
+/**
+ * DAO for image table (handle image url storage)
+ */
 @Dao
 interface ImageDao {
 

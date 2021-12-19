@@ -393,7 +393,22 @@ class AddElement : CommonType(), View.OnClickListener,
         linearLayout.addView(ll)
     }
 
+    private fun btnLoading(){
+        runOnUiThread {
+            binding.btnAdd.visibility = View.GONE
+            binding.pbBtnAdd.visibility = View.VISIBLE
+        }
+    }
+
+    private fun endLoading(){
+        runOnUiThread {
+            binding.btnAdd.visibility = View.VISIBLE
+            binding.pbBtnAdd.visibility = View.GONE
+        }
+    }
+
     override fun onClick(v: View?) {
+        btnLoading()
         binding.etError.visibility = View.GONE
         CoroutineScope(SupervisorJob()).launch {
                 val name = binding.etNom.text.toString()
@@ -406,6 +421,7 @@ class AddElement : CommonType(), View.OnClickListener,
             runOnUiThread {
                 binding.etError.text = getString(R.string.name_cannot_be_empty)
                 binding.etError.visibility = View.VISIBLE
+                endLoading()
             }
         } else if (
             (changedObjectId == 0L || changedObjectName != name) &&
@@ -419,6 +435,7 @@ class AddElement : CommonType(), View.OnClickListener,
             runOnUiThread {
                 binding.etError.text = getString(R.string.name_already_exist)
                 binding.etError.visibility = View.VISIBLE
+                endLoading()
             }
         } else {
             appInstance.database.runInTransaction {
@@ -468,6 +485,7 @@ class AddElement : CommonType(), View.OnClickListener,
         }
         startActivity(Intent(this@AddElement, ViewGamesActivity::class.java))
         finish()
+        endLoading()
     }
 
     private fun <T>addList(
@@ -880,8 +898,8 @@ class AddElement : CommonType(), View.OnClickListener,
     }
 
     private fun fillCommonRv(){
-        getAddedStringContentType().forEach { type ->
-            CoroutineScope(SupervisorJob()).launch{
+        CoroutineScope(SupervisorJob()).launch{
+            getAddedStringContentType().forEach { type ->
                 val lowCamelCase = type.highToLowCamelCase()
                 val adapter = GenericIDListCbAdapter(
                     this@AddElement,

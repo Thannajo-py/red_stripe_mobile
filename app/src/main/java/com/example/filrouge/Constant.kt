@@ -1,9 +1,19 @@
 package com.example.filrouge
 
+/**
+ * A temporary list containing all Board Game Atlas mechanics, reset when application closed
+ */
 val ALL_MECHANICS = ArrayList<NamedResultBean>()
+/**
+ * A temporary list containing all Board Game Atlas categories, reset when application closed
+ */
 val ALL_CATEGORIES = ArrayList<NamedResultBean>()
 
 
+/**
+ * An enum of serialKey used with shared preferences to recover variable,
+ * or to pass variable between activities
+ */
 enum class SerialKey{
     Game,
     Type,
@@ -24,11 +34,13 @@ enum class SerialKey{
     SaveDatabase,
     ApiBgaGame,
     ApiBgaImage,
-    SelectedLanguage
-
 }
 
 
+/**
+ * List of different game related type use to identify string
+ * and with reflection to get proper members
+ */
 enum class Type{
     Designer,
     Artist,
@@ -46,6 +58,9 @@ enum class Type{
 }
 
 
+/**
+ * Used with reflection to save all field from database
+ */
 enum class SaveDbField{
     Game,
     AddOn,
@@ -84,6 +99,9 @@ enum class SaveDbField{
 }
 
 
+/**
+ * Used to identify menu item selected
+ */
 enum class MenuId{
     ApiSearch,
     Synchronize,
@@ -109,11 +127,17 @@ enum class MenuId{
 }
 
 
+/**
+ * Enforce password rules regex
+ */
 enum class RegexPattern(val pattern:String){
     PassWord("^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}$")
 }
 
 
+/**
+ * A set of other constant grouped to avoid magical String
+ */
 enum class Constant(val value:String){
     ApiBgaKey("WgrVtRvHeo"),
     Extension("expansion"),
@@ -122,6 +146,9 @@ enum class Constant(val value:String){
 }
 
 
+/**
+ * All necessary on the fly permissions
+ */
 enum class PermissionRequest(val perm:String){
     Camera(android.Manifest.permission.CAMERA),
     ExternalStorage(android.Manifest.permission.READ_EXTERNAL_STORAGE)

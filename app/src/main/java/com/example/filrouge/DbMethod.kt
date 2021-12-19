@@ -59,7 +59,7 @@ class DbMethod {
     )
 
     /**
-     *
+     * use to delete game object from junction Tables
      */
     fun deleteLink(game: ID, type: String){
         getCommonField().forEach {
@@ -74,11 +74,17 @@ class DbMethod {
         }
     }
 
+    /**
+     * use to create link for game in junction Tables
+     */
     fun<T:CommonDataArrayList> insertLink(game: ID, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
         findMembers(game, getCommonField(), type, data)
         if (game is GameTableBean)findMembers(game, getGameSpecificField(), type, data, map)
     }
 
+    /**
+     * internal method get semantically linked element using Kotlin reflection and make junction tables link
+     */
     private fun<T:CommonDataArrayList> findMembers(game:ID, list: ArrayList<String>, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
         list.forEach {
             val lowercase = it.highToLowCamelCase()
@@ -95,7 +101,9 @@ class DbMethod {
         }
     }
 
-
+    /**
+     * set all add-ons gameId to point toward the game Id
+     */
     fun setAddOnGameLink(addOnList: ArrayList<CommonGame>, id:Long?){
         addOnList.forEach {
             val addOn = appInstance.database.addOnDao().getObjectById(it.id)
@@ -104,6 +112,9 @@ class DbMethod {
         }
     }
 
+    /**
+     * insert line into junction DAO table
+     */
     private fun <T:ID, U>linkList(
         name:ArrayList<String>,
         dao:CommonComponentDao<T>,
@@ -115,6 +126,10 @@ class DbMethod {
         }
     }
 
+    /**
+     * handle deletion by removing all junction first then save server Id Game object into
+     * deleted list table for synchronization
+     */
     fun delete(game: Previous, type:String){
         db.runInTransaction {
             val lowercase = type.highToLowCamelCase()
@@ -127,6 +142,9 @@ class DbMethod {
         }
     }
 
+    /**
+     * handle game multi-add-on junction table
+      */
     fun gameMultiAddOnLinkListByMultiAddOn(
         name:ArrayList<String>,
         dao:GameDao,
@@ -139,6 +157,9 @@ class DbMethod {
         }
     }
 
+    /**
+     * convert [GameTableBean] from local database to [GameBean] for server exchange
+     */
     fun convertToBean(game:GameTableBean):GameBean {
         val dao = appInstance.database.gameDao()
         var difficulty:String? = null
@@ -183,6 +204,9 @@ class DbMethod {
             game.picture)
     }
 
+    /**
+     * convert [AddOnTableBean] from local database to [AddOnBean] for server exchange
+     */
     fun convertToBean(game:AddOnTableBean):AddOnBean {
         val dao = appInstance.database.addOnDao()
         var difficulty:String? = null
@@ -217,6 +241,9 @@ class DbMethod {
             game.picture)
     }
 
+    /**
+     * convert [MultiAddOnTableBean] from local database to [MultiAddOnBean] for server exchange
+     */
     fun convertToBean(game:MultiAddOnTableBean):MultiAddOnBean {
         val dao = appInstance.database.multiAddOnDao()
         var difficulty:String? = null
@@ -246,6 +273,9 @@ class DbMethod {
             game.picture)
     }
 
+    /**
+     * convert [GameBean] from server exchange  to [GameTableBean] for local database
+     */
     fun convertToTableBean(it:GameBean):GameTableBean{
         var gameId = 0L
         val gameInDb = db.gameDao().getByServerId(it.id?.toLong() ?: 0L)
@@ -283,6 +313,9 @@ class DbMethod {
             )
     }
 
+    /**
+     * convert [AddOnBean] from server exchange  to [AddOnTableBean] for local database
+     */
     fun convertToTableBean(it:AddOnBean):AddOnTableBean{
         val gameInDb = db.addOnDao().getByServerId(it.id?.toLong() ?: 0L)
         var addOnId = 0L
@@ -318,6 +351,9 @@ class DbMethod {
             )
     }
 
+    /**
+     * convert [MultiAddOnBean] from server exchange  to [MultiAddOnTableBean] for local database
+     */
     fun convertToTableBean(it:MultiAddOnBean):MultiAddOnTableBean{
         var gameId = 0L
         val gameInDb = db.multiAddOnDao().getByServerId(it.id?.toLong() ?: 0L)
@@ -347,6 +383,9 @@ class DbMethod {
         )
     }
 
+    /**
+     * Convert [String] of Add-on name list to ArrayList of AddOns
+     */
     fun convertStringListToAddOnTableList(list:ArrayList<String>): ArrayList<CommonGame>{
         val addOnList = ArrayList<CommonGame>()
         list.forEach {

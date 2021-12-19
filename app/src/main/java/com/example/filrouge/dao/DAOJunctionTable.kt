@@ -12,7 +12,10 @@ interface CommonJunctionDAo<T>{
     fun insertIds(id1:Long, id2:Long)
 
 }
-     
+
+/**
+ * Dao for junction table game-multi-add-on
+ */
 @Dao
 interface GameMultiAddOnDao: CommonJunctionDAo<GameMultiAddOnTableBean> {
 

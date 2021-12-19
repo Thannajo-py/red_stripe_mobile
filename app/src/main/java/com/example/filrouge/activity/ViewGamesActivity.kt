@@ -25,6 +25,9 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.lang.Exception
 
+/**
+ * A central activity contains all general menu items and a list of all games in a RecyclerView
+ */
 class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     private val binding: ActivityViewGamesBinding by lazy {

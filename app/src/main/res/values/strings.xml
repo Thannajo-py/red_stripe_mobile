@@ -41,7 +41,7 @@
     <string name="add_account">Add an account</string>
     <string name="delete_account">Delete accounts</string>
     <plurals name="delete_accounts">
-        <item quantity="one">Do you really want to delete %d account?</item>
+        <item quantity="one">Do you really want to delete this account?</item>
         <item quantity="other">>Do you really want to delete %d accounts?</item>
     </plurals>
     <string name="delete_account_none_selected">Please select at least one account</string>

@@ -8,7 +8,9 @@ import com.example.filrouge.bean.*
 import com.example.filrouge.dao.*
 import com.example.filrouge.dao.MechanismDao
 
-
+/**
+ * Room table declaration
+ */
 @Database (
     entities = [
 GameTableBean::class,
@@ -49,8 +51,11 @@ MultiAddOnLanguageTableBean::class,
     version = 10,
     exportSchema = false
 )
+/**
+ * Room database class
+ */
 abstract class FilRougeRoomDatabase : RoomDatabase(){
-
+//Dao declaration
 abstract fun gameDao(): GameDao
 abstract fun addOnDao(): AddOnDao
 abstract fun multiAddOnDao(): MultiAddOnDao
@@ -86,7 +91,10 @@ abstract fun multiAddOnLanguageDao(): MultiAddOnLanguageDao
 abstract fun deletedContentDao(): DeletedItemDao
 abstract fun imageDao(): ImageDao
 
-companion object{
+    /**
+     * Database connection via Singleton
+     */
+    companion object{
         private var INSTANCE: FilRougeRoomDatabase? = null
 
         fun getDatabase(context:Context) = INSTANCE ?: Room.databaseBuilder(

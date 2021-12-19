@@ -11,7 +11,6 @@ val client = OkHttpClient()
 val gson = Gson()
 val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
 
-
 /**
  * method for POST httpRequest with String Body Return
  * use for communication with API of the server

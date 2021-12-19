@@ -67,7 +67,7 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
     }
 
     /**
-     * Handle difficulty for children
+     * Handle difficulty for class children
      */
     protected fun fillDifficultyField(gameId:Long, app:LifecycleOwner, tvDifficulty:TextView, dao:CommonDao<*,*>){
         dao.getDifficulty(gameId).observe(app, {
@@ -86,6 +86,9 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
         })
     }
 
+    /**
+     * handle deletion alert box for game, add-on, multi-add-on
+     */
     protected fun<T:Previous> showAlertBox(context: Context, message:String, dao:CommonDao<T,*>, type:String, gameId:Long){
         AlertDialog.Builder(context).setMessage(message).setTitle(getString(R.string.warning))
             .setPositiveButton(getString(R.string.ok)){

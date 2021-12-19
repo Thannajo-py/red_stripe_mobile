@@ -115,11 +115,11 @@ open class GenericListAdapter(private val client: OnGenericListAdapterListener)
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
         /**
-         * @return true if both item are the identical
+         * @return true if both item have the same content
          */
-        override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
     /**
@@ -186,13 +186,22 @@ open class GenericStringListAdapter(private val client: OnGenericStringListAdapt
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
@@ -226,14 +235,23 @@ class GenericIDListCbAdapter (
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
     = ViewHolder(NameListCbBinding.inflate(
         LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
@@ -281,14 +299,23 @@ class GenericIDListCbAdapterId (
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
             = ViewHolder(NameListCbBinding.inflate(
         LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
@@ -336,13 +363,22 @@ class GenericCommonGameListCbAdapter<T:CommonGame> (
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
     = ViewHolder(GameListCbBinding.inflate(LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
@@ -398,13 +434,22 @@ class OneToOneListAdapter<T:OneToOne> (private val client: GenericOneToOneListen
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem.id == newItem.id
+        override fun areItemsTheSame(oldItem: T, newItem: T) = oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
         override fun areContentsTheSame(oldItem: T, newItem: T) = oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
     = ViewHolder(NameListBinding.inflate(LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
@@ -442,13 +487,24 @@ class AddOnGameListAdapter (private val client: GenericOneToOneListener)
         /**
          * @return true if both item are the same
          */
-        override fun areItemsTheSame(oldItem: DesignerWithGame, newItem: DesignerWithGame) = oldItem.id == newItem.id
-        override fun areContentsTheSame(oldItem: DesignerWithGame, newItem: DesignerWithGame) = oldItem.name == newItem.name
+        override fun areItemsTheSame(oldItem: DesignerWithGame, newItem: DesignerWithGame) =
+            oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
+        override fun areContentsTheSame(oldItem: DesignerWithGame, newItem: DesignerWithGame) =
+            oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int)
             = ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
@@ -492,15 +548,23 @@ open class BgaListAdapter (private val client: APISearchActivity)
          * @return true if both item are the same
          */
         override fun areItemsTheSame(oldItem: BgaGameBean, newItem: BgaGameBean) =
-            oldItem.id == newItem.id
-
+            oldItem === newItem
+        /**
+         * @return true if both item have the same content
+         */
         override fun areContentsTheSame(oldItem: BgaGameBean, newItem: BgaGameBean) =
-            oldItem.id == newItem.id
+            oldItem.name == newItem.name
     }
 
+    /**
+     * call at view holder creation
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
         ViewHolder(GameListBinding.inflate(LayoutInflater.from(parent.context)))
 
+    /**
+     * use to fill the viewHolder
+     */
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val datum = getItem(position)
         holder.bind.tvName.text = datum.name
