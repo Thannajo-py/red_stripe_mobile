@@ -1,4 +1,4 @@
-package com.example.filrouge.bean
+package com.example.filrouge.utils
 
 import androidx.room.*
 

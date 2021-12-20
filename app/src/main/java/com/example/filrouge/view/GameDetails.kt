@@ -7,7 +7,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
-import com.example.filrouge.bean.*
+import com.example.filrouge.utils.*
 import com.example.filrouge.databinding.ActivityGameDetailsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

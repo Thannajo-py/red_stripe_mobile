@@ -7,8 +7,11 @@ import android.view.View
 import android.widget.CheckBox
 import android.widget.Toast
 import com.example.filrouge.*
-import com.example.filrouge.bean.UserTableBean
+import com.example.filrouge.utils.UserTableBean
 import com.example.filrouge.databinding.ActivityCreateNewAccountBinding
+import com.example.filrouge.utils.RegexPattern
+import com.example.filrouge.utils.currentUser
+import com.example.filrouge.utils.generateHashedPass
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

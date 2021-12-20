@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:gravity="center"
     android:orientation="vertical"
-    tools:context=".activity.GameDetails"
+    tools:context=".view.GameDetails"
     android:padding="10dp">
 
     <LinearLayout

@@ -1,10 +1,10 @@
-package com.example.filrouge.dao
+package com.example.filrouge.model
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
-import com.example.filrouge.bean.*
+import com.example.filrouge.utils.*
 
 
 interface CommonJunctionDAo<T>{

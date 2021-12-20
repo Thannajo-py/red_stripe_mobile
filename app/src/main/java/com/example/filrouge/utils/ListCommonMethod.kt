@@ -1,8 +1,6 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
 import android.widget.CheckBox
-import androidx.lifecycle.asLiveData
-import androidx.recyclerview.widget.GridLayoutManager
 
 /**
  * A class with tools for handling CheckBox in list

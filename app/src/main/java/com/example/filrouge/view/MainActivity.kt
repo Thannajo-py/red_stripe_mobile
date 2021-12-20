@@ -4,25 +4,35 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import android.window.SplashScreen
 import com.example.filrouge.*
-import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.ActivityMainBinding
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity(), View.OnClickListener {
 
+    /**
+     * access to xml element by id
+     */
     private val binding: ActivityMainBinding by lazy{ ActivityMainBinding.inflate(layoutInflater) }
+
+    /**
+     * user Dao shortcut
+     */
     private val dbUser = appInstance.database.userDao()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
-        recoverApiStatic()
-        handleNoUser()
-        binding.btnLogin.setOnClickListener(this)
-        handleRememberedUser()
+        binding.btnLogin.setOnClickListener(this@MainActivity)
+        CoroutineScope(SupervisorJob()).launch{
+            recoverApiStatic()
+            handleNoUser()
+            handleRememberedUser()
+        }
     }
 
     override fun onRestart() {
@@ -30,6 +40,9 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         displayLoginField()
     }
 
+    /**
+     * Check if there is a remembered user and if present in the database
+     */
     private fun handleRememberedUser(){
         appInstance.sharedPreference.getValueString(SerialKey.SavedUser.name)?.run{
             val userRemembered = gson.fromJson(this,UserTableBean::class.java)
@@ -46,9 +59,15 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * check if user inside the database is the same as the remembered user
+     */
     private fun rememberedUserError(userList:List<UserTableBean>, userRemembered: UserTableBean) =
         userList.first() != userRemembered
 
+    /**
+     *
+     */
     private fun autoLogin(userRemembered:UserTableBean){
         currentUser = userRemembered
         startActivity(Intent(this@MainActivity, ViewGamesActivity::class.java))
@@ -118,4 +137,5 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
     private fun endLoading() = runOnUiThread {
         binding.progressBarLogin.visibility = View.GONE
     }
+
 }

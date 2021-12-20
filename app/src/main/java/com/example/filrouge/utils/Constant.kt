@@ -1,4 +1,6 @@
-package com.example.filrouge
+package com.example.filrouge.utils
+
+import com.example.filrouge.NamedResultBean
 
 /**
  * A temporary list containing all Board Game Atlas mechanics, reset when application closed

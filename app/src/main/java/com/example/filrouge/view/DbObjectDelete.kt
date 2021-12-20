@@ -8,9 +8,9 @@ import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
-import com.example.filrouge.bean.ID
-import com.example.filrouge.dao.CommonCustomInsert
+import com.example.filrouge.model.CommonCustomInsert
 import com.example.filrouge.databinding.ActivityDbObjectDeleteBinding
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ class DbObjectDelete : AppCompatActivity(), GenericIDCbListenerId, View.OnClickL
         ActivityDbObjectDeleteBinding.inflate(layoutInflater)
     }
     private val addedContentHashMap = HashMap<String, ArrayList<Long>>()
-    private val adapterHashMap = HashMap<String,GenericIDListCbAdapterId>()
+    private val adapterHashMap = HashMap<String, GenericIDListCbAdapterId>()
     private val listMethod = ListCommonMethod()
 
     override fun onCreate(savedInstanceState: Bundle?) {

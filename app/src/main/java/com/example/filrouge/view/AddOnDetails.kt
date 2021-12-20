@@ -5,7 +5,7 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.lifecycle.asLiveData
 import com.example.filrouge.*
-import com.example.filrouge.bean.*
+import com.example.filrouge.utils.*
 import com.example.filrouge.databinding.ActivityAddOnDetailsBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

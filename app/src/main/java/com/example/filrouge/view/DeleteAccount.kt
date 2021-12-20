@@ -8,8 +8,8 @@ import android.widget.Toast
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
-import com.example.filrouge.bean.UserTableBean
 import com.example.filrouge.databinding.ActivityDeleteAccountBinding
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch

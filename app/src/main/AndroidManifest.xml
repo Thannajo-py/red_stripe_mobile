@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.filrouge">
+    package="com.example.filrouge" >
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -18,45 +18,45 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.FilRouge">
+        android:theme="@style/Theme.FilRouge" >
         <activity
-            android:name=".activity.DbObjectDelete"
+            android:name=".view.DbObjectDelete"
             android:exported="false"
-            android:parentActivityName=".activity.ViewGamesActivity"/>
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.APISearchActivity"
-            android:exported="true"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.APISearchActivity"
+            android:exported="false"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.AddElement"
-            android:exported="true"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.AddElement"
+            android:exported="false"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.DeleteAccount"
-            android:exported="true"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.DeleteAccount"
+            android:exported="false"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.Search"
-            android:exported="true"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.Search"
+            android:exported="false"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.CreateNewAccount"
-            android:exported="true"
-            android:parentActivityName=".activity.MainActivity" />
+            android:name=".view.CreateNewAccount"
+            android:exported="false"
+            android:parentActivityName=".view.MainActivity" />
         <activity
-            android:name=".activity.GenericTypeDetails"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.GenericTypeDetails"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.MultiAddOnDetails"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.MultiAddOnDetails"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.AddOnDetails"
-            android:parentActivityName=".activity.ViewGamesActivity" />
+            android:name=".view.AddOnDetails"
+            android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".activity.GameDetails"
-            android:parentActivityName=".activity.ViewGamesActivity" />
-        <activity android:name=".activity.ViewGamesActivity" />
-        <activity android:name=".activity.MainActivity">
+            android:name=".view.GameDetails"
+            android:parentActivityName=".view.ViewGamesActivity" />
+        <activity android:name=".view.ViewGamesActivity" />
+        <activity android:name=".view.MainActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

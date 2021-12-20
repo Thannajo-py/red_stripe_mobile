@@ -6,12 +6,20 @@ import android.view.MenuItem
 import androidx.lifecycle.asLiveData
 import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityMultiAddOnDetailBinding
+import com.example.filrouge.utils.*
 
 class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
 
+    /**
+     * access to xml element by id
+     */
     private val binding: ActivityMultiAddOnDetailBinding by lazy{
         ActivityMultiAddOnDetailBinding.inflate(layoutInflater)
     }
+
+    /**
+     * Id of the MultiAddOn passed with the intent that start the activity
+     */
     private val gameId by lazy{
         intent.extras!!.getSerializable(SerialKey.MultiAddOnId.name) as Long
     }
@@ -45,6 +53,9 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         return super.onOptionsItemSelected(item)
     }
 
+    /**
+     * Fill all Textview from the page with the sent multi-add-on
+     */
     private fun fillCommonTextView(){
         appInstance.database.multiAddOnDao().getById(gameId).asLiveData().observe(
             this,
@@ -82,6 +93,9 @@ class MultiAddOnDetails : GameAddOnMultiAddOnCommonMenu() {
         )
     }
 
+    /**
+     * Fill the RecyclerView with all multi-add-on linked games
+     */
     private fun fillGameRV(){
         val adapter = GenericListAdapter( this)
         binding.rvMultiAddOn.adapter = adapter

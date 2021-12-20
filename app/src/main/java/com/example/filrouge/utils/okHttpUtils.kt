@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
 import com.google.gson.Gson
 import okhttp3.MediaType.Companion.toMediaType
@@ -6,9 +6,18 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
-
+/**
+ * instance of [OkHttpClient]
+ */
 val client = OkHttpClient()
+/**
+ * instance of [Gson]
+ */
 val gson = Gson()
+
+/**
+ * Define body as JSON
+ */
 val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
 
 /**

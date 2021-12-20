@@ -19,10 +19,10 @@ import androidx.core.view.forEach
 import androidx.lifecycle.asLiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
-import com.example.filrouge.bean.*
-import com.example.filrouge.dao.CommonCustomInsert
-import com.example.filrouge.dao.CommonDao
-import com.example.filrouge.dao.GameDao
+import com.example.filrouge.utils.*
+import com.example.filrouge.model.CommonCustomInsert
+import com.example.filrouge.model.CommonDao
+import com.example.filrouge.model.GameDao
 import com.example.filrouge.databinding.ActivityAddElementBinding
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
@@ -33,7 +33,7 @@ import java.io.ByteArrayOutputStream
 import java.io.File
 
 class AddElement : CommonType(), View.OnClickListener,
-    GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener{
+    GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener {
 
     private val binding by lazy{ActivityAddElementBinding.inflate(layoutInflater)}
     private val listMethod = ListCommonMethod()
@@ -467,7 +467,8 @@ class AddElement : CommonType(), View.OnClickListener,
                 appInstance.database.playingModDao(),
                 binding.llAddPlayingMod
             ),
-            language = addList(Type.Language.name,
+            language = addList(
+                Type.Language.name,
                 appInstance.database.languageDao(),
                 binding.llAddLanguage
             ),
@@ -584,7 +585,7 @@ class AddElement : CommonType(), View.OnClickListener,
         dbMethod.getGameSpecificField().forEach {
         val list = ArrayList<String>()
             if(it == Type.MultiAddOn.name){
-                list.addAll(addedGameContentHashMap[Type.MultiAddOn.name]!!.map {cg->
+                list.addAll(addedGameContentHashMap[Type.MultiAddOn.name]!!.map { cg->
                     cg.name
                 }.toCollection(ArrayList()))
             }

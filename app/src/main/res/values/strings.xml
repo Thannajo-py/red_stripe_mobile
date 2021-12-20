@@ -160,4 +160,8 @@
     <string name="name_already_exist">
         a same type named element already exist
     </string>
+    <string name="title_activity_splash_screen">SplashScreen</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
 </resources>

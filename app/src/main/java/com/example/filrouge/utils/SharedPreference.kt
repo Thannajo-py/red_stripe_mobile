@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
 import android.content.Context
 import android.content.SharedPreferences

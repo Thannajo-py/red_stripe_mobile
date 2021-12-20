@@ -1,9 +1,5 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
-import android.graphics.Paint
-import android.widget.EditText
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 

@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
 import android.graphics.BitmapFactory
 import android.view.LayoutInflater
@@ -7,8 +7,8 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.filrouge.BgaGameBean
 import com.example.filrouge.view.APISearchActivity
-import com.example.filrouge.bean.*
 import com.example.filrouge.databinding.*
 import com.squareup.picasso.Picasso
 import java.io.File

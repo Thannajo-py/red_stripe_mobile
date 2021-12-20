@@ -6,9 +6,8 @@ import android.widget.ProgressBar
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import com.example.filrouge.*
-import com.example.filrouge.bean.CommonGame
-import com.example.filrouge.bean.DesignerWithGame
 import com.example.filrouge.databinding.ActivityGenericTypeDetailsBinding
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -97,7 +96,7 @@ class GenericTypeDetails : CommonType() {
         }
     }
 
-    private fun handleGameSearchQuery(search: SearchQuery, adapter:GenericListAdapter){
+    private fun handleGameSearchQuery(search: SearchQuery, adapter: GenericListAdapter){
         runOnUiThread {
             binding.rvGenericDetailGame.adapter = adapter
             layout(binding.rvGenericDetailGame)

@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.view
 
 import android.app.AlertDialog
 import android.content.Context
@@ -12,10 +12,9 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.example.filrouge.view.ViewGamesActivity
-import com.example.filrouge.bean.ID
-import com.example.filrouge.bean.Previous
-import com.example.filrouge.dao.CommonDao
+import com.example.filrouge.R
+import com.example.filrouge.model.CommonDao
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -24,17 +23,17 @@ import kotlinx.coroutines.launch
  * parent class GameDetails, AddOnDetails, MultiAddOnDetails
  * give common method
  */
-open class GameAddOnMultiAddOnCommonMenu :CommonType(){
+open class GameAddOnMultiAddOnCommonMenu : CommonType(){
 
     /**
      * Common menu for class children
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if(currentUser?.delete == true){
-            menu?.add(0,MenuId.DeleteThis.ordinal,0,getString(R.string.delete))
+            menu?.add(0, MenuId.DeleteThis.ordinal,0,getString(R.string.delete))
         }
         if (currentUser?.change == true){
-            menu?.add(0,MenuId.ModifyThis.ordinal,0,getString(R.string.modify))
+            menu?.add(0, MenuId.ModifyThis.ordinal,0,getString(R.string.modify))
         }
         return super.onCreateOptionsMenu(menu)
     }
@@ -87,7 +86,7 @@ open class GameAddOnMultiAddOnCommonMenu :CommonType(){
     /**
      * handle deletion alert box for game, add-on, multi-add-on
      */
-    protected fun<T:Previous> showAlertBox(context: Context, message:String, dao:CommonDao<T,*>, type:String, gameId:Long){
+    protected fun<T: Previous> showAlertBox(context: Context, message:String, dao:CommonDao<T,*>, type:String, gameId:Long){
         AlertDialog.Builder(context).setMessage(message).setTitle(getString(R.string.warning))
             .setPositiveButton(getString(R.string.ok)){
                     _, _ -> CoroutineScope(SupervisorJob()).launch{

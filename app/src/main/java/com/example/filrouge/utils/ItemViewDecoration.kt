@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
 import android.graphics.Rect
 import android.view.View

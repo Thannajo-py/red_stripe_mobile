@@ -12,6 +12,9 @@ interface CommonDataArrayList{
 }
 
 
+/**
+ * Generic Container for modified and new Game Type object
+ */
 data class ApiResponse(
         @SerializedName("games")
         val game:ArrayList<GameBean>,
@@ -21,7 +24,9 @@ data class ApiResponse(
         val multiAddOn: ArrayList<MultiAddOnBean>
         ):Serializable
 
-
+/**
+ * Container for deleted item object
+ */
 data class ApiDelete(
         @SerializedName("games")
         val game:ArrayList<DeletedObject>,
@@ -32,6 +37,9 @@ data class ApiDelete(
         ):Serializable
 
 
+/**
+ * Server API Response Bean container
+ */
 data class ApiReceive(
         @SerializedName("games")
         val game:ArrayList<GameBean>?,
@@ -47,6 +55,9 @@ data class ApiReceive(
         val deletedMultiAddOn:ArrayList<Int>?,
         val timestamp: Float
         ){
+        /**
+         * Specific method to ensure answer contains at least one modification
+         */
         fun isNullOrEmpty() = arrayListOf(
                         this.game,
                         this.addOn,
@@ -57,10 +68,15 @@ data class ApiReceive(
                 ).all { it.isNullOrEmpty() }
 }
 
-
+/**
+ * Deleted object Id
+ */
 data class DeletedObject(val id:Int)
 
 
+/**
+ * Game model for Server API communication
+ */
 data class GameBean(
         val id: Int?,
         val name: String,
@@ -92,6 +108,9 @@ data class GameBean(
 ): CommonDataArrayList, Serializable
 
 
+/**
+ * AddOn model for Server API communication
+ */
 data class AddOnBean(
         val id: Int?,
         val name: String,
@@ -115,6 +134,9 @@ data class AddOnBean(
 ):CommonDataArrayList, Serializable
 
 
+/**
+ * MultiAddOn model for Server API communication
+ */
 data class MultiAddOnBean(
         val id: Int?,
         val name: String,
@@ -138,6 +160,9 @@ data class MultiAddOnBean(
 ): CommonDataArrayList, Serializable
 
 
+/**
+ * Container to send change object to server API
+ */
 class SendApiChange(
         val login:String,
          val password:String,
@@ -148,9 +173,15 @@ class SendApiChange(
         )
 
 
+/**
+ * Global container to send API change
+ */
 class ApiBody(val body:SendApiChange)
 
 
+/**
+ * A data class containing all searched element
+ */
 data class SearchQuery(
         val name:String?,
         val designer:String?,
@@ -169,9 +200,15 @@ data class SearchQuery(
 ):Serializable
 
 
+/**
+ * Global container for BGA API
+ */
 data class BgaApi( val games: ArrayList<BgaGameBean>? )
 
 
+/**
+ * Game type representation of BGA API answer
+ */
 data class BgaGameBean(
      val id: String,
      val name: String,
@@ -190,20 +227,38 @@ data class BgaGameBean(
 ): Serializable
 
 
+/**
+ * A class representing object with id Only
+ */
 data class IdObjectBean(val id: String):Serializable
 
 
+/**
+ * A class representing object with name Only
+ */
 data class NamedObjectBean(val name: String):Serializable
 
 
+/**
+ * A class representing object with id and name
+ */
 data class NamedResultBean(val id:String, val name:String)
 
 
+/**
+ * BGA API container answer of all mechanics
+ */
 data class MechanicApiResult(val mechanics:ArrayList<NamedResultBean>)
 
-
+/**
+ * BGA API container answer of all categories
+ */
 data class CategoriesApiResult(val categories:ArrayList<NamedResultBean>)
 
+
+/**
+ * Common field between game AddOn and MultiAddOn
+ */
 data class CommonAddObject(
         val name: String,
         val player_min: Int?,

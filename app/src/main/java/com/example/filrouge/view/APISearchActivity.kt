@@ -7,6 +7,7 @@ import android.view.View
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityApisearchBinding
+import com.example.filrouge.utils.*
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob

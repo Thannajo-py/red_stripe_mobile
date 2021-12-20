@@ -7,18 +7,23 @@ import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import com.example.filrouge.*
-import com.example.filrouge.dao.CommonComponentDao
-import com.example.filrouge.dao.CommonDao
+import com.example.filrouge.model.CommonComponentDao
 import com.example.filrouge.databinding.ActivitySearchBinding
+import com.example.filrouge.utils.SerialKey
+import com.example.filrouge.utils.Type
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 
 class Search : AppCompatActivity(), View.OnClickListener {
 
+    /**
+     * access to xml element by id
+     */
     private val binding:ActivitySearchBinding by lazy{
         ActivitySearchBinding.inflate(layoutInflater)
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -26,7 +31,9 @@ class Search : AppCompatActivity(), View.OnClickListener {
         autoCompleteViewBinding()
     }
 
-
+    /**
+     * Generate list of link between Dao and [AutoCompleteTextView]
+     */
     private fun autoCompleteViewBinding(){
         val db = appInstance.database
         arrayOf(
@@ -43,6 +50,9 @@ class Search : AppCompatActivity(), View.OnClickListener {
         nameAutoCompleteBinding()
     }
 
+    /**
+     * Handle general [AutoCompleteTextView] linking with dao
+     */
     private fun<T> autoCompleteViewBinding
                 (dao:CommonComponentDao<T>,
                  autocompleteTextView:
@@ -60,6 +70,9 @@ class Search : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    /**
+     * Handle name [AutoCompleteTextView] with Game name AddOn name MultiAddOn name
+     */
     private fun nameAutoCompleteBinding(){
         CoroutineScope(SupervisorJob()).launch {
             val allNameList = ArrayList<String>()
@@ -81,7 +94,8 @@ class Search : AppCompatActivity(), View.OnClickListener {
             .putExtra(SerialKey.Name.name, getString(R.string.search_result))
             .putExtra(SerialKey.Type.name, Type.Search.name)
             .putExtra(SerialKey.GenericId.name,0L)
-            .putExtra(SerialKey.QueryContent.name, SearchQuery(
+            .putExtra(
+                SerialKey.QueryContent.name, SearchQuery(
                 checkEmpty(binding.actvName.text.toString()),
                 checkEmpty(binding.actvDesigner.text.toString()),
                 checkEmpty(binding.actvArtist.text.toString()),
@@ -100,8 +114,14 @@ class Search : AppCompatActivity(), View.OnClickListener {
         finish()
     }
 
+    /**
+     * return null if field is empty
+     */
     private fun checkEmpty(arg:String) = if (arg.isNullOrBlank()) null else arg
 
+    /**
+     * return null if field is empty or filled with non-number element
+     */
     private fun checkEmptyInt (arg:String) =  if (
         arg.isNullOrBlank() || !Regex("^[0-9]+$"
         ).matches(arg)) null else arg.toInt()

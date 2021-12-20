@@ -1,6 +1,7 @@
 package com.example.filrouge
 
 import android.app.Application
+import com.example.filrouge.utils.SharedPreference
 
 lateinit var appInstance:FilRougeApp
 /**
@@ -8,8 +9,15 @@ lateinit var appInstance:FilRougeApp
  */
 class FilRougeApp: Application() {
 
+    /**
+     * database handle
+     */
     val database by lazy{FilRougeRoomDatabase.getDatabase(this)}
-    val sharedPreference by lazy{SharedPreference(this)}
+
+    /**
+     * [SharedPreference] handle
+     */
+    val sharedPreference by lazy{ SharedPreference(this) }
 
     override fun onCreate() {
         super.onCreate()

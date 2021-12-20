@@ -1,4 +1,4 @@
-package com.example.filrouge
+package com.example.filrouge.view
 
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -7,9 +7,9 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.filrouge.view.*
-import com.example.filrouge.bean.*
-import com.example.filrouge.dao.CommonDao
+import com.example.filrouge.appInstance
+import com.example.filrouge.model.CommonDao
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
@@ -21,7 +21,7 @@ import java.io.File
  * [MultiAddOnDetails]
  */
 abstract class CommonType
-    : AppCompatActivity(),  OnGenericStringListAdapterListener, OnGenericListAdapterListener {
+    : AppCompatActivity(), OnGenericStringListAdapterListener, OnGenericListAdapterListener {
 
     /**
      * Handle [RecyclerView] layout Manager and space between [RecyclerView] element

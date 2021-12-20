@@ -1,8 +1,8 @@
-package com.example.filrouge.dao
+package com.example.filrouge.model
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.example.filrouge.bean.*
+import com.example.filrouge.utils.*
 import kotlinx.coroutines.flow.Flow
 
 /**

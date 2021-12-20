@@ -1,13 +1,16 @@
-package com.example.filrouge
+package com.example.filrouge.utils
 
-import com.example.filrouge.bean.*
-import com.example.filrouge.dao.*
+import com.example.filrouge.*
+import com.example.filrouge.model.*
 
 /**
  * Contain method frequently used with database and database related object
  */
 class DbMethod {
 
+    /**
+     * Database shortcut variable name
+     */
     val db = appInstance.database
 
     /**
@@ -77,7 +80,7 @@ class DbMethod {
     /**
      * use to create link for game in junction Tables
      */
-    fun<T:CommonDataArrayList> insertLink(game: ID, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
+    fun<T: CommonDataArrayList> insertLink(game: ID, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
         findMembers(game, getCommonField(), type, data)
         if (game is GameTableBean)findMembers(game, getGameSpecificField(), type, data, map)
     }
@@ -85,7 +88,7 @@ class DbMethod {
     /**
      * internal method get semantically linked element using Kotlin reflection and make junction tables link
      */
-    private fun<T:CommonDataArrayList> findMembers(game:ID, list: ArrayList<String>, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
+    private fun<T: CommonDataArrayList> findMembers(game:ID, list: ArrayList<String>, type:String, data:T, map:HashMap<String, ArrayList<String>>?=null){
         list.forEach {
             val lowercase = it.highToLowCamelCase()
             val lowerType = type.highToLowCamelCase()
@@ -160,7 +163,7 @@ class DbMethod {
     /**
      * convert [GameTableBean] from local database to [GameBean] for server exchange
      */
-    fun convertToBean(game:GameTableBean):GameBean {
+    fun convertToBean(game:GameTableBean): GameBean {
         val dao = appInstance.database.gameDao()
         var difficulty:String? = null
         game.difficultyId?.run{
@@ -207,7 +210,7 @@ class DbMethod {
     /**
      * convert [AddOnTableBean] from local database to [AddOnBean] for server exchange
      */
-    fun convertToBean(game:AddOnTableBean):AddOnBean {
+    fun convertToBean(game:AddOnTableBean): AddOnBean {
         val dao = appInstance.database.addOnDao()
         var difficulty:String? = null
         game.difficultyId?.run{
@@ -244,7 +247,7 @@ class DbMethod {
     /**
      * convert [MultiAddOnTableBean] from local database to [MultiAddOnBean] for server exchange
      */
-    fun convertToBean(game:MultiAddOnTableBean):MultiAddOnBean {
+    fun convertToBean(game:MultiAddOnTableBean): MultiAddOnBean {
         val dao = appInstance.database.multiAddOnDao()
         var difficulty:String? = null
         game.difficultyId?.run{
@@ -276,7 +279,7 @@ class DbMethod {
     /**
      * convert [GameBean] from server exchange  to [GameTableBean] for local database
      */
-    fun convertToTableBean(it:GameBean):GameTableBean{
+    fun convertToTableBean(it: GameBean):GameTableBean{
         var gameId = 0L
         val gameInDb = db.gameDao().getByServerId(it.id?.toLong() ?: 0L)
         var gameDifficulty: Long? = null
@@ -316,7 +319,7 @@ class DbMethod {
     /**
      * convert [AddOnBean] from server exchange  to [AddOnTableBean] for local database
      */
-    fun convertToTableBean(it:AddOnBean):AddOnTableBean{
+    fun convertToTableBean(it: AddOnBean):AddOnTableBean{
         val gameInDb = db.addOnDao().getByServerId(it.id?.toLong() ?: 0L)
         var addOnId = 0L
         var gameDifficulty: Long? = null
@@ -354,7 +357,7 @@ class DbMethod {
     /**
      * convert [MultiAddOnBean] from server exchange  to [MultiAddOnTableBean] for local database
      */
-    fun convertToTableBean(it:MultiAddOnBean):MultiAddOnTableBean{
+    fun convertToTableBean(it: MultiAddOnBean):MultiAddOnTableBean{
         var gameId = 0L
         val gameInDb = db.multiAddOnDao().getByServerId(it.id?.toLong() ?: 0L)
         var gameDifficulty: Long? = null
