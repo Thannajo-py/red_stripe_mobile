@@ -7,7 +7,7 @@ import android.widget.CheckBox
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.filrouge.activity.APISearchActivity
+import com.example.filrouge.view.APISearchActivity
 import com.example.filrouge.bean.*
 import com.example.filrouge.databinding.*
 import com.squareup.picasso.Picasso

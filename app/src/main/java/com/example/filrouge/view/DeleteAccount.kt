@@ -1,4 +1,4 @@
-package com.example.filrouge.activity
+package com.example.filrouge.view
 
 import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity

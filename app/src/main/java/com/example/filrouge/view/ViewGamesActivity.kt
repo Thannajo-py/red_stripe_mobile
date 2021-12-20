@@ -1,4 +1,4 @@
-package com.example.filrouge.activity
+package com.example.filrouge.view
 
 
 import android.app.AlertDialog
@@ -13,7 +13,7 @@ import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.filrouge.*
-import com.example.filrouge.activity.*
+import com.example.filrouge.view.*
 import com.example.filrouge.bean.*
 import com.example.filrouge.dao.CommonCustomInsert
 import com.example.filrouge.dao.CommonDao

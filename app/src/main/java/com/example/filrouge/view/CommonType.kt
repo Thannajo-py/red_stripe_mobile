@@ -7,7 +7,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.example.filrouge.activity.*
+import com.example.filrouge.view.*
 import com.example.filrouge.bean.*
 import com.example.filrouge.dao.CommonDao
 import kotlinx.coroutines.CoroutineScope

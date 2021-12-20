@@ -12,9 +12,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.LiveData
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewbinding.ViewBinding
-import com.example.filrouge.activity.ViewGamesActivity
-import com.example.filrouge.bean.CommonComponent
-import com.example.filrouge.bean.DesignerTableBean
+import com.example.filrouge.view.ViewGamesActivity
 import com.example.filrouge.bean.ID
 import com.example.filrouge.bean.Previous
 import com.example.filrouge.dao.CommonDao

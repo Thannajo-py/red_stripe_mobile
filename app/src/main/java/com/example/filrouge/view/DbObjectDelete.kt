@@ -1,4 +1,4 @@
-package com.example.filrouge.activity
+package com.example.filrouge.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
