@@ -148,15 +148,15 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            MenuId.Search.ordinal -> startActivity(Intent(this, Search::class.java))
+            MenuId.Search.ordinal -> startActivity(Intent(this, SearchActivity::class.java))
             MenuId.DeleteAccount.ordinal -> startActivity(
-                Intent(this, DeleteAccount::class.java)
+                Intent(this, DeleteAccountActivity::class.java)
             )
             MenuId.AddContent.ordinal -> startActivity(
-                Intent(this, AddElement::class.java)
+                Intent(this, AddElementActivity::class.java)
             )
             MenuId.CreateAccount.ordinal -> startActivity(
-                Intent(this, CreateNewAccount::class.java)
+                Intent(this, CreateNewAccountActivity::class.java)
             )
             MenuId.Synchronize.ordinal -> synchronizeBox(
                 getString(R.string.save_synchronize_message),
@@ -186,7 +186,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                 Intent(this, APISearchActivity::class.java)
             )
             MenuId.DeleteObject.ordinal -> startActivity(
-                Intent(this, DbObjectDelete::class.java)
+                Intent(this, DbObjectDeleteActivity::class.java)
             )
         }
         return super.onOptionsItemSelected(item)
@@ -578,7 +578,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
 
 
     override fun onElementClick(datum: CommonGame) {
-        intent = Intent(this, GameDetails::class.java)
+        intent = Intent(this, GameDetailsActivity::class.java)
         intent.putExtra(SerialKey.GameId.name, datum.id)
         startActivity(intent)
     }

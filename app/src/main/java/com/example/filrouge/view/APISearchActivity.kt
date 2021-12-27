@@ -133,7 +133,7 @@ class APISearchActivity : AppCompatActivity() {
 
     fun onElementClick(datum:BgaGameBean, img:String?){
         startActivity(
-            Intent(this, AddElement::class.java)
+            Intent(this, AddElementActivity::class.java)
             .putExtra(SerialKey.ApiBgaGame.name, datum)
                 .putExtra(SerialKey.ApiBgaImage.name, img)
         )

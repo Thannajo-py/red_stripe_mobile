@@ -4,7 +4,6 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
-import android.window.SplashScreen
 import com.example.filrouge.*
 import com.example.filrouge.databinding.ActivityMainBinding
 import com.example.filrouge.utils.*
@@ -84,7 +83,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener {
    private fun handleNoUser(){
         CoroutineScope(SupervisorJob()).launch {
             if (dbUser.getList().isEmpty()) {
-                startActivity(Intent(this@MainActivity, CreateNewAccount::class.java))
+                startActivity(Intent(this@MainActivity, CreateNewAccountActivity::class.java))
                 finish()
             }
         }

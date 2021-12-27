@@ -9,16 +9,16 @@ import okhttp3.RequestBody.Companion.toRequestBody
 /**
  * instance of [OkHttpClient]
  */
-val client = OkHttpClient()
+val client by lazy{ OkHttpClient() }
 /**
  * instance of [Gson]
  */
-val gson = Gson()
+val gson by lazy{ Gson() }
 
 /**
  * Define body as JSON
  */
-val MEDIA_TYPE_JSON = "application/json; charset=utf-8".toMediaType()
+val MEDIA_TYPE_JSON by lazy{ "application/json; charset=utf-8".toMediaType() }
 
 /**
  * method for POST httpRequest with String Body Return

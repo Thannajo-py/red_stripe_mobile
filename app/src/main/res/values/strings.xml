@@ -31,8 +31,8 @@
         - 1 special character\n
         - 8 characters\n
     </string>
-    <string name="save_and_synchronize">save modification and synchronize</string>
-    <string name="reset_content">reset local database content</string>
+    <string name="save_and_synchronize">Save modification and synchronize</string>
+    <string name="reset_content">Reset local database content</string>
     <string name="save_local">save local database</string>
     <string name="reset_local">load local save</string>
     <string name="synchronize_parameters">Synchronisation parameters</string>

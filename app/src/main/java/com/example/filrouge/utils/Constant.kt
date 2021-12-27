@@ -5,11 +5,11 @@ import com.example.filrouge.NamedResultBean
 /**
  * A temporary list containing all Board Game Atlas mechanics, reset when application closed
  */
-val ALL_MECHANICS = ArrayList<NamedResultBean>()
+val ALL_MECHANICS by lazy { ArrayList<NamedResultBean>() }
 /**
  * A temporary list containing all Board Game Atlas categories, reset when application closed
  */
-val ALL_CATEGORIES = ArrayList<NamedResultBean>()
+val ALL_CATEGORIES by lazy { ArrayList<NamedResultBean>() }
 
 
 /**

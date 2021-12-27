@@ -20,7 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.FilRouge" >
         <activity
-            android:name=".view.DbObjectDelete"
+            android:name=".view.DbObjectDeleteActivity"
             android:exported="false"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
@@ -28,35 +28,36 @@
             android:exported="false"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.AddElement"
+            android:name=".view.AddElementActivity"
             android:exported="false"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.DeleteAccount"
+            android:name=".view.DeleteAccountActivity"
             android:exported="false"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.Search"
+            android:name=".view.SearchActivity"
             android:exported="false"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.CreateNewAccount"
+            android:name=".view.CreateNewAccountActivity"
             android:exported="false"
             android:parentActivityName=".view.MainActivity" />
         <activity
-            android:name=".view.GenericTypeDetails"
+            android:name=".view.GenericTypeDetailsActivity"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.MultiAddOnDetails"
+            android:name=".view.MultiAddOnDetailsActivity"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.AddOnDetails"
+            android:name=".view.AddOnDetailsActivity"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity
-            android:name=".view.GameDetails"
+            android:name=".view.GameDetailsActivity"
             android:parentActivityName=".view.ViewGamesActivity" />
         <activity android:name=".view.ViewGamesActivity" />
-        <activity android:name=".view.MainActivity" >
+        <activity android:name=".view.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
