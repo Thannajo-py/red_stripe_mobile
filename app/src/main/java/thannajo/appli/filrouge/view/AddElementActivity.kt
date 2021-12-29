@@ -31,7 +31,7 @@ import kotlinx.coroutines.launch
 import java.io.ByteArrayOutputStream
 import java.io.File
 
-abstract class AddElementActivity : CommonTypeAbstractActivity(), View.OnClickListener,
+class AddElementActivity : CommonTypeAbstractActivity(), View.OnClickListener,
     GenericIDCbListener, GenericCommonGameCbListener, GenericOneToOneListener {
 
     private val binding by lazy{ ActivityAddElementBinding.inflate(layoutInflater)}
