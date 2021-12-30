@@ -91,6 +91,9 @@ class AddElementActivity : CommonTypeAbstractActivity(), View.OnClickListener,
         getAddedStringContentType().forEach {
             addedStringContentHashMap[it] = arrayListOf()
         }
+        dbMethod.getGameType().forEach {
+            addedGameContentHashMap[it] = arrayListOf()
+        }
     }
 
     private fun loadObject(){
@@ -713,7 +716,6 @@ class AddElementActivity : CommonTypeAbstractActivity(), View.OnClickListener,
     private fun setGameTypeListAdapter() {
         dbMethod.getGameType().forEach {type ->
             CoroutineScope(SupervisorJob()).launch{
-                addedGameContentHashMap[type] = ArrayList()
                 val adapter = GenericCommonGameListCbAdapter(
                     this@AddElementActivity,
                     addedGameContentHashMap[type]!!,
