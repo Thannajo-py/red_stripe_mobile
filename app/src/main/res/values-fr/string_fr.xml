@@ -24,7 +24,7 @@
     <string name="enter_password">Entrer votre mot de passe</string>
     <string name="enter_password_again">Entrer de nouveau votre mot de passe</string>
     <string name="password_rules">
-        le login ne doit pas être vide,\n
+        l\'identifiant ne doit pas être vide,\n
         le mot de passe doit contenir au moins:\n
         - 1 lettre minuscule\n
         - 1 lettre majuscule\n
@@ -158,7 +158,11 @@
     <string name="mechanism_hint">parcours</string>
     <string name="password_register_error">Erreur lors de l\'enregistrement du mot de passe</string>
     <string name="incorrect_server_answer">Réponse du serveur incorrect : %d</string>
+    <string name="create_new_account">Créer un nouveau compte</string>
     <string name="name_already_exist">
         Un élément de la même catégorie portant le même nom existe déjà!
     </string>
+    <string name="create_new_account_login">Entrer un identifiant</string>
+    <string name="create_new_account_password">Entrer un mot de passe</string>
+    <string name="create_new_account_password_confirm">Confirmer votre mot de passe</string>
 </resources>

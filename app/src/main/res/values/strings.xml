@@ -160,8 +160,8 @@
     <string name="name_already_exist">
         a same type named element already exist
     </string>
-    <string name="title_activity_splash_screen">SplashScreen</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="create_new_account_login">Enter a login</string>
+    <string name="create_new_account_password">Enter a password</string>
+    <string name="create_new_account_password_confirm">Confirm your password</string>
 </resources>

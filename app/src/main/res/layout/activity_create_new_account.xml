@@ -16,7 +16,15 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enter_login"
+            android:layout_marginBottom="20dp"
+            android:text="@string/create_new_account"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/create_new_account_login"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -36,7 +44,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enter_password"
+            android:text="@string/create_new_account_password"
             android:textSize="20sp"
             android:textStyle="bold" />
 
@@ -57,7 +65,7 @@
             android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/enter_password_again"
+            android:text="@string/create_new_account_password_confirm"
             android:textSize="20sp"
             android:textStyle="bold" />
 
