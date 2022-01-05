@@ -20,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:text="@string/search"
-            android:textColor="#673AB7"
+            android:textColor="@color/title"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -30,7 +30,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/name"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -51,7 +50,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/designer"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -74,7 +72,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/artist"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -98,7 +95,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/publisher"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -121,7 +117,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/min_player_number"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -145,7 +140,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/max_player_number"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -169,7 +163,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/max_time"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -193,7 +186,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/difficulty"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -214,7 +206,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/min_age"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -237,7 +228,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/playing_mod"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -261,7 +251,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/language_display"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -285,7 +274,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/tag"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -309,7 +297,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/topic"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -333,7 +320,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/mechanism"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 

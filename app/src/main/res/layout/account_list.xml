@@ -6,7 +6,7 @@
     android:layout_margin="5dp"
     android:clickable="true"
     android:focusable="true"
-    app:cardBackgroundColor="#B1B1B1">
+    app:cardBackgroundColor="@color/list_background">
 
     <CheckBox
         android:id="@+id/cb_select"
@@ -15,8 +15,8 @@
         android:checked="false"
         android:clickable="true"
         android:focusable="true"
+        android:textColor="@color/fourth"
         android:foreground="?android:attr/selectableItemBackground"
-        android:textColor="#673AB7"
         android:textSize="18sp"
         android:textStyle="bold" />
 

@@ -105,6 +105,7 @@ enum class SaveDbField{
  * Used to identify menu item selected
  */
 enum class MenuId{
+    Other,
     ApiSearch,
     Synchronize,
     Search,

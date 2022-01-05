@@ -33,8 +33,8 @@
     </string>
     <string name="save_and_synchronize">Save modification and synchronize</string>
     <string name="reset_content">Reset local database content</string>
-    <string name="save_local">save local database</string>
-    <string name="reset_local">load local save</string>
+    <string name="save_local">Save local database</string>
+    <string name="reset_local">Load local save</string>
     <string name="synchronize_parameters">Synchronisation parameters</string>
     <string name="search">Search</string>
     <string name="download_images">Download images</string>
@@ -164,4 +164,7 @@
     <string name="create_new_account_login">Enter a login</string>
     <string name="create_new_account_password">Enter a password</string>
     <string name="create_new_account_password_confirm">Confirm your password</string>
+    <string name="account_management">Account management</string>
+    <string name="database">Database</string>
+    <string name="server_less_note">unless you\'ve got a server hosting your games, remain in serverless mode</string>
 </resources>

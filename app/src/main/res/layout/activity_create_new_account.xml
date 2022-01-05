@@ -19,6 +19,7 @@
             android:layout_marginBottom="20dp"
             android:text="@string/create_new_account"
             android:textSize="30dp"
+            android:textColor="@color/title"
             android:textStyle="bold" />
 
         <TextView
@@ -139,7 +140,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/error"
-            android:textColor="#FB0000"
+            android:textColor="@color/error"
             android:textSize="20sp"
             android:textStyle="italic"
             android:visibility="gone"

@@ -4,10 +4,6 @@ import thannajo.appli.filrouge.R
 import thannajo.appli.filrouge.appInstance
 import thannajo.appli.filrouge.databinding.ActivityDeleteAccountBinding
 import thannajo.appli.filrouge.model.UserTableBean
-import thannajo.appli.filrouge.utils.MarginItemDecoration
-import thannajo.appli.filrouge.utils.UserBeanAdapter
-import thannajo.appli.filrouge.utils.UserListener
-import thannajo.appli.filrouge.utils.currentUser
 import android.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
+import thannajo.appli.filrouge.utils.*
 
 class DeleteAccountActivity : AppCompatActivity(), View.OnClickListener, UserListener {
 
@@ -44,14 +41,15 @@ class DeleteAccountActivity : AppCompatActivity(), View.OnClickListener, UserLis
 
     override fun onClick(v: View?) {
         if (accountSelected.isNotEmpty()){
-            AlertDialog.Builder(this)
+            val title = getString(R.string.warning).colored(getColor(R.color.list_background))
+            AlertDialog.Builder(this, R.style.alert_dialog)
                 .setMessage(
                     resources.getQuantityString(
                     R.plurals.delete_accounts,
                     accountSelected.size
                     )
                 )
-                .setTitle(getString(R.string.warning))
+                .setTitle(title)
                 .setPositiveButton(getString(R.string.ok)){
                         _, _ -> run{
                     deleteSelectedAccount()

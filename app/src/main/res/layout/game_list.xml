@@ -11,7 +11,7 @@
     android:focusable="true"
     android:orientation="vertical"
     android:layout_margin="5dp"
-    app:cardBackgroundColor="#B1B1B1"
+    app:cardBackgroundColor="@color/list_background"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -42,7 +42,7 @@
                     android:id="@+id/tvName"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#673AB7"
+                    android:textColor="@color/fourth"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -50,7 +50,7 @@
                     android:id="@+id/tvDesigner"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#FFFFFF"
+                    android:textColor="@color/fourth"
                     android:textSize="18sp"
                     android:textStyle="italic" />
             </LinearLayout>

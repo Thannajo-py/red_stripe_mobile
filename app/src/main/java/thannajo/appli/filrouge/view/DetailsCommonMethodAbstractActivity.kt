@@ -89,7 +89,10 @@ abstract class DetailsCommonMethodAbstractActivity : CommonTypeAbstractActivity(
      * handle deletion alert box for game, add-on, multi-add-on
      */
     protected fun<T: Previous> showAlertBox(context: Context, message:String, dao:CommonDao<T,*>, type:String, gameId:Long){
-        AlertDialog.Builder(context).setMessage(message).setTitle(getString(R.string.warning))
+        val title = getString(R.string.warning).colored(getColor(R.color.list_background))
+        AlertDialog.Builder(context,R.style.alert_dialog)
+            .setMessage(message)
+            .setTitle(title)
             .setPositiveButton(getString(R.string.ok)){
                     _, _ -> CoroutineScope(SupervisorJob()).launch{
                 val list = dao.getObjectById(gameId)

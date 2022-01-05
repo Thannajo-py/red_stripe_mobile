@@ -352,9 +352,10 @@ class AddElementActivity : CommonTypeAbstractActivity(), View.OnClickListener,
     private fun externalImageMenu(): Boolean{
         val urlLink = EditText(this)
         val ll = addLinearLayout(arrayListOf(urlLink))
-        AlertDialog.Builder(this)
+        val title = getString(R.string.external_image_link).colored(getColor(R.color.list_background))
+        AlertDialog.Builder(this, R.style.alert_dialog)
             .setMessage(getString(R.string.external_image_link_copy))
-            .setTitle(getString(R.string.external_image_link))
+            .setTitle(title)
             .setPositiveButton(getString(R.string.ok)) { _,_ ->
                 externalImageUrl = urlLink.text.toString()
             }

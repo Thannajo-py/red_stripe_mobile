@@ -20,7 +20,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/designers"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -36,7 +35,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/artists"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -52,7 +50,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/publishers"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -68,7 +65,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/tags"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -85,7 +81,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/topics"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -102,7 +97,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/languages_display"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -119,7 +113,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/mechanisms"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -136,7 +129,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/playing_mods"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -153,7 +145,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/difficulties"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 

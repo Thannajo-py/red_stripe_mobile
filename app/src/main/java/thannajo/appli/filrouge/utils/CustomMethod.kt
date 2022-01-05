@@ -1,5 +1,9 @@
 package thannajo.appli.filrouge.utils
 
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.ForegroundColorSpan
+import thannajo.appli.filrouge.R
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 
@@ -33,3 +37,9 @@ fun<T> Any.setMember(name:String, vararg arg:T) =
     this::class.memberProperties.filterIsInstance<KMutableProperty<*>>().find{
         it.name == name
     }!!.setter.call(this,*arg)
+
+fun String.colored(color:Int, start:Int=0, stop:Int=this.length):SpannableStringBuilder{
+    val title = SpannableStringBuilder(this)
+    title.setSpan(ForegroundColorSpan(color), start, stop, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE )
+    return title
+}

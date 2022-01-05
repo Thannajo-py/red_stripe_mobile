@@ -7,7 +7,7 @@
     android:layout_gravity="center_horizontal"
     android:layout_margin="5dp"
     android:orientation="vertical"
-    app:cardBackgroundColor="#B1B1B1"
+    app:cardBackgroundColor="@color/list_background"
     app:cardCornerRadius="5dp">
 
     <LinearLayout
@@ -22,7 +22,7 @@
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="#673AB7"
+            android:textColor="@color/fourth"
             android:textSize="18sp"
             android:textStyle="bold" />
 

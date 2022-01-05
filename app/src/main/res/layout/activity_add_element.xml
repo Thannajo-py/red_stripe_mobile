@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:text="@string/add_a_game"
-            android:textColor="#673AB7"
+            android:textColor="@color/title"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -55,7 +55,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/name"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -78,7 +77,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/type"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -113,7 +111,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/designers"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -161,7 +158,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/artists"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -208,7 +204,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/publishers"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -253,7 +248,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/min_player_number"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -275,7 +269,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/max_player_number"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -297,7 +290,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/max_time"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -319,7 +311,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/difficulty"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -346,7 +337,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/min_age"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -369,7 +359,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/playing_mods"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -415,7 +404,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/languages_display"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -462,7 +450,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/external_link"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -484,7 +471,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/number"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -506,7 +492,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/buying_price"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -538,7 +523,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/tags"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -583,7 +567,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/topics"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -628,7 +611,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/mechanisms"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -673,7 +655,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/multi_add_ons"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -689,7 +670,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/add_ons"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -704,7 +684,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/by_player"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -749,7 +728,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/link_game"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -761,7 +739,6 @@
                 android:ems="10"
                 android:text="@string/none"
                 android:textAlignment="center"
-                android:textColor="#000000"
                 android:textSize="16sp" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -785,7 +762,6 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
                 android:text="@string/link_games"
-                android:textColor="#000000"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
@@ -802,7 +778,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/error"
-            android:textColor="#FB0000"
+            android:textColor="@color/error"
             android:textSize="20sp"
             android:visibility="gone"
             tools:visibility="visible" />

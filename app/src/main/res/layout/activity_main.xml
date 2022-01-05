@@ -68,7 +68,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/error"
-            android:textColor="#FD0000"
+            android:textColor="@color/error"
             android:textSize="20sp"
             android:textStyle="italic"
             android:visibility="gone"

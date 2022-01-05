@@ -51,7 +51,7 @@
         android:layout_height="wrap_content"
         android:text="@string/error"
         android:textAlignment="center"
-        android:textColor="#FF0000"
+        android:textColor="@color/error"
         android:visibility="gone"
         tools:visibility="visible" />
 

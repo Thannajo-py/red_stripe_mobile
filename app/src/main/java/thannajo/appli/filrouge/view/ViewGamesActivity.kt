@@ -11,8 +11,12 @@ import android.content.Intent
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.text.Html
 import android.text.InputType
+import android.text.Spannable
+import android.text.SpannableStringBuilder
 import android.text.method.PasswordTransformationMethod
+import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.GridLayoutManager
@@ -103,44 +107,66 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if (currentUser?.synchronize == true) {
-            if (!isLocal) {
-                menu?.add(
-                    0,
-                    MenuId.Synchronize.ordinal,
-                    0,
-                    getString(R.string.save_and_synchronize)
-                )
-                menu?.add(0, MenuId.ResetDB.ordinal, 0, getString(R.string.reset_content))
-
-            } else {
-                menu?.add(0, MenuId.SaveLocalDatabase.ordinal, 0, getString(R.string.save_local))
-                menu?.add(0, MenuId.LoadLocalDatabase.ordinal, 0, getString(R.string.reset_local))
-            }
-            menu?.add(
-                0,
-                MenuId.SynchronizeParameter.ordinal,
-                0,
-                getString(R.string.synchronize_parameters)
-            )
-        }
-        menu?.add(0, MenuId.Search.ordinal, 0, getString(R.string.search))
-        menu?.add(0, MenuId.LoadImages.ordinal, 0, getString(R.string.download_images))
-        if (currentUser?.addAccount == true) {
-            menu?.add(0, MenuId.CreateAccount.ordinal, 0, getString(R.string.add_account))
-        }
-        if (currentUser?.deleteAccount == true) {
-            menu?.add(0, MenuId.DeleteAccount.ordinal, 0, getString(R.string.delete_account))
-        }
         if (currentUser?.add == true) {
             menu?.add(0, MenuId.AddContent.ordinal, 0, getString(R.string.add_element))
             menu?.add(0, MenuId.ApiSearch.ordinal, 0, getString(R.string.api_add_element))
         }
-        menu?.add(0, MenuId.ChangePassword.ordinal, 0, getString(R.string.change_password))
-        menu?.add(0, MenuId.Disconnect.ordinal, 0, getString(R.string.disconnect))
-        if (currentUser?.delete == true) {
-            menu?.add(0, MenuId.DeleteObject.ordinal, 0, getString(R.string.delete_object))
+        menu?.add(0, MenuId.Search.ordinal, 0, getString(R.string.search))
+        if(currentUser?.synchronize == true || currentUser?.delete == true) {
+            val dbOptions = menu?.addSubMenu(getString(R.string.database))
+            if (currentUser?.synchronize == true) {
+                if (!isLocal) {
+                    dbOptions?.add(
+                        0,
+                        MenuId.Synchronize.ordinal,
+                        0,
+                        getString(R.string.save_and_synchronize)
+                    )
+                    dbOptions?.add(
+                        0,
+                        MenuId.ResetDB.ordinal,
+                        0,
+                        getString(R.string.reset_content)
+                    )
+
+                } else {
+                    dbOptions?.add(
+                        0,
+                        MenuId.SaveLocalDatabase.ordinal,
+                        0,
+                        getString(R.string.save_local)
+                    )
+                    dbOptions?.add(
+                        0,
+                        MenuId.LoadLocalDatabase.ordinal,
+                        0,
+                        getString(R.string.reset_local)
+                    )
+                }
+                dbOptions?.add(
+                    0,
+                    MenuId.SynchronizeParameter.ordinal,
+                    0,
+                    getString(R.string.synchronize_parameters)
+                )
+            }
+            if (currentUser?.delete == true) {
+                dbOptions?.add(0, MenuId.DeleteObject.ordinal, 0, getString(R.string.delete_object))
+            }
         }
+        currentUser?.run{
+            val accountManagement = menu?.addSubMenu(getString(R.string.account_management))
+            if (currentUser?.addAccount == true) {
+                accountManagement?.add(0, MenuId.CreateAccount.ordinal, 0, getString(R.string.add_account))
+            }
+            if (currentUser?.deleteAccount == true) {
+                accountManagement?.add(0, MenuId.DeleteAccount.ordinal, 0, getString(R.string.delete_account))
+            }
+            accountManagement?.add(0, MenuId.ChangePassword.ordinal, 0, getString(R.string.change_password))
+        }
+        menu?.add(0, MenuId.LoadImages.ordinal, 0, getString(R.string.download_images))
+        menu?.add(0, MenuId.Disconnect.ordinal, 0, getString(R.string.disconnect))
+
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -734,9 +760,10 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             pwd
         )
         val ll = addLinearLayout(view)
-        AlertDialog.Builder(this)
+        val title = getString(R.string.warning).colored(getColor(R.color.list_background))
+        AlertDialog.Builder(this, R.style.alert_dialog)
             .setMessage(message)
-            .setTitle(getString(R.string.warning))
+            .setTitle(title)
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 run {
                     synchronize(login.text.toString(), pwd.text.toString(), cancel)
@@ -761,14 +788,16 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             url,
             addTextView(getString(R.string.url_static_file)),
             staticUrl,
-            cbIsLocal
+            cbIsLocal,
+            addTextView(getString(R.string.server_less_note))
         )
         val ll = addLinearLayout(view)
         url.setText(API_URL)
         staticUrl.setText(API_STATIC)
-        AlertDialog.Builder(this)
+        val title = getString(R.string.parameters).colored(getColor(R.color.list_background))
+        AlertDialog.Builder(this, R.style.alert_dialog)
             .setMessage(getString(R.string.url_web_message))
-            .setTitle(getString(R.string.parameters))
+            .setTitle(title)
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 API_URL = url.text.toString()
                 API_STATIC = staticUrl.text.toString()
@@ -803,8 +832,9 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
             pwdConfirm
         )
         val ll = addLinearLayout(view)
-        AlertDialog.Builder(this)
-            .setTitle(getString(R.string.change_password))
+        val title = getString(R.string.change_password).colored(getColor(R.color.list_background))
+        AlertDialog.Builder(this, R.style.alert_dialog)
+            .setTitle(title)
             .setPositiveButton(getString(R.string.ok)) { _, _ ->
                 run {
                     passwordChangeCheck(exPwd, pwd, pwdConfirm)

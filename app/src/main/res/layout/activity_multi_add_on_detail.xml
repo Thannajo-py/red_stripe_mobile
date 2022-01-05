@@ -34,7 +34,6 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:text="@string/name"
-            android:textColor="#673AB7"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -45,7 +44,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/designers"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -73,7 +71,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/artists"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -101,7 +98,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/publishers"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -127,7 +123,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/player_number_display"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -145,7 +140,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/playing_time_display"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -163,7 +157,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/difficulty"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -172,13 +165,13 @@
             android:layout_height="match_parent"
             android:layout_margin="5dp"
             android:background="#FFFFFF"
-            app:cardBackgroundColor="#B1B1B1"
+            app:cardBackgroundColor="@color/list_background"
             app:cardCornerRadius="5dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#B1B1B1"
+                android:background="@color/list_background"
                 android:gravity="center|center_horizontal"
                 android:orientation="vertical">
 
@@ -186,7 +179,6 @@
                     android:id="@+id/tvDifficulty"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="#673AB7"
                     android:textSize="18sp"
                     android:textStyle="bold" />
 
@@ -199,7 +191,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/min_age"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -217,7 +208,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/playing_mods"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -244,7 +234,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/languages_display"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 
@@ -271,7 +260,6 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"
             android:text="@string/link_games"
-            android:textColor="#000000"
             android:textSize="18sp"
             android:textStyle="bold" />
 

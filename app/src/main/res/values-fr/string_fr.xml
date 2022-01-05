@@ -165,4 +165,7 @@
     <string name="create_new_account_login">Entrer un identifiant</string>
     <string name="create_new_account_password">Entrer un mot de passe</string>
     <string name="create_new_account_password_confirm">Confirmer votre mot de passe</string>
+    <string name="account_management">Gestion de compte</string>
+    <string name="database">Base de données</string>
+    <string name="server_less_note">sauf si vous disposez d\'un serveur pour héberger vos jeux, veuillez rester en mode sans serveur</string>
 </resources>
