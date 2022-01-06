@@ -114,7 +114,11 @@ abstract class DetailsCommonMethodAbstractActivity : CommonTypeAbstractActivity(
     protected fun getDataStringOrUnknown(data:Any?, id:Int):String{
         var string = ""
         data?.run{
-            string = getString(id, data.toString())
+            if (data.toString().isNotBlank()) {
+                string = getString(id, data.toString())
+            }else{
+                string = getString(R.string.unknown)
+            }
         }?:run{
             string = getString(R.string.unknown)
         }

@@ -54,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:checked="true"
+            android:focusable="false"
             android:text="@string/stay_connected" />
 
         <Button
@@ -61,6 +62,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/second"
+            android:focusable="true"
             android:text="@string/login" />
 
         <TextView
