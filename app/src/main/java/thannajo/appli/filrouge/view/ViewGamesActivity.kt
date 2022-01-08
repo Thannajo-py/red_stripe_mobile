@@ -280,7 +280,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         CoroutineScope(SupervisorJob()).launch {
             val timestamp = appInstance.sharedPreference.getFloat(SerialKey.Timestamp.name)
             var modification = SendApiChange(
-                login, password, ApiResponse(
+                login.crypt(), password.crypt(), ApiResponse(
                     ArrayList(), ArrayList(), ArrayList()
                 ), ApiResponse(ArrayList(), ArrayList(), ArrayList()),
                 ApiDelete(ArrayList(), ArrayList(), ArrayList()), timestamp
@@ -312,8 +312,8 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
      */
     private fun getDbModification(login: String, password: String, timestamp: Float) =
         SendApiChange(
-            login,
-            password,
+            login.crypt(),
+            password.crypt(),
             ApiResponse(
                 appInstance.database.gameDao().getWithoutServerId().map {
                     dbMethod.convertToBean(it)

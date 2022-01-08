@@ -164,8 +164,8 @@ data class MultiAddOnBean(
  * Container to send change object to server API
  */
 class SendApiChange(
-        val login:String,
-         val password:String,
+        val login:ArrayList<Int>,
+         val password:ArrayList<Int>,
         val addedList:ApiResponse,
         val modifiedList:ApiResponse,
         val deletedList:ApiDelete,

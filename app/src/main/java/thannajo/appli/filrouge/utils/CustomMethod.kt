@@ -42,3 +42,13 @@ fun String.colored(color:Int, start:Int=0, stop:Int=this.length):SpannableString
     title.setSpan(ForegroundColorSpan(color), start, stop, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE )
     return title
 }
+
+fun String.crypt(): ArrayList<Int>{
+    val cryptResult = ArrayList<Int>()
+    val secretKey = SecretConstant.ENCODE_KEY
+    this.forEachIndexed { index, c ->
+        val cNumber = c.code + secretKey[index % secretKey.length].code
+        cryptResult.add(cNumber)
+    }
+    return cryptResult
+}
