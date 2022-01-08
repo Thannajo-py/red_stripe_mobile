@@ -11,12 +11,8 @@ import android.content.Intent
 import android.graphics.Typeface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.text.Html
 import android.text.InputType
-import android.text.Spannable
-import android.text.SpannableStringBuilder
 import android.text.method.PasswordTransformationMethod
-import android.text.style.ForegroundColorSpan
 import android.view.*
 import android.widget.*
 import androidx.recyclerview.widget.GridLayoutManager
@@ -275,7 +271,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     /**
-     * A method to synchronize loacal database with server
+     * A method to synchronize local database with server
      * available only in server mode
      */
     private fun synchronize(login: String, password: String, cancel: Boolean) {
@@ -539,7 +535,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     /**
-     * specific insert method for new game, create game pecific element if not present
+     * specific insert method for new game, create game specific element if not present
      */
     private fun insertNewGameData(g: GameBean) {
         db.gameDao().insert(dbMethod.convertToTableBean(g))
@@ -609,7 +605,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     }
 
     /**
-     * refresh isLocal common variable indication derverless mode
+     * refresh isLocal common variable indication serverless mode
      */
     private fun getSave() {
             isLocal = appInstance.sharedPreference.getBoolean(SerialKey.IsLocal.name)
@@ -632,7 +628,6 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
         CoroutineScope(SupervisorJob()).launch {
             for (game in dao.getList()) {
                 if (dao.getImage(game.name).isEmpty()) {
-
                     if (!game.external_img.isNullOrBlank()) {
                         launch {
                             getImage(game.external_img!!, game.name, type)
@@ -644,10 +639,7 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
                         }
                     }
                 }
-
             }
-
-
         }
     }
 

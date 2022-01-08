@@ -3,7 +3,6 @@ package thannajo.appli.filrouge.utils
 import android.text.Spannable
 import android.text.SpannableStringBuilder
 import android.text.style.ForegroundColorSpan
-import thannajo.appli.filrouge.R
 import kotlin.reflect.KMutableProperty
 import kotlin.reflect.full.memberProperties
 
