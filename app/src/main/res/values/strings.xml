@@ -166,5 +166,6 @@
     <string name="create_new_account_password_confirm">Confirm your password</string>
     <string name="account_management">Account management</string>
     <string name="database">Database</string>
+    <string name="authentication_error">Incorrect authentication credentials.</string>
     <string name="server_less_note">unless you\'ve got a server hosting your games, remain in serverless mode</string>
 </resources>

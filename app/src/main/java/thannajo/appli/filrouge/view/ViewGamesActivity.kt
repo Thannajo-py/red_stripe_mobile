@@ -591,7 +591,12 @@ class ViewGamesActivity : AppCompatActivity(), OnGenericListAdapterListener {
     private fun apiErrorHandling(e: Exception) {
         e.printStackTrace()
         runOnUiThread {
-            binding.tvGameError.text = getString(R.string.error_content, e.message)
+            if (e.message?.contains("403") == true){
+                binding.tvGameError.text = getString(R.string.authentication_error)
+            }
+            else{
+                binding.tvGameError.text = getString(R.string.error_content, e.message)
+            }
             binding.tvGameError.visibility = View.VISIBLE
             binding.progressBar.visibility = View.GONE
         }
