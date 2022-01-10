@@ -7,11 +7,11 @@
         <deviceKey>
           <Key>
             <type value="VIRTUAL_DEVICE_PATH" />
-            <value value="C:\Users\wolga\.android\avd\Pixel_4_API_29.avd" />
+            <value value="C:\Users\wolga\.android\avd\SophosResponse.avd" />
           </Key>
         </deviceKey>
       </Target>
     </targetSelectedWithDropDown>
-    <timeTargetWasSelectedWithDropDown value="2022-01-05T16:04:23.512364Z" />
+    <timeTargetWasSelectedWithDropDown value="2022-01-10T10:31:52.289338500Z" />
   </component>
 </project>
